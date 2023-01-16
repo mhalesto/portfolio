@@ -1,5 +1,10 @@
-import { FaAngular, FaBootstrap, FaCss3, FaHtml5, FaJava, FaJsSquare, FaNodeJs, FaReact } from "react-icons/fa";
+import { FaAngular, FaAws, FaBootstrap, FaCss3, FaHtml5, FaJsSquare, FaNodeJs, FaReact } from "react-icons/fa";
 import Layout from "../../components/layout";
+import AOS from 'aos';
+
+AOS.init({
+  duration: 1000
+});
 
 const Home = () => {
   return (
@@ -20,8 +25,8 @@ const Home = () => {
             </div>
 
             <div className="font-bold text-white md:px-5">
-              <h1 className="text-7xl md:text-4xl">Hii, I am <b className="text-yellow-500">HALALISANI</b></h1>
-              <h1 className="text-4xl md:text-2xl">Fullstack <b className="text-red-500">Developer</b>, Freelancer</h1>
+              <h1 className="text-7xl md:text-4xl" data-aos="slide-right">Hii, I am <b className="text-yellow-500">HALALISANI</b></h1>
+              <h1 className="text-4xl md:text-2xl" data-aos="slide-left">Fullstack <b className="text-red-500">Developer</b>, Freelancer</h1>
             </div>
           </div>
         </div>
@@ -31,7 +36,7 @@ const Home = () => {
           <div className="grid md:grid-cols-1 grid-cols-4">
             <FaReact size={180} color='cyan' className="w-full text-center mt-20" />
             <FaAngular size={180} color='red' className="w-full text-center mt-20 animate-bounce " />
-            <FaJava size={180} color='orange' className="w-full text-center mt-20 animate-bounce" />
+            <FaAws size={180} color='orange' className="w-full text-center mt-20 animate-bounce" />
             <FaNodeJs size={180} color='green' className="w-full text-center mt-20" />
             <FaBootstrap size={180} color='blue' className="w-full text-center mt-20 animate-bounce" />
             <FaJsSquare size={180} color='green' className="w-full text-center mt-20" />
@@ -48,7 +53,7 @@ const Home = () => {
           </div>
 
           <div className="md:mx-5 mx-32 shadow-2xl bg-gray-50 -mt-20 rounded-md hover:bg-gray-700 hover:text-white">
-            <div className="h-96">
+            <div className="h-96" data-aos='zoom-in'>
               <lottie-player
                 src="https://assets10.lottiefiles.com/packages/lf20_sSF6EG.json"
                 background="transparent"
@@ -73,7 +78,7 @@ const Home = () => {
           </div>
 
           <div className="md:mx-5 mx-32 shadow-2xl bg-gray-50 -mt-20 rounded-md hover:bg-gray-700 hover:text-white">
-            <div className="h-96">
+            <div className="h-96" data-aos='zoom-in'>
               <lottie-player
                 src="https://assets2.lottiefiles.com/packages/lf20_vybwn7df.json"
                 // src="https://assets1.lottiefiles.com/packages/lf20_dydyldzm.json"
