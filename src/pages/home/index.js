@@ -1,4 +1,4 @@
-import { FaAmazon, FaAngular, FaAws, FaBootstrap, FaCss3, FaHtml5, FaJava, FaJsSquare, FaNodeJs, FaReact } from "react-icons/fa";
+import { FaAngular, FaAws, FaBootstrap, FaCss3, FaHtml5, FaJsSquare, FaNodeJs, FaReact } from "react-icons/fa";
 import Layout from "../../components/layout";
 import AOS from 'aos';
 
