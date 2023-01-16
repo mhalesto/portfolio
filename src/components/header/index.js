@@ -27,7 +27,9 @@ const Header = () => {
     <div className="text-white font-mont fixed top-0 left-0 right-0 z-50 ">
       <div className={`flex bg-theme justify-between items-center p-2 shadow-lg ${showMenu === '' && 'md:flex-col'}`}>
         <div className="flex justify-between items-center w-full">
-          <h1 className="text-4xl">HG-M</h1>
+          <Link to={'/'}>
+            <h1 className="text-4xl font-semibold hover:text-yellow-500 cursor-pointer">HG-M</h1>
+          </Link>
 
           <FaBars
             className="md:flex lg:hidden xl:hidden 2xl:hidden cursor-pointer"
@@ -45,7 +47,7 @@ const Header = () => {
           {
             menuItems.map((item) => {
               return (
-                <li className={`list-none mx-5 p-1 ${item.key === pathname && 'bg-white text-black rounded-md'}`}>
+                <li className={`list-none mx-5 px-3 py-2 ${item.key === pathname && 'bg-white text-black rounded-md'}`}>
                   <Link to={`${item.key}`}> {item.title} </Link>
                 </li>
               );
@@ -57,7 +59,7 @@ const Header = () => {
           {
             menuItems.map((item) => {
               return (
-                <li className={`list-none my-2 p-1 ${item.key === pathname && 'bg-white text-black rounded-md px-5'}`}>
+                <li className={`list-none  my-2 p-1 ${item.key === pathname && 'bg-white text-black rounded-md px-5'}`}>
                   <Link to={`${item.key}`}> {item.title} </Link>
                 </li>
               );
