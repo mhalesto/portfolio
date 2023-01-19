@@ -5,6 +5,15 @@ html {
   scroll-behavior: smooth;
 }
 
+::-webkit-scrollbar {
+  width: 12px !important
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: tomato;
+  border-radius: 7px
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
