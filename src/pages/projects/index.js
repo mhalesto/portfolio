@@ -1,6 +1,7 @@
 import Layout from "../../components/layout";
 import projectsData from '../../resources/projects';
 import AOS from 'aos';
+import { Link } from "react-router-dom";
 
 AOS.init({
   duration: 1000
@@ -37,14 +38,31 @@ const Projects = () => {
         <div className="grid mt-20 md:grid-cols-1 grid-cols-3 items-center justify-center gap-10 mx-20 md:mx-5">
           {
             projectsData.map((project) => {
+              const isExternal = project.link.startsWith('http');
               return (
-                <div>
+                <div key={project.title}>
                   <div className="relative p-10 border-2 rounded-tr-3xl rounded-bl-3xl text-center border-gray-300">
                     <img src={project.image} alt="" className="w-full h-52 text-center" />
                     <div className="absolute inset-0 flex flex-col items-center justify-center opacity-0 bg-black 
                          hover:opacity-80 text-white rounded-tr-3xl rounded-bl-3xl">
                       <h1 className="text-3xl font-semibold">{project.title}</h1>
-                      <button className="border-2 rounded border-white py-2 px-5 hover:bg-green-500 mt-5">DEMO</button>
+                      {isExternal ? (
+                        <a
+                          href={project.link}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="border-2 rounded border-white py-2 px-5 hover:bg-green-500 mt-5"
+                        >
+                          DEMO
+                        </a>
+                      ) : (
+                        <Link
+                          to={project.link}
+                          className="border-2 rounded border-white py-2 px-5 hover:bg-green-500 mt-5"
+                        >
+                          DEMO
+                        </Link>
+                      )}
                     </div>
                   </div>
                 </div>

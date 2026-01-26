@@ -32,7 +32,7 @@ const Header = () => {
           </Link>
 
           <FaBars
-            className="md:flex lg:hidden xl:hidden 2xl:hidden cursor-pointer"
+            className="hidden md:flex cursor-pointer"
             onClick={() => {
               if (showMenu === 'md:hidden') {
                 setShowMenu('')
@@ -55,7 +55,7 @@ const Header = () => {
           }
         </div>
 
-        <div className={`mt-5 md:flex w-full items-start flex-col lg:hidden 2xl:hidden xl:hidden ${showMenu} `}>
+        <div className={`hidden md:flex mt-5 w-full items-start flex-col ${showMenu} `}>
           {
             menuItems.map((item) => {
               return (

@@ -14,6 +14,13 @@ const projectsData = [
     link: "/",
   },
   {
+    title: "Soundframe Studio",
+    image: "./soundframe.svg",
+    description:
+      "Audio extraction and slideshow-based soundframe clips for iOS and Android",
+    link: "/projects/soundframe-studio",
+  },
+  {
     title: "Signific",
     image: "./iamsignific.svg",
     description:
