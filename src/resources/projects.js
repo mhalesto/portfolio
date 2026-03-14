@@ -22,7 +22,7 @@ const projectsData = [
   },
   {
     title: "SoundFrame iOS",
-    image: "./soundframe.svg",
+    image: "./soundframe-ios.svg",
     description:
       "Beat-synced iOS video editor with captions, timeline layers, overlays, speed tools, and export-ready clips",
     link: "/projects/soundframe-ios",

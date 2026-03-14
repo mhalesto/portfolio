@@ -37,7 +37,7 @@ const SoundframeIOS = () => {
             </div>
             <div className="flex justify-center">
               <img
-                src={`${process.env.PUBLIC_URL}/soundframe.svg`}
+                src={`${process.env.PUBLIC_URL}/soundframe-ios.svg`}
                 alt="SoundFrame iOS"
                 className="w-80 md:w-64"
               />
