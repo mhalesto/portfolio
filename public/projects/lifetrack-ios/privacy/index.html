@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>LifeTrack Privacy Policy</title>
+    <style>
+      body {
+        margin: 0;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: #f6f7f5;
+        color: #202124;
+        line-height: 1.65;
+      }
+
+      header {
+        background: #252525;
+        color: #fff;
+        padding: 20px;
+      }
+
+      .header-inner,
+      main {
+        max-width: 980px;
+        margin: 0 auto;
+      }
+
+      .header-inner {
+        display: flex;
+        justify-content: space-between;
+        gap: 18px;
+        align-items: center;
+      }
+
+      a {
+        color: #157a5b;
+      }
+
+      header a {
+        color: #fff;
+        text-decoration: none;
+        font-weight: 800;
+      }
+
+      nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+      }
+
+      main {
+        padding: 40px 20px 64px;
+      }
+
+      .panel {
+        background: #fff;
+        border: 1px solid #d8dee8;
+        border-radius: 18px;
+        padding: 32px;
+        box-shadow: 0 22px 60px rgba(32, 33, 36, 0.08);
+      }
+
+      .eyebrow {
+        color: #5f6368;
+        font-size: 13px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        font-weight: 800;
+      }
+
+      h1, h2 {
+        line-height: 1.2;
+      }
+
+      h1 {
+        margin: 8px 0 0;
+        color: #157a5b;
+      }
+
+      h2 {
+        color: #157a5b;
+        margin-top: 28px;
+      }
+
+      .updated {
+        color: #5f6368;
+        font-size: 14px;
+      }
+
+      .actions {
+        margin-top: 32px;
+        display: flex;
+        gap: 14px;
+        flex-wrap: wrap;
+      }
+
+      .button {
+        border: 2px solid #157a5b;
+        border-radius: 999px;
+        color: #157a5b;
+        text-decoration: none;
+        font-weight: 800;
+        padding: 10px 18px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="header-inner">
+        <a href="/">HG-M</a>
+        <nav aria-label="Primary">
+          <a href="/">Home</a>
+          <a href="/projects">Projects</a>
+          <a href="/contact">Contact</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <article class="panel">
+        <div class="eyebrow">LifeTrack iOS</div>
+        <h1>Privacy Policy</h1>
+        <p class="updated">Last updated: May 2, 2026</p>
+
+        <p>
+          LifeTrack is an iOS app for task planning, focus sessions, money tracking,
+          document-assisted capture, reminders, widgets, and local backup/export. This policy
+          explains how information is handled in the app.
+        </p>
+
+        <h2>Information We Collect</h2>
+        <p>
+          We do not sell personal data, use advertising SDKs, or run cross-app tracking. LifeTrack
+          stores the tasks, notes, categories, reminders, money records, focus history, settings,
+          documents, and backups you create on your device.
+        </p>
+
+        <h2>Local Processing</h2>
+        <p>
+          Core planning, focus, money tracking, receipt parsing, bank statement import, document
+          storage, widgets, and backup workflows are designed to run locally. Backup files are
+          created as portable JSON exports only when you choose to share or save them.
+        </p>
+
+        <h2>AI Features</h2>
+        <p>
+          Free task suggestions use Apple Foundation Models when available, with offline task rules
+          as a fallback. Ultimate users may add their own Claude API key in Settings. When
+          Claude-backed features are used, task-oriented context may be sent to Anthropic to
+          generate suggestions or analysis.
+        </p>
+        <p>
+          Raw bank transactions, raw HealthKit samples, StoreKit receipts, API keys, and document
+          binaries are not sent to Claude by LifeTrack.
+        </p>
+
+        <h2>Permissions</h2>
+        <ul>
+          <li>Notifications: to deliver task, money, and reminder alerts.</li>
+          <li>Location: to trigger location reminders you create.</li>
+          <li>Camera and Files: to scan, import, and attach documents or receipts.</li>
+          <li>Microphone and Speech Recognition: to create tasks from voice input.</li>
+          <li>Calendar: to read busy windows and optionally sync scheduled task blocks.</li>
+          <li>Health: to read sleep and heart rate variability for energy-aware planning.</li>
+          <li>Photos: to choose a local profile avatar.</li>
+        </ul>
+        <p>Permissions are requested only when you use a feature that needs them.</p>
+
+        <h2>Subscriptions and Payments</h2>
+        <p>
+          Optional subscriptions are handled by Apple. We do not receive your full payment card
+          details. Apple may provide transaction status needed to unlock subscription features.
+        </p>
+
+        <h2>Data Retention</h2>
+        <p>
+          Local app data remains on your device unless you delete it, export it, restore a backup,
+          share it, or uninstall the app. Claude API keys are stored in the iOS Keychain and are not
+          included in LifeTrack backup exports.
+        </p>
+
+        <h2>Children's Privacy</h2>
+        <p>
+          LifeTrack is not directed to children under 13, and we do not knowingly collect personal
+          information from children.
+        </p>
+
+        <h2>Changes to This Policy</h2>
+        <p>If privacy practices change, this page will be updated before those changes take effect.</p>
+
+        <h2>Contact</h2>
+        <p>
+          For privacy questions, contact
+          <a href="mailto:currenttech.co.za@gmail.com">currenttech.co.za@gmail.com</a>.
+        </p>
+
+        <div class="actions">
+          <a class="button" href="/projects/lifetrack-ios/data-collection/">Data Collection</a>
+          <a class="button" href="/projects/lifetrack-ios/">Back to Project</a>
+          <a class="button" href="/contact">Contact</a>
+        </div>
+      </article>
+    </main>
+  </body>
+</html>

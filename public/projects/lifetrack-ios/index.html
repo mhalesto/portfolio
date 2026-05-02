@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>LifeTrack iOS</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f6f7f5;
+        --panel: #ffffff;
+        --text: #202124;
+        --muted: #5f6368;
+        --accent: #157a5b;
+        --accent-soft: #e8f6f0;
+        --border: #d8dee8;
+        --dark: #252525;
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+      }
+
+      .site-header {
+        background: var(--dark);
+        color: #fff;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+      }
+
+      .site-header-inner {
+        max-width: 1120px;
+        margin: 0 auto;
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+      }
+
+      .brand {
+        color: #fff;
+        text-decoration: none;
+        font-size: 24px;
+        font-weight: 800;
+      }
+
+      .nav {
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+      }
+
+      .nav a {
+        color: #fff;
+        text-decoration: none;
+        font-weight: 700;
+      }
+
+      main {
+        max-width: 1120px;
+        margin: 0 auto;
+        padding: 40px 20px 64px;
+      }
+
+      .hero {
+        background: var(--dark);
+        color: #fff;
+        border-radius: 22px;
+        padding: 42px;
+        display: grid;
+        grid-template-columns: 1.3fr 0.7fr;
+        gap: 34px;
+        align-items: center;
+      }
+
+      .eyebrow {
+        color: #8be0bd;
+        font-size: 13px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        font-weight: 800;
+      }
+
+      h1, h2 {
+        line-height: 1.15;
+        margin: 0;
+      }
+
+      h1 {
+        font-size: clamp(34px, 5vw, 54px);
+        margin-top: 8px;
+      }
+
+      h2 {
+        font-size: 26px;
+        color: var(--accent);
+      }
+
+      p { margin: 12px 0 0; }
+
+      .hero p {
+        font-size: 20px;
+        max-width: 760px;
+      }
+
+      .icon-wrap {
+        display: grid;
+        place-items: center;
+      }
+
+      .app-icon {
+        width: min(260px, 65vw);
+        border-radius: 34px;
+        box-shadow: 0 28px 70px rgba(0, 0, 0, 0.38);
+      }
+
+      .actions {
+        margin-top: 28px;
+        display: flex;
+        gap: 14px;
+        flex-wrap: wrap;
+      }
+
+      .button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid currentColor;
+        border-radius: 999px;
+        color: inherit;
+        text-decoration: none;
+        font-weight: 800;
+        padding: 10px 18px;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 28px;
+        margin-top: 34px;
+      }
+
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        padding: 28px;
+        box-shadow: 0 22px 60px rgba(32, 33, 36, 0.08);
+      }
+
+      ul {
+        padding-left: 22px;
+        margin: 14px 0 0;
+      }
+
+      li + li { margin-top: 8px; }
+
+      .note {
+        color: var(--muted);
+        font-size: 14px;
+        margin-top: 22px;
+      }
+
+      @media (max-width: 760px) {
+        .site-header-inner,
+        .hero {
+          align-items: flex-start;
+        }
+
+        .site-header-inner,
+        .hero,
+        .grid {
+          grid-template-columns: 1fr;
+        }
+
+        .site-header-inner {
+          flex-direction: column;
+        }
+
+        .hero {
+          padding: 28px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="site-header-inner">
+        <a class="brand" href="/">HG-M</a>
+        <nav class="nav" aria-label="Primary">
+          <a href="/">Home</a>
+          <a href="/projects">Projects</a>
+          <a href="/contact">Contact</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div>
+          <div class="eyebrow">iOS Life Planner</div>
+          <h1>LifeTrack</h1>
+          <p>
+            Plan tasks, protect focus time, track money, capture documents, schedule reminders,
+            review progress, and export local backups from one privacy-conscious iOS app.
+          </p>
+          <div class="actions">
+            <a class="button" href="/projects/lifetrack-ios/privacy/">Privacy Policy</a>
+            <a class="button" href="/projects/lifetrack-ios/data-collection/">Data Collection</a>
+            <a class="button" href="/projects">Back to Projects</a>
+          </div>
+        </div>
+        <div class="icon-wrap">
+          <img class="app-icon" src="/lifetrack-ios.png" alt="LifeTrack app icon" />
+        </div>
+      </section>
+
+      <section class="grid">
+        <div class="card">
+          <h2>What it does</h2>
+          <ul>
+            <li>Create, schedule, prioritize, complete, archive, and restore tasks.</li>
+            <li>Plan the day with focus recommendations, calendar-aware scheduling, and focus sessions.</li>
+            <li>Track income, expenses, bills, recurring transactions, budgets, and money insights.</li>
+            <li>Scan receipts, import bank statements, attach documents, and search supporting files.</li>
+            <li>Use notifications, widgets, App Intents, Share Extension capture, and location reminders.</li>
+            <li>Export and restore integrity-checked local JSON backups.</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h2>Platforms &amp; notes</h2>
+          <p><strong>Platform:</strong> iOS</p>
+          <p><strong>Processing:</strong> Core planning, focus, money, document, and backup workflows are local-first.</p>
+          <p><strong>AI:</strong> Free suggestions use on-device AI or offline rules. Ultimate users can add their own Claude API key.</p>
+          <p><strong>Permissions:</strong> Notifications, Location, Camera, Microphone, Speech Recognition, Calendar, Health, Photos, and Files are requested only when needed.</p>
+          <p><strong>Status:</strong> Release preparation and TestFlight validation.</p>
+          <p class="note">Support, privacy, and data-use details are available in the pages linked above.</p>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

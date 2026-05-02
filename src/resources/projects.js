@@ -28,6 +28,13 @@ const projectsData = [
     link: "/projects/soundframe-ios",
   },
   {
+    title: "LifeTrack",
+    image: "./lifetrack-ios.png",
+    description:
+      "iOS life planner for tasks, focus sessions, money tracking, document capture, reminders, widgets, and local backup",
+    link: "/projects/lifetrack-ios",
+  },
+  {
     title: "YouMine",
     image: "./youmine.png",
     description:
