@@ -28,6 +28,13 @@ const projectsData = [
     link: "/projects/soundframe-ios",
   },
   {
+    title: "YouMine",
+    image: "./youmine.png",
+    description:
+      "Voice-first AI companion with personality modes, memory, chat history, tools, attachments, and Pro voice support",
+    link: "/projects/youmine-ios",
+  },
+  {
     title: "Signific",
     image: "./iamsignific.svg",
     description:
