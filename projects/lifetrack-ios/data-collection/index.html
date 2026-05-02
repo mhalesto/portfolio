@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>LifeTrack Data Collection</title>
+    <style>
+      body {
+        margin: 0;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: #f6f7f5;
+        color: #202124;
+        line-height: 1.65;
+      }
+
+      header {
+        background: #252525;
+        color: #fff;
+        padding: 20px;
+      }
+
+      .header-inner,
+      main {
+        max-width: 980px;
+        margin: 0 auto;
+      }
+
+      .header-inner {
+        display: flex;
+        justify-content: space-between;
+        gap: 18px;
+        align-items: center;
+      }
+
+      a {
+        color: #157a5b;
+      }
+
+      header a {
+        color: #fff;
+        text-decoration: none;
+        font-weight: 800;
+      }
+
+      nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+      }
+
+      main {
+        padding: 40px 20px 64px;
+      }
+
+      .panel {
+        background: #fff;
+        border: 1px solid #d8dee8;
+        border-radius: 18px;
+        padding: 32px;
+        box-shadow: 0 22px 60px rgba(32, 33, 36, 0.08);
+      }
+
+      .eyebrow {
+        color: #5f6368;
+        font-size: 13px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        font-weight: 800;
+      }
+
+      h1, h2 {
+        line-height: 1.2;
+      }
+
+      h1 {
+        margin: 8px 0 0;
+        color: #157a5b;
+      }
+
+      h2 {
+        color: #157a5b;
+        margin-top: 28px;
+      }
+
+      .actions {
+        margin-top: 32px;
+        display: flex;
+        gap: 14px;
+        flex-wrap: wrap;
+      }
+
+      .button {
+        border: 2px solid #157a5b;
+        border-radius: 999px;
+        color: #157a5b;
+        text-decoration: none;
+        font-weight: 800;
+        padding: 10px 18px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="header-inner">
+        <a href="/">HG-M</a>
+        <nav aria-label="Primary">
+          <a href="/">Home</a>
+          <a href="/projects">Projects</a>
+          <a href="/contact">Contact</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <article class="panel">
+        <div class="eyebrow">LifeTrack iOS</div>
+        <h1>Data Collection</h1>
+        <p>
+          LifeTrack is designed to keep personal planning, focus, money, and document data under user
+          control. Most app data is stored locally on the device, and external processing happens
+          only for features the user chooses to use.
+        </p>
+
+        <h2>What We Don't Collect</h2>
+        <ul>
+          <li>Advertising identifiers or cross-app tracking data</li>
+          <li>Payment card details</li>
+          <li>Contacts or social profiles</li>
+          <li>Account passwords</li>
+          <li>Raw HealthKit samples, raw bank transactions, StoreKit receipts, or API keys for analytics</li>
+        </ul>
+
+        <h2>Stored on Device</h2>
+        <ul>
+          <li>Tasks, notes, categories, priorities, due dates, recurrence, and completion history</li>
+          <li>Focus sessions, daily planning state, weekly review data, and dashboard settings</li>
+          <li>Money entries, budgets, bills, recurring templates, receipt drafts, and statement imports</li>
+          <li>Attached documents, extracted text, local search metadata, and backup files you create</li>
+          <li>Notification, privacy, display, avatar, subscription tier, and AI settings</li>
+          <li>Claude API key data stored in the iOS Keychain when the user adds a key</li>
+        </ul>
+
+        <h2>Sent to Service Providers When Used</h2>
+        <ul>
+          <li>Anthropic Claude may receive task-focused prompts when an Ultimate user enables Claude features with their own API key.</li>
+          <li>Apple processes in-app purchases and may provide entitlement status.</li>
+          <li>Apple Speech Recognition may process voice input to produce task transcripts.</li>
+          <li>Apple Calendar busy windows may be used for planning; event titles are omitted from AI scheduling prompts.</li>
+        </ul>
+
+        <h2>Files, Receipts, and Bank Statements</h2>
+        <p>
+          Documents, receipts, and bank statements are selected by the user. LifeTrack stores attached
+          files locally, extracts readable text where possible, and uses parsed data for task and
+          money workflows. Document binaries and raw bank statement rows are not sent to Claude by
+          LifeTrack.
+        </p>
+
+        <h2>User Controls</h2>
+        <p>
+          Users can edit or delete tasks and money entries, disable sensitive notification previews,
+          manage Spotlight indexing, remove or replace the Claude API key, export local backups, and
+          manage permissions through iOS Settings.
+        </p>
+
+        <h2>Changes</h2>
+        <p>
+          If data collection or processing practices change in a future release, this page will be
+          updated before the updated app is published.
+        </p>
+
+        <h2>Contact</h2>
+        <p>
+          For data-collection questions, contact
+          <a href="mailto:currenttech.co.za@gmail.com">currenttech.co.za@gmail.com</a>.
+        </p>
+
+        <div class="actions">
+          <a class="button" href="/projects/lifetrack-ios/privacy/">Privacy Policy</a>
+          <a class="button" href="/projects/lifetrack-ios/">Back to Project</a>
+          <a class="button" href="/contact">Contact</a>
+        </div>
+      </article>
+    </main>
+  </body>
+</html>
