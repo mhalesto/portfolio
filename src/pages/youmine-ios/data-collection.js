@@ -39,7 +39,9 @@ const YouMineIOSDataCollection = () => {
                 <li>Speech Recognition may process audio to produce a transcript.</li>
                 <li>OpenAI or another configured AI provider may receive prompts, memory context, chat context, and extracted attachment text.</li>
                 <li>Text-to-speech providers may receive response text to generate spoken audio.</li>
+                <li>Club realtime voice, when used, may send live microphone audio, transcripts, and generated audio through the configured AI voice provider.</li>
                 <li>Open-Meteo may receive a typed weather location to return current weather.</li>
+                <li>Firebase may process anonymous authentication, App Check, usage metering, cloud functions, and subscription entitlement checks.</li>
                 <li>Apple processes App Store purchases and may provide entitlement status.</li>
               </ul>
             </div>

@@ -29,7 +29,8 @@ const YouMineIOSPrivacy = () => {
                 When AI features are enabled, prompts, conversation context, selected memory, and
                 text extracted from attachments may be sent to the configured AI provider to generate
                 a response. Pro voice may send response text to a text-to-speech provider so spoken
-                audio can be generated.
+                audio can be generated. Club realtime voice, when used, may send live microphone
+                audio, transcripts, and generated audio through the configured AI voice provider.
               </p>
             </div>
             <div>
@@ -56,7 +57,9 @@ const YouMineIOSPrivacy = () => {
               <p className="mt-2">
                 Weather requests may send the location text you enter to Open-Meteo to retrieve
                 current weather. In-app purchases are handled by Apple, and Apple may provide
-                purchase status needed to unlock subscription features.
+                purchase status needed to unlock subscription features. Firebase may be used for
+                anonymous authentication, App Check protection, cloud functions, usage metering, and
+                subscription entitlement checks.
               </p>
             </div>
             <div>

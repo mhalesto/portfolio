@@ -90,6 +90,7 @@
       .card { background: var(--panel); border: 1px solid var(--border); border-radius: 22px; padding: 28px; box-shadow: 0 24px 60px rgba(18, 12, 35, .1); }
       .card strong { color: var(--theme); }
       .muted { color: var(--muted); }
+      .support-card { grid-column: 1 / -1; }
       @media (max-width: 760px) {
         .site-header-inner, .hero { align-items: flex-start; flex-direction: column; }
         .hero, .grid { grid-template-columns: 1fr; }
@@ -111,7 +112,7 @@
         <nav class="site-nav">
           <a href="/">Home</a>
           <a href="/projects">Projects</a>
-          <a href="/contact">Contact</a>
+          <a href="/contact/">Contact</a>
         </nav>
       </div>
     </header>
@@ -150,6 +151,10 @@
           <p><strong>AI:</strong> OpenAI chat and Pro voice can be enabled through configured API access.</p>
           <p><strong>Permissions:</strong> Microphone, Speech Recognition, Reminders, and selected files are used only for requested features.</p>
           <p class="muted">Support, privacy, and data-use details are available in the pages linked above.</p>
+        </div>
+        <div class="card support-card">
+          <h2>Support</h2>
+          <p>For help with YouMine, privacy questions, subscription issues, or app feedback, contact <a href="mailto:currenttech.co.za@gmail.com">currenttech.co.za@gmail.com</a>.</p>
         </div>
       </section>
     </main>

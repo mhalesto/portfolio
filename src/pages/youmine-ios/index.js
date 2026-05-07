@@ -76,6 +76,16 @@ const YouMineIOS = () => {
               </p>
             </div>
           </div>
+
+          <div className="bg-white shadow-2xl rounded-2xl p-8 col-span-2 md:col-span-1">
+            <h2 className="text-2xl font-bold text-theme">Support</h2>
+            <p className="mt-4">
+              For help with YouMine, privacy questions, subscription issues, or app feedback, contact{" "}
+              <a href="mailto:currenttech.co.za@gmail.com" className="text-blue-600 underline">
+                currenttech.co.za@gmail.com
+              </a>.
+            </p>
+          </div>
         </div>
       </div>
     </Layout>

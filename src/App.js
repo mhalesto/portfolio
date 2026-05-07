@@ -38,6 +38,7 @@ function App() {
           <Route path='/projects/youmine-ios/privacy' element={<YouMineIOSPrivacy />} />
           <Route path='/projects/youmine-ios/data-collection' element={<YouMineIOSDataCollection />} />
           <Route path='/contact' element={<Contact />} />
+          <Route path='/contact/' element={<Contact />} />
         </Routes>
       </BrowserRouter>
     </div>
