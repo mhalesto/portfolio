@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SugarShifts iOS</title>
+    <style>
+      :root {
+        --bg: #fff5fb;
+        --panel: #ffffff;
+        --ink: #1b1725;
+        --muted: #6f6578;
+        --theme: #2a2a2a;
+        --pink: #f6508a;
+        --mint: #5ad3cd;
+        --gold: #ffbe1b;
+        --border: #eadde6;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: linear-gradient(180deg, #2a2a2a 0, #2a2a2a 120px, var(--bg) 120px);
+        color: var(--ink);
+      }
+      .site-header {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background: rgba(42, 42, 42, 0.96);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(16px);
+      }
+      .site-header-inner {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 18px 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+      }
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        color: #fff;
+        text-decoration: none;
+      }
+      .brand img {
+        width: 46px;
+        height: 46px;
+        object-fit: contain;
+        border-radius: 14px;
+        box-shadow: 0 0 26px rgba(246, 80, 138, 0.45);
+      }
+      .brand-name { font-size: 20px; font-weight: 800; }
+      .brand-tag { display: block; font-size: 12px; color: rgba(255,255,255,.68); letter-spacing: .12em; text-transform: uppercase; }
+      .site-nav { display: flex; gap: 18px; flex-wrap: wrap; }
+      .site-nav a { color: rgba(255,255,255,.84); text-decoration: none; font-size: 14px; font-weight: 700; }
+      main { max-width: 1100px; margin: 0 auto; padding: 72px 20px 56px; }
+      .hero {
+        display: grid;
+        grid-template-columns: 1.25fr .75fr;
+        gap: 32px;
+        align-items: center;
+        background: #2a2a2a;
+        color: #fff;
+        border-radius: 28px;
+        padding: 40px;
+        box-shadow: 0 30px 70px rgba(63, 28, 48, .18);
+      }
+      .eyebrow { margin: 0; color: #ff9bc3; font-size: 13px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
+      h1 { margin: 12px 0 16px; font-size: 44px; line-height: 1.05; }
+      h2 { margin: 0; font-size: 26px; color: var(--theme); }
+      p, li { font-size: 18px; line-height: 1.65; }
+      ul { margin: 16px 0 0; padding-left: 24px; }
+      .logo-wrap { display: grid; place-items: center; position: relative; }
+      .logo-glow { position: absolute; width: min(320px, 76vw); height: min(320px, 76vw); border-radius: 40px; background: rgba(246, 80, 138, .32); filter: blur(42px); }
+      .logo-wrap img {
+        position: relative;
+        width: min(280px, 72vw);
+        height: auto;
+        object-fit: contain;
+        border-radius: 34px;
+        box-shadow: 0 0 60px rgba(255, 190, 27, .25);
+      }
+      .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+      .button {
+        display: inline-block;
+        padding: 12px 18px;
+        border-radius: 999px;
+        text-decoration: none;
+        font-weight: 800;
+        border: 2px solid currentColor;
+        color: #fff;
+      }
+      .button.primary { background: #fff; color: var(--theme); border-color: #fff; }
+      .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 34px; }
+      .card { background: var(--panel); border: 1px solid var(--border); border-radius: 22px; padding: 28px; box-shadow: 0 24px 60px rgba(63, 28, 48, .1); }
+      .card strong { color: var(--theme); }
+      .muted { color: var(--muted); }
+      .support-card { grid-column: 1 / -1; }
+      @media (max-width: 760px) {
+        .site-header-inner { align-items: flex-start; flex-direction: column; }
+        .hero, .grid { grid-template-columns: 1fr; }
+        .hero { padding: 28px; }
+        h1 { font-size: 34px; }
+        p, li { font-size: 16px; }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="site-header-inner">
+        <a class="brand" href="/projects/sugarshifts-ios/">
+          <img src="/sugarshifts-ios.png" alt="" />
+          <span>
+            <span class="brand-name">SugarShifts</span>
+            <span class="brand-tag">Match-3 Puzzle</span>
+          </span>
+        </a>
+        <nav class="site-nav">
+          <a href="/">Home</a>
+          <a href="/projects">Projects</a>
+          <a href="/contact/">Contact</a>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <section class="hero">
+        <div>
+          <p class="eyebrow">iOS Match-3 Puzzle Game</p>
+          <h1>SugarShifts</h1>
+          <p>
+            Swap fruit tiles, build special combo clears, manage lives and coins, and chase star
+            targets across a colorful 200-level puzzle campaign.
+          </p>
+          <div class="actions">
+            <a class="button primary" href="/projects/sugarshifts-ios/privacy/">Privacy Policy</a>
+            <a class="button" href="/projects/sugarshifts-ios/data-collection/">Data Collection</a>
+            <a class="button" href="/projects">Back to Projects</a>
+          </div>
+        </div>
+        <div class="logo-wrap">
+          <div class="logo-glow"></div>
+          <img src="/sugarshifts-ios.png" alt="SugarShifts app icon" />
+        </div>
+      </section>
+      <section class="grid">
+        <div class="card">
+          <h2>What it does</h2>
+          <ul>
+            <li>Match fruit tiles across shaped boards, blockers, specials, and combo swaps.</li>
+            <li>Progress through a 200-level campaign with star goals and crowned late-game stages.</li>
+            <li>Use boosters, shuffles, hammers, swaps, extra moves, lives, and coin rewards.</li>
+            <li>Return for daily challenges, life regeneration, local reminders, and reward moments.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h2>Platforms and notes</h2>
+          <p><strong>Platform:</strong> iOS</p>
+          <p><strong>Processing:</strong> Gameplay, local progress, economy state, settings, and gameplay analytics are stored on device first.</p>
+          <p><strong>Cloud:</strong> iCloud and optional Firebase account sync can mirror progress, rewards, and purchase delivery records.</p>
+          <p><strong>Payments:</strong> Optional coin packs are handled by Apple through StoreKit.</p>
+          <p class="muted">Support, privacy, and data-use details are available in the pages linked above.</p>
+        </div>
+        <div class="card support-card">
+          <h2>Support</h2>
+          <p>For help with SugarShifts, privacy questions, purchase issues, or app feedback, contact <a href="mailto:currenttech.co.za@gmail.com">currenttech.co.za@gmail.com</a>.</p>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

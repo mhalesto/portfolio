@@ -39,10 +39,19 @@ const Projects = () => {
           {
             projectsData.map((project) => {
               const isExternal = project.link.startsWith('http');
+              const imageSource = project.image.startsWith('/')
+                ? project.image
+                : `${process.env.PUBLIC_URL}/${project.image.replace(/^\.\//, '')}`;
               return (
                 <div key={project.title}>
                   <div className="relative p-10 border-2 rounded-tr-3xl rounded-bl-3xl text-center border-gray-300">
-                    <img src={project.image} alt="" className="w-full h-52 text-center" />
+                    <div className="h-52 flex items-center justify-center">
+                      <img
+                        src={imageSource}
+                        alt={`${project.title} project preview`}
+                        className="max-w-full max-h-52 object-contain"
+                      />
+                    </div>
                     <div className="absolute inset-0 flex flex-col items-center justify-center opacity-0 bg-black 
                          hover:opacity-80 text-white rounded-tr-3xl rounded-bl-3xl">
                       <h1 className="text-3xl font-semibold">{project.title}</h1>

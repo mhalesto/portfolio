@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SugarShifts Privacy Policy</title>
+    <style>
+      :root { --bg: #fff5fb; --panel: #fff; --ink: #1b1725; --muted: #6f6578; --theme: #2a2a2a; --pink: #f6508a; --border: #eadde6; }
+      * { box-sizing: border-box; }
+      body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: linear-gradient(180deg, #2a2a2a 0, #2a2a2a 100px, var(--bg) 100px); color: var(--ink); }
+      .site-header { position: sticky; top: 0; z-index: 10; background: rgba(42,42,42,.96); border-bottom: 1px solid rgba(255,255,255,.08); backdrop-filter: blur(16px); }
+      .site-header-inner { max-width: 960px; margin: 0 auto; padding: 18px 20px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+      .brand { display: inline-flex; align-items: center; gap: 12px; color: #fff; text-decoration: none; }
+      .brand img { width: 44px; height: 44px; object-fit: contain; border-radius: 13px; box-shadow: 0 0 26px rgba(246,80,138,.45); }
+      .brand-name { font-size: 19px; font-weight: 800; }
+      .brand-tag { display: block; font-size: 12px; color: rgba(255,255,255,.68); letter-spacing: .12em; text-transform: uppercase; }
+      .site-nav { display: flex; gap: 18px; flex-wrap: wrap; }
+      .site-nav a { color: rgba(255,255,255,.84); text-decoration: none; font-size: 14px; font-weight: 700; }
+      main { max-width: 960px; margin: 0 auto; padding: 72px 20px 56px; }
+      .card { background: var(--panel); border: 1px solid var(--border); border-radius: 24px; box-shadow: 0 24px 60px rgba(63,28,48,.1); padding: 32px; }
+      .eyebrow { margin: 0; color: var(--muted); font-size: 13px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
+      h1 { margin: 12px 0 8px; font-size: 40px; line-height: 1.05; }
+      h2 { margin: 28px 0 8px; font-size: 22px; color: var(--theme); }
+      p, li { font-size: 18px; line-height: 1.65; }
+      ul { margin: 12px 0 0; padding-left: 24px; }
+      .muted { color: var(--muted); }
+      a { color: #2563eb; }
+      .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+      .button { display: inline-block; padding: 12px 18px; border-radius: 999px; text-decoration: none; font-weight: 800; border: 1px solid var(--theme); color: var(--theme); }
+      .button.primary { background: var(--theme); color: #fff; }
+      @media (max-width: 640px) { .site-header-inner { align-items: flex-start; flex-direction: column; } .card { padding: 24px; } h1 { font-size: 32px; } p, li { font-size: 16px; } }
+    </style>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="site-header-inner">
+        <a class="brand" href="/projects/sugarshifts-ios/">
+          <img src="/sugarshifts-ios.png" alt="" />
+          <span><span class="brand-name">SugarShifts</span><span class="brand-tag">Match-3 Puzzle</span></span>
+        </a>
+        <nav class="site-nav"><a href="/">Home</a><a href="/projects">Projects</a><a href="/contact/">Contact</a></nav>
+      </div>
+    </header>
+    <main>
+      <article class="card">
+        <p class="eyebrow">SugarShifts iOS</p>
+        <h1>Privacy Policy</h1>
+        <p class="muted">Last updated: May 21, 2026</p>
+        <p>SugarShifts is a match-3 puzzle game for iPhone. This policy explains how game progress, purchases, optional sync, and permissions are handled.</p>
+
+        <h2>Information We Collect</h2>
+        <p>We do not sell personal data or use advertising SDKs for cross-app tracking. The app stores gameplay data such as level progress, stars, coins, lives, boosters, settings, local gameplay events, daily rewards, and purchase-delivery records on your device.</p>
+
+        <h2>Progress Sync</h2>
+        <p>If iCloud key-value storage is available, selected progress and economy values may be mirrored through Apple iCloud so progress can follow your devices. If you choose Sign in with Apple for account sync, Firebase may store a sanitized progress snapshot and StoreKit delivery ledger so purchases and progress can be restored.</p>
+
+        <h2>Purchases</h2>
+        <p>Optional coin packs are processed by Apple through StoreKit. We do not receive your full payment card details. The app may save transaction identifiers and product information so coin delivery is not duplicated and can be restored after a device switch.</p>
+
+        <h2>Game Center and Notifications</h2>
+        <p>Game Center may be used for leaderboards and achievements if you enable it. Local notifications may be requested for reminders such as full lives or daily challenge resets. Permissions are requested only when a feature needs them.</p>
+
+        <h2>Third-Party Services</h2>
+        <p>Apple provides iCloud, Game Center, Sign in with Apple, notifications, and StoreKit services. Firebase may be used for authentication, Firestore progress sync, Cloud Functions, and purchase-delivery validation. The current release does not include a third-party ad network.</p>
+
+        <h2>Data Retention</h2>
+        <p>Local progress remains on your device until you delete it, reset the game, or uninstall the app. Cloud progress remains available while the linked iCloud or Firebase account exists, subject to the controls provided by Apple and Firebase-backed app settings.</p>
+
+        <h2>Children's Privacy</h2>
+        <p>SugarShifts is not directed to children under 13, and we do not knowingly collect personal information from children.</p>
+
+        <h2>Changes to This Policy</h2>
+        <p>If privacy practices change, this page will be updated before those changes take effect.</p>
+
+        <h2>Contact</h2>
+        <p>For privacy questions, contact <a href="mailto:currenttech.co.za@gmail.com">currenttech.co.za@gmail.com</a>.</p>
+
+        <div class="actions">
+          <a class="button primary" href="/projects/sugarshifts-ios/data-collection/">Data Collection</a>
+          <a class="button" href="/projects/sugarshifts-ios/">Back to Project</a>
+          <a class="button" href="/contact/">Contact</a>
+        </div>
+      </article>
+    </main>
+  </body>
+</html>

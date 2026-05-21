@@ -14,6 +14,9 @@ import LifeTrackIOSDataCollection from './pages/lifetrack-ios/data-collection';
 import YouMineIOS from './pages/youmine-ios';
 import YouMineIOSPrivacy from './pages/youmine-ios/privacy';
 import YouMineIOSDataCollection from './pages/youmine-ios/data-collection';
+import SugarShiftsIOS from './pages/sugarshifts-ios';
+import SugarShiftsIOSPrivacy from './pages/sugarshifts-ios/privacy';
+import SugarShiftsIOSDataCollection from './pages/sugarshifts-ios/data-collection';
 import 'aos/dist/aos.css';
 
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
@@ -37,6 +40,9 @@ function App() {
           <Route path='/projects/youmine-ios' element={<YouMineIOS />} />
           <Route path='/projects/youmine-ios/privacy' element={<YouMineIOSPrivacy />} />
           <Route path='/projects/youmine-ios/data-collection' element={<YouMineIOSDataCollection />} />
+          <Route path='/projects/sugarshifts-ios' element={<SugarShiftsIOS />} />
+          <Route path='/projects/sugarshifts-ios/privacy' element={<SugarShiftsIOSPrivacy />} />
+          <Route path='/projects/sugarshifts-ios/data-collection' element={<SugarShiftsIOSDataCollection />} />
           <Route path='/contact' element={<Contact />} />
           <Route path='/contact/' element={<Contact />} />
         </Routes>

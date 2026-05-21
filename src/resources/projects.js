@@ -14,6 +14,13 @@ const projectsData = [
     link: "/",
   },
   {
+    title: "SugarShifts",
+    image: "./sugarshifts-ios.png",
+    description:
+      "Bright iOS match-3 puzzle game with 200 levels, shaped boards, boosters, coin packs, daily challenges, and progress sync",
+    link: "/projects/sugarshifts-ios",
+  },
+  {
     title: "Soundframe Studio",
     image: "./soundframe.svg",
     description:
