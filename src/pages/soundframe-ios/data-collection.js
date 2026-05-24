@@ -9,18 +9,17 @@ const SoundframeIOSDataCollection = () => {
           <p className="text-sm uppercase tracking-widest text-gray-500">SoundFrame iOS</p>
           <h1 className="text-3xl md:text-2xl font-bold text-theme mt-2">Data Collection</h1>
           <p className="mt-4 text-lg md:text-base">
-            SoundFrame is designed so core editing workflows can run on device, while optional account,
-            subscription, cloud caption, AI, and advertising attribution features may collect the data
-            needed to provide, secure, measure, and improve those services.
+            SoundFrame is designed so core editing and caption workflows can run without collecting
+            personal profiles or selling user data.
           </p>
           <div className="mt-4 space-y-6">
             <div>
-              <h2 className="text-xl font-semibold text-theme">What We Do Not Collect</h2>
+              <h2 className="text-xl font-semibold text-theme">What We Don’t Collect</h2>
               <ul className="list-disc ml-6 mt-2 space-y-1">
-                <li>Payment card numbers or full payment credentials</li>
+                <li>Names, passwords, or account profiles for editing</li>
+                <li>Advertising identifiers or cross-app tracking data</li>
+                <li>Analytics profiles tied to your personal identity</li>
                 <li>Precise location, contacts, or health data</li>
-                <li>Passwords for Apple, Google, or App Store accounts</li>
-                <li>Sale of personal data to data brokers</li>
               </ul>
             </div>
             <div>
@@ -28,19 +27,6 @@ const SoundframeIOSDataCollection = () => {
               <p className="mt-2">
                 Videos, images, audio, captions, and timeline edits are processed on device for editing
                 and export. Imported media stays local unless you choose to share or export it elsewhere.
-                If you use cloud captions, AI Studio, generated images, or related connected features,
-                selected audio, text, prompts, project context, or generated outputs may be sent to
-                service providers to complete that request.
-              </p>
-            </div>
-            <div>
-              <h2 className="text-xl font-semibold text-theme">Identifiers and App Events</h2>
-              <p className="mt-2">
-                SoundFrame may process user identifiers, device identifiers, subscription status,
-                purchase history, and product interaction events such as app launches, registration,
-                login, tutorial completion, and subscription activity. These records help unlock
-                features, prevent fraud, provide support, measure performance, and understand campaign
-                effectiveness.
               </p>
             </div>
             <div>
@@ -48,10 +34,6 @@ const SoundframeIOSDataCollection = () => {
               <ul className="list-disc ml-6 mt-2 space-y-1">
                 <li>Photos/Media Library: to import media and save finished exports.</li>
                 <li>Speech Recognition: to convert selected audio into timed captions.</li>
-                <li>
-                  App Tracking Transparency: to ask before using advertising identifiers for campaign
-                  attribution and measurement.
-                </li>
               </ul>
             </div>
             <div>
@@ -62,17 +44,9 @@ const SoundframeIOSDataCollection = () => {
               </p>
             </div>
             <div>
-              <h2 className="text-xl font-semibold text-theme">Advertising Attribution and TikTok SDK</h2>
+              <h2 className="text-xl font-semibold text-theme">Third-Party Tracking</h2>
               <p className="mt-2">
-                SoundFrame may use the TikTok Business SDK to measure app installs, sign-ins,
-                subscriptions, and selected app events from TikTok advertising campaigns. TikTok and
-                SoundFrame may process device advertising identifiers, app or user identifiers, purchase
-                or subscription events, and product interaction events for advertising attribution,
-                analytics, and campaign measurement.
-              </p>
-              <p className="mt-2">
-                This data may be used for tracking as defined by Apple. On iOS, you can allow or deny
-                tracking when prompted, and you can change that choice later in iOS Settings.
+                The current release does not include ad networks or third-party tracking SDKs.
               </p>
             </div>
             <div>
