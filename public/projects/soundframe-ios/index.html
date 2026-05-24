@@ -4,199 +4,230 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>SoundFrame iOS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&display=swap" rel="stylesheet" />
     <style>
-      :root {
-        color-scheme: light;
-        --bg: #f5f5f2;
-        --panel: #ffffff;
-        --text: #202124;
-        --muted: #5f6368;
-        --accent: #1f3b73;
-        --accent-soft: #eff4ff;
-        --border: #d8dee8;
-      }
-
       * {
         box-sizing: border-box;
       }
 
+      html {
+        overflow-x: hidden;
+        scroll-behavior: smooth;
+      }
+
       body {
         margin: 0;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-        background: linear-gradient(180deg, #20242d 0, #2f3745 88px, var(--bg) 88px);
-        color: var(--text);
+        background: #ffffff;
+        color: #202124;
+        font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      ::-webkit-scrollbar {
+        width: 12px;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background-color: tomato;
+        border-radius: 7px;
       }
 
       .site-header {
-        position: sticky;
+        position: fixed;
         top: 0;
-        z-index: 10;
-        background: rgba(32, 36, 45, 0.96);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-        backdrop-filter: blur(16px);
+        left: 0;
+        right: 0;
+        z-index: 50;
+        background: #282828;
+        color: #ffffff;
+        box-shadow: 0 10px 18px rgba(0, 0, 0, 0.22);
       }
 
       .site-header-inner {
-        max-width: 960px;
-        margin: 0 auto;
-        padding: 18px 20px;
+        min-height: 68px;
+        padding: 8px 12px;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: 16px;
+        gap: 24px;
       }
 
       .brand {
-        display: inline-flex;
-        align-items: center;
-        gap: 12px;
-        color: #fff;
+        color: #ffffff;
         text-decoration: none;
-      }
-
-      .brand-badge {
-        width: 42px;
-        height: 42px;
-        border-radius: 12px;
-        background: linear-gradient(135deg, #3d8bff, #59d0ff);
-        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.24);
-        display: grid;
-        place-items: center;
-        flex: 0 0 auto;
-      }
-
-      .brand-copy {
-        display: flex;
-        flex-direction: column;
-        gap: 2px;
-      }
-
-      .brand-name {
-        font-size: 18px;
-        font-weight: 800;
-        letter-spacing: 0.01em;
-      }
-
-      .brand-tag {
-        font-size: 12px;
-        color: rgba(255, 255, 255, 0.68);
-        letter-spacing: 0.12em;
-        text-transform: uppercase;
+        font-size: 44px;
+        line-height: 1;
+        font-weight: 600;
       }
 
       .site-nav {
         display: flex;
-        gap: 18px;
-        flex-wrap: wrap;
+        align-items: center;
+        gap: 24px;
       }
 
       .site-nav a {
-        color: rgba(255, 255, 255, 0.82);
+        color: #ffffff;
         text-decoration: none;
-        font-size: 14px;
+        padding: 8px 12px;
+        font-size: 18px;
         font-weight: 600;
       }
 
       main {
-        max-width: 960px;
-        margin: 0 auto;
-        padding: 112px 20px 48px;
+        padding: 162px 36px 72px;
       }
 
-      .card {
-        background: var(--panel);
-        border: 1px solid var(--border);
-        border-radius: 24px;
-        box-shadow: 0 24px 60px rgba(18, 26, 42, 0.12);
-        padding: 32px;
+      .hero {
+        background: #282828;
+        color: #ffffff;
+        border-radius: 28px;
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.18);
+        padding: 50px;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 420px;
+        align-items: center;
+        gap: 44px;
       }
 
       .eyebrow {
         margin: 0;
-        color: var(--muted);
-        font-size: 13px;
-        font-weight: 700;
+        color: #f4d02d;
+        font-size: 16px;
         letter-spacing: 0.14em;
         text-transform: uppercase;
       }
 
       h1 {
-        margin: 12px 0 16px;
-        font-size: 40px;
-        line-height: 1.05;
+        margin: 14px 0 22px;
+        font-size: 44px;
+        line-height: 1.1;
       }
 
-      p,
-      li {
-        font-size: 18px;
-        line-height: 1.65;
-      }
-
-      ul {
-        margin: 16px 0 0;
-        padding-left: 24px;
-      }
-
-      .meta {
-        display: grid;
-        gap: 12px;
-        margin: 28px 0;
-        padding: 20px;
-        background: var(--accent-soft);
-        border-radius: 18px;
-      }
-
-      .meta strong {
-        color: var(--accent);
+      .hero-copy {
+        margin: 0;
+        max-width: 850px;
+        font-size: 22px;
+        line-height: 1.55;
       }
 
       .actions {
+        margin-top: 38px;
         display: flex;
         flex-wrap: wrap;
-        gap: 12px;
-        margin-top: 28px;
+        gap: 18px;
       }
 
       .button {
-        display: inline-block;
-        padding: 12px 18px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 54px;
+        padding: 12px 26px;
+        border: 3px solid currentColor;
         border-radius: 999px;
+        color: inherit;
         text-decoration: none;
+        font-size: 18px;
         font-weight: 700;
-        border: 1px solid var(--accent);
-        color: var(--accent);
       }
 
-      .button.primary {
-        background: var(--accent);
-        color: #fff;
+      .hero-art {
+        display: flex;
+        justify-content: center;
       }
 
-      @media (max-width: 640px) {
+      .hero-art img {
+        width: min(100%, 380px);
+        height: auto;
+        display: block;
+      }
+
+      .grid {
+        margin-top: 58px;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 38px;
+      }
+
+      .card {
+        background: #ffffff;
+        border-radius: 18px;
+        box-shadow: 0 28px 70px rgba(0, 0, 0, 0.14);
+        padding: 40px;
+      }
+
+      h2 {
+        margin: 0 0 22px;
+        font-size: 30px;
+        line-height: 1.2;
+      }
+
+      ul {
+        margin: 0;
+        padding-left: 28px;
+      }
+
+      li,
+      .note p {
+        font-size: 18px;
+        line-height: 1.55;
+      }
+
+      li + li,
+      .note p + p {
+        margin-top: 12px;
+      }
+
+      .note p {
+        margin: 0;
+      }
+
+      .note strong {
+        font-weight: 700;
+      }
+
+      .small-note {
+        margin-top: 34px;
+        color: #757b8a;
+        font-size: 16px;
+      }
+
+      @media (max-width: 900px) {
         .site-header-inner {
           align-items: flex-start;
           flex-direction: column;
         }
 
         .site-nav {
-          gap: 14px;
+          flex-wrap: wrap;
+          gap: 12px;
         }
 
         main {
-          padding-top: 96px;
+          padding: 168px 20px 56px;
         }
 
-        .card {
-          padding: 24px;
+        .hero,
+        .grid {
+          grid-template-columns: 1fr;
+        }
+
+        .hero {
+          padding: 30px;
         }
 
         h1 {
-          font-size: 32px;
+          font-size: 34px;
         }
 
-        p,
-        li {
-          font-size: 16px;
+        .hero-copy {
+          font-size: 18px;
+        }
+
+        .card {
+          padding: 28px;
         }
       }
     </style>
@@ -204,60 +235,58 @@
   <body>
     <header class="site-header">
       <div class="site-header-inner">
-        <a class="brand" href="/projects/soundframe-ios/">
-          <span class="brand-badge" aria-hidden="true">
-            <svg width="22" height="18" viewBox="0 0 22 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect x="1" y="6.5" width="2.5" height="5" rx="1.25" fill="white"/>
-              <rect x="5.5" y="4.5" width="2.5" height="9" rx="1.25" fill="white"/>
-              <rect x="10" y="2" width="2.5" height="14" rx="1.25" fill="white"/>
-              <rect x="14.5" y="4.5" width="2.5" height="9" rx="1.25" fill="white"/>
-              <rect x="19" y="6.5" width="2.5" height="5" rx="1.25" fill="white"/>
-            </svg>
-          </span>
-          <span class="brand-copy">
-            <span class="brand-name">SoundFrame</span>
-            <span class="brand-tag">Video Editor</span>
-          </span>
-        </a>
-        <nav class="site-nav" aria-label="SoundFrame links">
-          <a href="/projects/soundframe-ios/">Overview</a>
-          <a href="/projects/soundframe-ios/privacy/">Privacy</a>
-          <a href="/projects/soundframe-ios/data-collection/">Data Collection</a>
+        <a class="brand" href="/">HG-M</a>
+        <nav class="site-nav" aria-label="Main navigation">
+          <a href="/">Home</a>
+          <a href="/projects">Projects</a>
+          <a href="/contact">Contact</a>
         </nav>
       </div>
     </header>
+
     <main>
-      <section class="card">
-        <p class="eyebrow">SoundFrame iOS</p>
-        <h1>Beat-synced video editing on iPhone and iPad.</h1>
-        <p>
-          SoundFrame helps creators build short-form edits with captions, layered media, audio control,
-          filters, speed tools, and export-ready vertical clips.
-        </p>
-        <p>
-          It is designed for fast mobile workflows so creators can move from raw footage to polished,
-          social-ready edits without leaving the device.
-        </p>
-
-        <div class="meta">
-          <div><strong>Platform:</strong> iOS</div>
-          <div><strong>Processing:</strong> Core editing and caption workflows run on device.</div>
-          <div><strong>Account:</strong> No login is required for editing. An optional subscription unlocks Pro features.</div>
-          <div><strong>Permissions:</strong> Photos access for import/export and Speech Recognition for timed captions.</div>
+      <section class="hero">
+        <div>
+          <p class="eyebrow">iOS Video Editor</p>
+          <h1>SoundFrame</h1>
+          <p class="hero-copy">
+            Build fast beat-synced edits with captions, timeline layers, overlays, audio control,
+            filters, speed tools, and export-ready clips for short-form video.
+          </p>
+          <div class="actions">
+            <a class="button" href="/projects/soundframe-ios/privacy/">Privacy Policy</a>
+            <a class="button" href="/projects/soundframe-ios/data-collection/">Data Collection</a>
+            <a class="button" href="/projects">Back to Projects</a>
+          </div>
         </div>
 
-        <ul>
-          <li>Create edits with beat-aware cuts, trim tools, and timeline snapping.</li>
-          <li>Generate timed captions and refine text directly on the timeline.</li>
-          <li>Stack video, audio, graphics, text, and speed layers in one project.</li>
-          <li>Export polished clips for social-first formats.</li>
-        </ul>
-
-        <div class="actions">
-          <a class="button primary" href="/projects/soundframe-ios/privacy/">Privacy Policy</a>
-          <a class="button" href="/projects/soundframe-ios/data-collection/">Data Collection</a>
-          <a class="button" href="/contact">Contact</a>
+        <div class="hero-art">
+          <img src="/soundframe-ios.svg" alt="SoundFrame iOS" />
         </div>
+      </section>
+
+      <section class="grid" aria-label="SoundFrame details">
+        <article class="card">
+          <h2>What it does</h2>
+          <ul>
+            <li>Create reels and edits with beat-aware cuts, trim tools, and timeline snapping.</li>
+            <li>Generate timed captions and edit text blocks directly on the timeline.</li>
+            <li>Stack video, audio, graphics, text, and speed layers in one project.</li>
+            <li>Add overlays, filters, effects, beat-reactive visuals, and still-image layers.</li>
+            <li>Adjust clip timing with split, resize, move, mute, lock, and hide controls.</li>
+            <li>Export polished clips for vertical and social-first formats.</li>
+          </ul>
+        </article>
+
+        <article class="card note">
+          <h2>Platforms &amp; notes</h2>
+          <p><strong>Platform:</strong> iOS</p>
+          <p><strong>Processing:</strong> Editing, waveform analysis, and core caption workflows run on device.</p>
+          <p><strong>Account:</strong> No login required to edit. Optional subscription unlocks Pro features.</p>
+          <p><strong>Permissions:</strong> Photos access for import/export and Speech Recognition for caption generation.</p>
+          <p><strong>Status:</strong> Active development and App Store release preparation.</p>
+          <p class="small-note">Support, privacy, and data-use details are available in the pages linked above.</p>
+        </article>
       </section>
     </main>
   </body>
