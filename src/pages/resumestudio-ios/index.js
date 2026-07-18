@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import Layout from "../../components/layout";
+import content from "./content.json";
 
 const ResumeStudioIOS = () => {
   return (
@@ -31,12 +32,12 @@ const ResumeStudioIOS = () => {
           </div>
         </section>
 
+        <section className="mt-10 overflow-hidden rounded-[2.25rem] border border-slate-200 bg-white p-5 shadow-xl">
+          <img src={`${process.env.PUBLIC_URL}/resumestudio-home.png`} alt="ResumeStudio Today dashboard showing focused career actions" className="mx-auto w-full max-w-5xl rounded-[1.6rem]" />
+        </section>
+
         <section className="grid grid-cols-3 md:grid-cols-1 gap-6 mt-10">
-          {[
-            ["01", "Build with evidence", "Structured editing, import, ATS readiness, Recruiter Scan, 131 résumé templates, Layout Studio, searchable PDF and editable DOCX export."],
-            ["02", "Run the search", "Capture job adverts, track applications, connect documents and contacts, schedule interviews, compare offers, and act on a focused Today queue."],
-            ["03", "Use AI deliberately", "On-device assistance handles suitable lightweight work. Higher-quality server AI powers complex tailoring, interview plans, cover letters, and Career Coach workflows."],
-          ].map(([number, title, copy]) => (
+          {content.features.map(([number, title, copy]) => (
             <article key={number} className="rounded-3xl border border-slate-200 bg-white p-7 shadow-xl">
               <span className="font-mono text-sm font-bold text-[#f05a13]">{number}</span>
               <h2 className="mt-8 text-2xl font-bold text-[#08111f]">{title}</h2>
@@ -49,13 +50,7 @@ const ResumeStudioIOS = () => {
           <article className="rounded-3xl bg-[#f4f0e8] p-9 md:p-7">
             <p className="text-sm font-bold uppercase tracking-widest text-[#d94d0a]">Privacy by design</p>
             <h2 className="mt-3 font-serif text-4xl md:text-3xl text-[#08111f]">The résumé stays yours.</h2>
-            <ul className="mt-6 space-y-3 text-slate-700">
-              <li>• Drafts, applications, contacts, offers, and voice recordings are stored on device first.</li>
-              <li>• On-device OCR reads selected screenshots and scanned job documents locally.</li>
-              <li>• AI requests are explicit, redacted, App Check protected, and returned for review.</li>
-              <li>• No advertising, data sale, or cross-app tracking.</li>
-              <li>• Local, iCloud, hosted, and account data have separate export and deletion controls.</li>
-            </ul>
+            <ul className="mt-6 space-y-3 text-slate-700">{content.privacyBullets.map(item => <li key={item}>• {item}</li>)}</ul>
           </article>
           <article className="rounded-3xl bg-[#f05a13] p-9 md:p-7 text-white">
             <p className="text-sm font-bold uppercase tracking-widest text-orange-100">Platform</p>
