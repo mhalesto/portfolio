@@ -21,6 +21,13 @@ const projectsData = [
     link: "/projects/sugarshifts-ios",
   },
   {
+    title: "ResumeStudio",
+    image: "./resumestudio-ios.png",
+    description:
+      "Private iPhone and iPad career workspace for resumes, job targeting, applications, interviews, networking, and polished exports",
+    link: "/projects/resumestudio-ios",
+  },
+  {
     title: "Soundframe Studio",
     image: "./soundframe.svg",
     description:

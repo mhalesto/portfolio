@@ -1,0 +1,31 @@
+import { Link } from "react-router-dom";
+import Layout from "../../components/layout";
+
+const Section = ({ title, children }) => <section><h2 className="text-xl font-semibold text-theme">{title}</h2><div className="mt-2 space-y-3 text-slate-700 leading-7">{children}</div></section>;
+
+const ResumeStudioIOSPrivacy = () => (
+  <Layout>
+    <div className="pt-28 md:pt-24 px-8 md:px-5 pb-16">
+      <article className="mx-auto max-w-4xl bg-white shadow-2xl rounded-3xl p-10 md:p-6">
+        <p className="text-sm uppercase tracking-widest text-gray-500">ResumeStudio for iPhone and iPad</p>
+        <h1 className="text-4xl md:text-3xl font-bold text-theme mt-2">Privacy Policy</h1>
+        <p className="text-sm text-gray-500 mt-2">Effective: July 18, 2026</p>
+        <div className="mt-8 space-y-8">
+          <p className="text-lg leading-8">ResumeStudio is an offline-first career workspace. Résumés, applications, cover letters, contacts, offers, interview history, and career evidence are stored on your device by default. Connected processing happens only when you choose a feature that requires it.</p>
+          <Section title="Data stored on your device"><p>ResumeStudio stores your résumé documents and photos, versions, layouts, cover letters, applications, contacts, offers, interview work, selected source files, AI results, settings, processing history, and the last verified StoreKit entitlement needed for secure offline access.</p><p>Voice-practice recordings remain local. When you request AI feedback, the transcript and delivery measurements may be sent, but not the raw recording.</p></Section>
+          <Section title="On-device intelligence and OCR"><p>Selected screenshots, images, and scanned documents can be read with Apple Vision on your device. On supported Apple Intelligence devices, suitable lightweight writing and extraction tasks may use Apple’s on-device Foundation Models framework. Content handled entirely on device is not sent to ResumeStudio, Firebase, or OpenAI.</p><p>Free users generally receive on-device assistance first when it is available. Go and Pro users generally receive the higher-quality connected AI service first, with on-device assistance used as a private fallback for eligible lightweight tasks.</p></Section>
+          <Section title="AI processing"><p>Connected AI runs only after you select an AI action. Requests pass through ResumeStudio’s Firebase backend to OpenAI. The backend uses Firebase App Check, fixed supported actions, usage limits, structured responses, and requests that OpenAI does not store the response for later retrieval.</p><p>Writing requests exclude names, phone numbers, email addresses, references, profile photographs, attached source files, interview links, interviewer names, and private source URLs. The minimum relevant résumé or career evidence is sent for the selected task. You can pause AI and exclude Evidence Vault items in Privacy Centre.</p></Section>
+          <Section title="Privacy-safe product measurement"><p>If Help Improve ResumeStudio is enabled, the app may send coarse event names such as “first export” or “job captured,” the plan tier, and app version. These events never include résumé text, names, contact details, job descriptions, company names, URLs, document contents, advertising identifiers, or a persistent analytics identifier. The server stores aggregate counts rather than a user activity timeline. You can disable this setting at any time.</p></Section>
+          <Section title="iCloud, accounts, and hosted features"><p>If you enable document sync, ResumeStudio stores a workspace archive in your private iCloud container under your Apple Account. Firebase may store authentication records, saved AI results, AI-credit usage, referral records, entitlement verification, public CV-page metadata, trackable-link metadata, and hosted Review Room content needed to provide those features.</p><p>Publishing a CV page, trackable résumé link, or Review Room uploads the exact PDF you select, which may contain personal information you placed in that PDF. Links can be withdrawn, revoked, or deleted by their owner.</p></Section>
+          <Section title="Purchases"><p>Apple processes purchases and payment details. ResumeStudio receives signed transaction information such as product identifier, status, purchase date, and expiration date to unlock access and enforce allowances. ResumeStudio does not receive card or bank details.</p></Section>
+          <Section title="Data sharing and tracking"><p>ResumeStudio does not sell personal data, show third-party advertising, or track you across other companies’ apps and websites. Service providers receive data only to provide authentication, cloud functions, AI processing, purchase verification, optional iCloud sync, or explicitly published hosted features.</p></Section>
+          <Section title="Retention and deletion"><p>On-device data remains until you delete it or remove the app. iCloud data remains until you erase the archive. Saved AI work remains in Firebase until you delete it or your account. Hosted links end on expiry, revocation, withdrawal, or deletion.</p><p>Settings lets you separately delete the server account, on-device workspace, iCloud archive, AI history, and career intelligence. Deleting an account does not cancel an App Store subscription.</p></Section>
+          <Section title="Children, changes, and contact"><p>ResumeStudio is not directed to children under 13. This policy will be updated before material processing changes take effect.</p><p>For privacy or deletion questions, email <a href="mailto:currenttech.co.za@gmail.com" className="text-blue-600 underline">currenttech.co.za@gmail.com</a>.</p></Section>
+        </div>
+        <div className="flex flex-wrap gap-4 mt-10"><Link to="/projects/resumestudio-ios/data-collection" className="border-2 border-theme text-theme px-5 py-2 rounded-full">Data Collection</Link><Link to="/projects/resumestudio-ios/support" className="border-2 border-theme text-theme px-5 py-2 rounded-full">Support</Link><Link to="/projects/resumestudio-ios" className="border-2 border-theme text-theme px-5 py-2 rounded-full">Back to Project</Link></div>
+      </article>
+    </div>
+  </Layout>
+);
+
+export default ResumeStudioIOSPrivacy;

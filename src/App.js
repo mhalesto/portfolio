@@ -17,6 +17,10 @@ import YouMineIOSDataCollection from './pages/youmine-ios/data-collection';
 import SugarShiftsIOS from './pages/sugarshifts-ios';
 import SugarShiftsIOSPrivacy from './pages/sugarshifts-ios/privacy';
 import SugarShiftsIOSDataCollection from './pages/sugarshifts-ios/data-collection';
+import ResumeStudioIOS from './pages/resumestudio-ios';
+import ResumeStudioIOSPrivacy from './pages/resumestudio-ios/privacy';
+import ResumeStudioIOSDataCollection from './pages/resumestudio-ios/data-collection';
+import ResumeStudioIOSSupport from './pages/resumestudio-ios/support';
 import 'aos/dist/aos.css';
 
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
@@ -43,6 +47,10 @@ function App() {
           <Route path='/projects/sugarshifts-ios' element={<SugarShiftsIOS />} />
           <Route path='/projects/sugarshifts-ios/privacy' element={<SugarShiftsIOSPrivacy />} />
           <Route path='/projects/sugarshifts-ios/data-collection' element={<SugarShiftsIOSDataCollection />} />
+          <Route path='/projects/resumestudio-ios' element={<ResumeStudioIOS />} />
+          <Route path='/projects/resumestudio-ios/privacy' element={<ResumeStudioIOSPrivacy />} />
+          <Route path='/projects/resumestudio-ios/data-collection' element={<ResumeStudioIOSDataCollection />} />
+          <Route path='/projects/resumestudio-ios/support' element={<ResumeStudioIOSSupport />} />
           <Route path='/contact' element={<Contact />} />
           <Route path='/contact/' element={<Contact />} />
         </Routes>

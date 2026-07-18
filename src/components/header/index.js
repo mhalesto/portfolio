@@ -47,7 +47,7 @@ const Header = () => {
           {
             menuItems.map((item) => {
               return (
-                <li className={`list-none mx-5 px-3 py-2 ${item.key === pathname && 'bg-white text-black rounded-md'}`}>
+                <li key={item.key} className={`list-none mx-5 px-3 py-2 ${item.key === pathname && 'bg-white text-black rounded-md'}`}>
                   <Link to={`${item.key}`}> {item.title} </Link>
                 </li>
               );
@@ -59,7 +59,7 @@ const Header = () => {
           {
             menuItems.map((item) => {
               return (
-                <li className={`list-none  my-2 p-1 ${item.key === pathname && 'bg-white text-black rounded-md px-5'}`}>
+                <li key={item.key} className={`list-none  my-2 p-1 ${item.key === pathname && 'bg-white text-black rounded-md px-5'}`}>
                   <Link to={`${item.key}`}> {item.title} </Link>
                 </li>
               );
