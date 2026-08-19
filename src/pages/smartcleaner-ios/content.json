@@ -1,0 +1,42 @@
+{
+  "effectiveDate": "August 19, 2026",
+  "summary": "Smart Cleaner is an on-device storage cleaner. Your photos, videos, contacts, and calendar events never leave your iPhone. There is no account, no server, no analytics, and no network layer for your media at all.",
+  "features": [
+    ["01", "Measure, never guess", "Every figure is one the app took itself and can act on. It reports what it scanned, separates iCloud-only items from on-device ones, and caps reclaimable space at storage the device is physically using."],
+    ["02", "Compress instead of delete", "Videos are re-encoded to HEVC on the iPhone's own hardware encoder and Live Photos convert to stills, so the memory survives at a fraction of the size. Deletion is offered, never the default."],
+    ["03", "Know how long you have", "One capacity reading a day becomes a trend line, so the app can say what freeing space actually buys you in months of runway — not just a byte figure you scroll past."]
+  ],
+  "privacyBullets": [
+    "No network layer for media. Photos and videos are never uploaded.",
+    "Compression runs on the device's own hardware video encoder.",
+    "Duplicate and quality detection uses Apple Vision, entirely on device.",
+    "The scan index is a local SQLite file, excluded from backup.",
+    "No account, no analytics, no advertising identifier, no cross-app tracking."
+  ],
+  "privacySections": [
+    {"title":"Data collected","paragraphs":["None. Smart Cleaner does not collect, store, or transmit personal data to the developer or to anyone else. There is no analytics package, no crash reporter that sends data off the device, no advertising, and no tracking across apps or websites.","There is no account to create and no sign-in. The app works the same whether or not the device is online."]},
+    {"title":"What the app accesses, and why","paragraphs":["Photos, read: to measure what your library is using and to find large videos, duplicates, and low-quality shots. Photos, add: to save a compressed copy back to your library. Originals are only removed when you explicitly choose to remove them.","Contacts: to find duplicate contact entries, compared on the device. Calendars: to find events old enough to be worth clearing, read on the device only.","Declining any prompt disables that one feature and nothing else. You can withdraw any permission at any time in iOS Settings under Privacy and Security."]},
+    {"title":"Where processing happens","paragraphs":["Compression uses your iPhone's own hardware video encoder. No file is uploaded to be processed. Duplicate and quality detection uses Apple's Vision framework, which runs entirely on the device.","The index — the app's record of what it has scanned — is a SQLite file inside the app's own container, excluded from backup. Deleting the app deletes it. Storage readings for the forecast are a single capacity number per day, kept on the device and used only to draw the trend you see in the app."]},
+    {"title":"Purchases","paragraphs":["Premium features are sold through Apple's In-App Purchase system. Payment is handled entirely by Apple under Apple's own privacy policy. The developer never sees your name, payment method, or billing address. The app checks purchase status with StoreKit on your device, and that check does not identify you to us."]},
+    {"title":"Required-reason APIs","paragraphs":["Apple requires apps to declare certain system APIs. Smart Cleaner's privacy manifest declares exactly three and uses each only for the purpose stated: disk space (85F4.1) to show how full the device is and what cleaning would recover; user defaults (CA92.1) to remember your own settings; and file timestamp (C617.1) to sort and group items by date."]},
+    {"title":"Children","paragraphs":["Smart Cleaner is rated 4+ and contains no objectionable content, no user-generated content, no messaging, no advertising, and no web browsing. Because it collects no data at all, it collects no data from children."]},
+    {"title":"Changes and contact","paragraphs":["If this policy changes, the revised version will be posted here with a new date. Because the app collects nothing, any change would be a clarification rather than a new use of your data.","For privacy questions, email support@currenttech.app."]}
+  ],
+  "dataCards": [
+    {"title":"Never collected","items":["Your photos, videos, or any media file","Advertising identifiers","Cross-app tracking data","Payment card or bank details","Location of any kind","Your address book or calendar contents","Crash or usage analytics"]},
+    {"title":"Stored on device only","items":["The scan index of what was measured","One storage capacity reading per day","Your settings and preferences","StoreKit entitlement state for premium access"]},
+    {"title":"Processed on device","items":["Apple Vision compares images to find duplicates and low-quality shots.","The hardware video encoder re-encodes videos to HEVC.","Live Photos are converted to stills locally.","Contacts and calendar entries are compared locally when you use those tools."]},
+    {"title":"Handled by Apple","items":["In-App Purchases and all payment details.","Subscription management, renewal, and cancellation.","iCloud Photos, if you have it enabled — the app only reads what iOS exposes."]}
+  ],
+  "measurement": "There is none. Smart Cleaner ships no analytics SDK and sends no product-measurement events of any kind, opt-in or otherwise. Nothing about your usage reaches the developer.",
+  "supportIntro": "Help with scanning, compression, duplicates, the storage forecast, purchases, and anything the app reports that does not look right.",
+  "supportDiagnostic": "Include your iPhone model, iOS version, the Smart Cleaner version and build shown in Settings, what you were doing, and what the app said. Screenshots help. Never send passwords or payment details.",
+  "supportCards": [
+    {"title":"Free space did not change after compressing","body":"Compressing writes a smaller copy and leaves the original in place, which is why the app says 'ready to free' rather than 'freed' until you remove originals. After deleting, iOS holds items in Recently Deleted for up to 30 days — empty that album in Photos to get the space back."},
+    {"title":"The number differs from iOS Settings","body":"Settings counts system data and app caches that no third-party app may read or delete. Smart Cleaner only reports what it measured itself and can act on, which is why it never claims to clear junk files, caches, or memory."},
+    {"title":"An item is marked iCloud only","body":"With Optimize iPhone Storage on, iOS keeps originals in iCloud and a small preview on the device. Those items already cost almost nothing locally, so the app separates them out instead of counting them toward space you would get back."},
+    {"title":"The forecast says it is still learning","body":"The forecast fits a line to real capacity readings taken once a day. Under three days of readings there is nothing honest to project from, so it says so rather than inventing a number. It also declines when the rate of change is inside normal system churn."},
+    {"title":"Compressing a Live Photo dropped the motion","body":"Converting a Live Photo to a still is one of the ways space is saved. On the manual Browse to Compress path the motion half is dropped and the sheet warns you first. Leave Live Photos out of that selection if you want to keep the movement."},
+    {"title":"Purchases and subscriptions","body":"Restore Purchases lives in the app's Settings screen. Subscriptions are managed by Apple: open iOS Settings, tap your name, then Subscriptions. Refund requests go through reportaproblem.apple.com."}
+  ]
+}

@@ -19,7 +19,8 @@
   "scripts": {
     "start": "react-scripts start",
     "generate:resumestudio": "node scripts/generate-resumestudio-pages.cjs",
-    "prebuild": "npm run generate:resumestudio",
+    "generate:smartcleaner": "node scripts/generate-smartcleaner-pages.cjs",
+    "prebuild": "npm run generate:resumestudio && npm run generate:smartcleaner",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",

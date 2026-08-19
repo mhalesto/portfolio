@@ -21,6 +21,13 @@ const projectsData = [
     link: "/projects/sugarshifts-ios",
   },
   {
+    title: "Smart Cleaner",
+    image: "./smartcleaner-ios.png",
+    description:
+      "On-device iPhone storage cleaner that compresses photos and videos instead of deleting them, finds duplicates, and forecasts how long your space will last",
+    link: "/projects/smartcleaner-ios",
+  },
+  {
     title: "ResumeStudio",
     image: "./resumestudio-ios.png",
     description:

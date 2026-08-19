@@ -21,6 +21,10 @@ import ResumeStudioIOS from './pages/resumestudio-ios';
 import ResumeStudioIOSPrivacy from './pages/resumestudio-ios/privacy';
 import ResumeStudioIOSDataCollection from './pages/resumestudio-ios/data-collection';
 import ResumeStudioIOSSupport from './pages/resumestudio-ios/support';
+import SmartCleanerIOS from './pages/smartcleaner-ios';
+import SmartCleanerIOSPrivacy from './pages/smartcleaner-ios/privacy';
+import SmartCleanerIOSDataCollection from './pages/smartcleaner-ios/data-collection';
+import SmartCleanerIOSSupport from './pages/smartcleaner-ios/support';
 import 'aos/dist/aos.css';
 
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
@@ -51,6 +55,10 @@ function App() {
           <Route path='/projects/resumestudio-ios/privacy' element={<ResumeStudioIOSPrivacy />} />
           <Route path='/projects/resumestudio-ios/data-collection' element={<ResumeStudioIOSDataCollection />} />
           <Route path='/projects/resumestudio-ios/support' element={<ResumeStudioIOSSupport />} />
+          <Route path='/projects/smartcleaner-ios' element={<SmartCleanerIOS />} />
+          <Route path='/projects/smartcleaner-ios/privacy' element={<SmartCleanerIOSPrivacy />} />
+          <Route path='/projects/smartcleaner-ios/data-collection' element={<SmartCleanerIOSDataCollection />} />
+          <Route path='/projects/smartcleaner-ios/support' element={<SmartCleanerIOSSupport />} />
           <Route path='/contact' element={<Contact />} />
           <Route path='/contact/' element={<Contact />} />
         </Routes>
