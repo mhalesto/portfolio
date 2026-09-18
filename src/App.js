@@ -25,6 +25,11 @@ import SmartCleanerIOS from './pages/smartcleaner-ios';
 import SmartCleanerIOSPrivacy from './pages/smartcleaner-ios/privacy';
 import SmartCleanerIOSDataCollection from './pages/smartcleaner-ios/data-collection';
 import SmartCleanerIOSSupport from './pages/smartcleaner-ios/support';
+import ClipAuraIOS from './pages/clipaura-ios';
+import ClipAuraIOSPrivacy from './pages/clipaura-ios/privacy';
+import ClipAuraIOSDataCollection from './pages/clipaura-ios/data-collection';
+import ClipAuraIOSSupport from './pages/clipaura-ios/support';
+import ClipAuraIOSTerms from './pages/clipaura-ios/terms';
 import 'aos/dist/aos.css';
 
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
@@ -59,6 +64,11 @@ function App() {
           <Route path='/projects/smartcleaner-ios/privacy' element={<SmartCleanerIOSPrivacy />} />
           <Route path='/projects/smartcleaner-ios/data-collection' element={<SmartCleanerIOSDataCollection />} />
           <Route path='/projects/smartcleaner-ios/support' element={<SmartCleanerIOSSupport />} />
+          <Route path='/projects/clipaura-ios' element={<ClipAuraIOS />} />
+          <Route path='/projects/clipaura-ios/privacy' element={<ClipAuraIOSPrivacy />} />
+          <Route path='/projects/clipaura-ios/data-collection' element={<ClipAuraIOSDataCollection />} />
+          <Route path='/projects/clipaura-ios/support' element={<ClipAuraIOSSupport />} />
+          <Route path='/projects/clipaura-ios/terms' element={<ClipAuraIOSTerms />} />
           <Route path='/contact' element={<Contact />} />
           <Route path='/contact/' element={<Contact />} />
         </Routes>

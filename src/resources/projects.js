@@ -28,6 +28,13 @@ const projectsData = [
     link: "/projects/smartcleaner-ios",
   },
   {
+    title: "ClipAura",
+    image: "./clipaura-ios.png",
+    description:
+      "Creative iOS video studio with smart templates, AI effects, beat-synced editing, captions, Brand Kits, and polished exports",
+    link: "/projects/clipaura-ios",
+  },
+  {
     title: "ResumeStudio",
     image: "./resumestudio-ios.png",
     description:
