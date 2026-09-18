@@ -101,7 +101,8 @@
         "Role, interests, style choices, and onboarding progress",
         "Optional Apple display name and email address",
         "Used only for app functionality and linked to the private account"
-      ]
+      ],
+      "note": "This exists so your plan, onboarding answers, and creator progress survive reinstalling the app or moving to a new iPhone. It is tied to a private Firebase identity that is created automatically, so you can use ClipAura without an account; signing in with Apple only upgrades that same identity so it can be restored elsewhere."
     },
     {
       "title": "Hosted AI, only with consent",
@@ -110,7 +111,8 @@
         "Model task identifier, status, and timestamps",
         "Daily usage count used to return results and prevent abuse",
         "Processed by Firebase and, per feature, BytePlus, Google, OpenAI, or D-ID"
-      ]
+      ],
+      "note": "Each provider receives only the media and text needed for the one request you made. None of them receives your name, your email address, or your account identifier. ClipAura holds the surrounding task record so a render can be returned to the right device and resumed if your connection drops mid-job."
     },
     {
       "title": "Face data, only with consent",
@@ -120,7 +122,8 @@
         "Sent to D-ID with a one-way hash, never your identifier or email",
         "Deleted automatically within 24 hours, and on account deletion",
         "Never used for recognition, face templates, or model training"
-      ]
+      ],
+      "note": "The AI Presenter is the only feature that involves a face, and it is entirely optional. The portrait lives on your iPhone until you use it; the copy that reaches D-ID exists only for as long as the render needs. It is never compared against any other face, never turned into a template or faceprint, and never used to train a model."
     },
     {
       "title": "On device",
@@ -129,7 +132,8 @@
         "Timeline edits, captions, audio, Brand Kit, and settings",
         "Photos library identifiers needed to reopen selected media",
         "StoreKit entitlement state"
-      ]
+      ],
+      "note": "None of this is uploaded, backed up by ClipAura, or visible to us. It stays inside the app's own container or in your photo library, which means deleting the app removes it, and it also means ClipAura cannot restore it for you if you delete it yourself."
     },
     {
       "title": "Never collected by ClipAura",
@@ -139,10 +143,11 @@
         "Precise or coarse location",
         "Contacts, health data, or browsing history",
         "Face templates, faceprints, or biometric identifiers"
-      ]
+      ],
+      "note": "These are not collected in any form, under any plan, at any time. There is no advertising SDK in the app and no analytics product that follows you between apps or websites."
     }
   ],
-  "measurement": "ClipAura stores hosted-AI task status and daily usage counts only to return results, resume pending work, and protect the service from abuse. It does not use this information for advertising or cross-app tracking.",
+  "measurement": "ClipAura records hosted-AI task status, timestamps, and daily usage counts for three reasons: to return a finished result to the device that asked for it, to resume work that was interrupted, and to stop a single account from overwhelming a paid provider. These counts are about requests, not about you: there is no profile built from them, no advertising use, no cross-app or cross-site tracking, and no advertising identifier anywhere in the app. ClipAura does not sell personal information, and no third-party analytics product receives your creative content.",
   "supportIntro": "Help with projects, editing, exports, hosted AI, subscriptions, optional Apple sign-in, account deletion, and anything in ClipAura that does not behave as expected.",
   "supportDiagnostic": "Include your iPhone model, iOS version, ClipAura version and build, what you were doing, and what the app displayed. Screenshots help. Never send passwords, Apple verification codes, or payment details.",
   "supportCards": [
@@ -215,5 +220,44 @@
         "Questions about ClipAura or these terms can be sent to currenttech.co.za@gmail.com."
       ]
     }
+  ],
+  "dataIntro": [
+    "This page sets out every category of information ClipAura touches, why it is needed, where it goes, and how long it lasts. It is a companion to the privacy policy rather than a replacement: the policy is the binding document, and this page is the plain-language version of the same facts.",
+    "The shape of the app is that ordinary creative work never leaves your iPhone. Trimming, transitions, colour, captions, subject cutout, timeline edits, and export all run locally, so most of what you make is never uploaded at all. Information leaves the device in only three situations: you sign in, you buy something, or you ask a hosted AI model to generate something for you.",
+    "Hosted AI is the only one of those that sends your creative content anywhere, and it never happens silently. Before the first request to any provider, ClipAura names the company that will receive your data and what it will receive, and waits for you to agree. If you decline, the feature stops and everything else in the app keeps working."
+  ],
+  "dataRetention": [
+    {
+      "item": "Projects, edits, exports, and your reusable portrait on the iPhone",
+      "kept": "Until you delete them"
+    },
+    {
+      "item": "A portrait uploaded for an AI Presenter render",
+      "kept": "Up to 24 hours"
+    },
+    {
+      "item": "Source clips and reference media staged for a provider",
+      "kept": "Up to 7 days"
+    },
+    {
+      "item": "Finished renders waiting to be downloaded to your device",
+      "kept": "Up to 7 days"
+    },
+    {
+      "item": "Agency cloud backup of recent AI videos",
+      "kept": "7 to 30 days by creator level"
+    },
+    {
+      "item": "Cloud profile, AI task records, and usage counts",
+      "kept": "While the account exists"
+    }
+  ],
+  "dataControls": [
+    "Decline any hosted AI request. The consent prompt names the company before anything is sent, and declining leaves every on-device feature working.",
+    "Replace or delete your reusable portrait at any time, which removes the local copy immediately.",
+    "Revoke Photos, Microphone, Camera, and Speech Recognition access at any time in iOS Settings.",
+    "Delete your account under Profile, then Account, then Delete ClipAura account. This erases the Firebase identity, cloud profile, AI usage, AI task history, and any stored portraits and media.",
+    "Keep your local projects after deleting the account. They stay on the device on purpose, so deleting an account never destroys your own files.",
+    "Email currenttech.co.za@gmail.com with any privacy or deletion question. Never send passwords, Apple verification codes, or card details."
   ]
 }
