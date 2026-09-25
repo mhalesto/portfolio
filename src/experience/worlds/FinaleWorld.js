@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { World } from './World';
 import { IconSlab } from '../objects/IconSlab';
-import { damp } from '../utils/math';
+import { damp, easeOutBack } from '../utils/math';
 
 // The end of the current: a bright core with every app orbiting it. Each
 // orbiting icon is a door to that app's page.
@@ -107,6 +107,54 @@ export class FinaleWorld extends World {
     });
     this.slow = 0;
     this.iconScale = iconScale;
+    this.radius = radius;
+    this.slabGeometry = slabGeometry;
+    this.yours = null;
+  }
+
+  // The visitor's own app joins the orbit, a little larger than the rest.
+  // Textures are owned by the caller; only the slab's materials are ours.
+  setYourApp(app, textures, onBuild) {
+    if (this.yours) {
+      const { orbit, target } = this.yours;
+      this.group.remove(orbit.slab.group);
+      this.orbiters.splice(this.orbiters.indexOf(orbit), 1);
+      this.targets.splice(this.targets.indexOf(target), 1);
+      [orbit.slab.front, orbit.slab.side, orbit.slab.back].forEach(material => material.dispose());
+      this.yours = null;
+    }
+    if (!app || !textures) return;
+    const slab = new IconSlab({
+      geometry: this.slabGeometry,
+      texture: textures.front,
+      backTexture: textures.back,
+      colors: textures.colors,
+    });
+    slab.group.scale.setScalar(0.0001);
+    this.group.add(slab.group);
+    const orbit = {
+      slab,
+      app,
+      radius: this.radius + 0.2,
+      speed: 0.2,
+      phase: Math.PI * 0.42,
+      tilt: 0.5,
+      yours: true,
+      pop: 0,
+    };
+    const target = {
+      object: slab.mesh,
+      label: 'Build it',
+      color: textures.colors.a,
+      onHover: active => {
+        slab.hoverTarget = active ? 1 : 0;
+        orbit.hovered = active;
+      },
+      onClick: () => onBuild && onBuild(),
+    };
+    this.orbiters.push(orbit);
+    this.targets.push(target);
+    this.yours = { orbit, target };
   }
 
   update({ time, delta, camera, motion }) {
@@ -123,7 +171,12 @@ export class FinaleWorld extends World {
       const y = Math.sin(angle) * orbit.radius * 0.28 * orbit.tilt + Math.sin(time + orbit.phase * 3) * 0.06;
       orbit.slab.group.position.set(x, y, z);
       orbit.slab.group.quaternion.copy(camera.quaternion);
-      orbit.slab.group.scale.setScalar(this.iconScale * (1 + (z / orbit.radius) * 0.25));
+      let scale = this.iconScale * (1 + (z / orbit.radius) * 0.25);
+      if (orbit.yours) {
+        orbit.pop = Math.min(1, orbit.pop + delta * 1.2);
+        scale *= 1.2 * Math.max(0.0001, easeOutBack(orbit.pop));
+      }
+      orbit.slab.group.scale.setScalar(scale);
       orbit.slab.update(delta, { time, idle: 1, motion, tiltX: Math.sin(time * 0.6 + orbit.phase) * 0.25 });
     });
   }

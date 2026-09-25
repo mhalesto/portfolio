@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import App from './App';
 import { apps, otherProjects, person, webProjects } from './site/data';
 
@@ -57,6 +57,7 @@ beforeEach(() => {
   window.scrollTo = jest.fn();
   // jsdom has no WebGL; the pages must fall back to plain DOM content.
   HTMLCanvasElement.prototype.getContext = jest.fn(() => null);
+  window.localStorage.clear();
 });
 
 test('renders the ResumeStudio project page', () => {
@@ -83,6 +84,33 @@ test('home introduces Halalisani and gives every app a chapter linked to its pag
   webProjects.forEach(project => {
     expect(document.querySelector(`.web__row[href="${project.url}"]`)).not.toBeNull();
   });
+});
+
+test('a visitor can add their own app idea and email it from the finale', () => {
+  visit('/');
+  fireEvent.click(screen.getByRole('button', { name: /put your app idea/i }));
+  const dialog = screen.getByRole('dialog', { name: 'Add your app idea' });
+  const save = within(dialog).getByRole('button', { name: 'Save my app' });
+  expect(save).toBeDisabled();
+  fireEvent.change(within(dialog).getByLabelText(/app name/i), { target: { value: '  Salon   Book ' } });
+  fireEvent.change(within(dialog).getByLabelText(/what it does/i), { target: { value: 'Bookings for my salon' } });
+  fireEvent.click(save);
+
+  expect(screen.queryByRole('dialog')).toBeNull();
+  expect(screen.getByText(/Salon Book is saved/)).toBeInTheDocument();
+  expect(JSON.parse(window.localStorage.getItem('hgm-your-app'))).toEqual({
+    name: 'Salon Book',
+    idea: 'Bookings for my salon',
+  });
+  expect(screen.getByRole('heading', { level: 2, name: 'Let’s build Salon Book.' })).toBeInTheDocument();
+  const href = screen.getByRole('link', { name: /email me about salon book/i }).getAttribute('href');
+  expect(href.startsWith(`mailto:${person.email}?subject=App%20idea%3A%20Salon%20Book`)).toBe(true);
+  expect(decodeURIComponent(href)).toContain('What it should do: Bookings for my salon');
+
+  fireEvent.click(screen.getByRole('button', { name: /salon book is in the last slot/i }));
+  fireEvent.click(within(screen.getByRole('dialog')).getByRole('button', { name: 'Remove' }));
+  expect(window.localStorage.getItem('hgm-your-app')).toBeNull();
+  expect(document.querySelector('.finale__actions .btn--primary')).toHaveAttribute('href', `mailto:${person.email}`);
 });
 
 test('projects lists every app, website and earlier project', () => {

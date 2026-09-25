@@ -6,17 +6,29 @@ import SplitText from '../../site/components/SplitText';
 import Magnetic from '../../site/components/Magnetic';
 import Marquee from '../../site/components/Marquee';
 import ChapterRail from '../../site/components/ChapterRail';
+import YourAppDialog from '../../site/components/YourAppDialog';
 import useReveal from '../../site/useReveal';
 import { addTicker, loadStore } from '../../site/ticker';
 import { scrollToTarget } from '../../site/scroll';
 import { prefersReducedMotion, supportsWebGL } from '../../site/motion';
 import { apps, person, stack, webProjects } from '../../site/data';
+import { buildMailto, loadYourApp, saveYourApp, yourAppIconUrl } from '../../site/yourApp';
 import './home.css';
 
 const pad = value => String(value).padStart(2, '0');
 const REEL_URL = `${process.env.PUBLIC_URL}/experience/clipaura-reel.webp`;
 const MANIFESTO =
   'I build apps end to end: the interface, the code, the payments, the privacy policy and the support page. Seven of them live on this phone. Keep scrolling and each one opens into a world of its own.';
+
+// What to tell a visitor who just saved their app, depending on where they are.
+function savedMessage(app, webgl) {
+  const finale = document.getElementById('contact-cta');
+  const atFinale = finale && finale.getBoundingClientRect().top < window.innerHeight * 0.6;
+  if (atFinale) return webgl ? `${app.name} just joined the orbit.` : `${app.name} is saved.`;
+  return webgl
+    ? `${app.name} is on the phone. Scroll to the end to watch it join the orbit.`
+    : `${app.name} is saved. Send it to me from the end of the page.`;
+}
 
 // The preloader only plays on the first visit of a session.
 let introPlayed = false;
@@ -143,6 +155,11 @@ export default function Home() {
   const [preloading, setPreloading] = useState(() => !introPlayed && webgl && !prefersReducedMotion());
   const [heroIn, setHeroIn] = useState(false);
   const [sceneFailed, setSceneFailed] = useState(false);
+  const [yourApp, setYourApp] = useState(() => loadYourApp());
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [toast, setToast] = useState(null);
+  const yourAppRef = useRef(yourApp);
+  yourAppRef.current = yourApp;
 
   useReveal(mainRef);
 
@@ -181,8 +198,13 @@ export default function Home() {
             scrollToTarget(`#app-${apps[index].slug}`, {
               offset: window.innerHeight * 0.35,
             }),
+          onYourApp: () => setDialogOpen(true),
+          onBuildYourApp: () => {
+            if (yourAppRef.current) window.location.href = buildMailto(yourAppRef.current);
+          },
           onError: fail,
         });
+        controller.setYourApp(yourAppRef.current);
         experienceRef.current = controller;
       })
       .catch(fail);
@@ -223,6 +245,25 @@ export default function Home() {
     if (experienceRef.current) experienceRef.current.setWebHover(index);
   };
 
+  useEffect(() => {
+    if (experienceRef.current) experienceRef.current.setYourApp(yourApp);
+  }, [yourApp]);
+
+  useEffect(() => {
+    if (!toast) return undefined;
+    const id = window.setTimeout(() => setToast(null), 5200);
+    return () => window.clearTimeout(id);
+  }, [toast]);
+
+  const yourIcon = useMemo(() => yourAppIconUrl(yourApp, 168), [yourApp]);
+
+  const changeYourApp = (app, message) => {
+    saveYourApp(app);
+    setYourApp(app);
+    setDialogOpen(false);
+    setToast({ id: Date.now(), message });
+  };
+
   const webglActive = webgl && !sceneFailed;
 
   return (
@@ -255,10 +296,35 @@ export default function Home() {
             </h1>
 
             <div className="hero__bottom">
-              <p className="hero__lede">
-                I build iOS apps and websites from {person.country}. Seven of my apps live on this phone, and each one
-                opens into a world of its own.
-              </p>
+              <div className="hero__intro">
+                <p className="hero__lede">
+                  I build iOS apps and websites from {person.country}. Seven of my apps live on this phone, and each one
+                  opens into a world of its own.
+                </p>
+                <button
+                  type="button"
+                  className={`hero__yours${yourApp ? ' has-app' : ''}`}
+                  data-cursor={yourApp ? 'Edit' : 'Add yours'}
+                  onClick={() => setDialogOpen(true)}
+                >
+                  {yourApp && yourIcon ? (
+                    <img src={yourIcon} alt="" />
+                  ) : (
+                    <span className="hero__yours-plus" aria-hidden="true">
+                      +
+                    </span>
+                  )}
+                  {yourApp ? (
+                    <span>
+                      <b>{yourApp.name}</b> is in the last slot · Edit
+                    </span>
+                  ) : (
+                    <span>
+                      There’s room for one more. <b>Put your app idea {webglActive ? 'on this phone' : 'here'}</b>
+                    </span>
+                  )}
+                </button>
+              </div>
               <div className="hero__actions">
                 <Magnetic>
                   <button type="button" className="btn btn--primary" onClick={() => scrollToTarget('#manifesto')}>
@@ -292,6 +358,12 @@ export default function Home() {
                     </a>
                   </li>
                 ))}
+                <li>
+                  <button type="button" className="hero__fallback-yours" onClick={() => setDialogOpen(true)}>
+                    {yourApp && yourIcon ? <img src={yourIcon} alt="" /> : <i aria-hidden="true">+</i>}
+                    <span>{yourApp ? yourApp.name : 'Your app'}</span>
+                  </button>
+                </li>
               </ul>
             )}
 
@@ -418,16 +490,35 @@ export default function Home() {
             <div className="finale__content" data-reveal>
               <p className="eyebrow eyebrow--plain">Next up</p>
               <h2 className="finale__title" id="finale-title">
-                <SplitText text="Let’s build" /> <SplitText text="what’s next." className="serif" />
+                <SplitText text="Let’s build" />{' '}
+                {yourApp ? (
+                  <SplitText
+                    key={yourApp.name}
+                    text={`${yourApp.name}.`}
+                    className="serif finale__name"
+                    style={{ '--len': yourApp.name.length + 1 }}
+                  />
+                ) : (
+                  <SplitText text="what’s next." className="serif" />
+                )}
               </h2>
               <div className="finale__actions">
                 <Magnetic>
-                  <a href={`mailto:${person.email}`} className="btn btn--primary" data-cursor="Write">
-                    {person.email}
-                    <span className="btn__arrow" aria-hidden="true">
-                      →
-                    </span>
-                  </a>
+                  {yourApp ? (
+                    <a href={buildMailto(yourApp)} className="btn btn--primary" data-cursor="Write">
+                      Email me about {yourApp.name}
+                      <span className="btn__arrow" aria-hidden="true">
+                        →
+                      </span>
+                    </a>
+                  ) : (
+                    <a href={`mailto:${person.email}`} className="btn btn--primary" data-cursor="Write">
+                      {person.email}
+                      <span className="btn__arrow" aria-hidden="true">
+                        →
+                      </span>
+                    </a>
+                  )}
                 </Magnetic>
                 <Magnetic>
                   <Link to="/projects" className="btn">
@@ -435,11 +526,35 @@ export default function Home() {
                   </Link>
                 </Magnetic>
               </div>
-              {webglActive && <p className="finale__hint">Every icon in orbit opens its app.</p>}
+              <p className="finale__hint">
+                {webglActive &&
+                  (yourApp
+                    ? 'Every icon in orbit opens its app. Yours emails me. '
+                    : 'Every icon in orbit opens its app. ')}
+                <button type="button" className="text-link finale__yours" onClick={() => setDialogOpen(true)}>
+                  {yourApp ? `Edit ${yourApp.name}` : 'Add your own app idea'}
+                </button>
+              </p>
             </div>
           </div>
         </section>
       </main>
+
+      <YourAppDialog
+        open={dialogOpen}
+        initial={yourApp}
+        scene={webglActive}
+        onClose={() => setDialogOpen(false)}
+        onSave={app => changeYourApp(app, savedMessage(app, webglActive))}
+        onRemove={() => changeYourApp(null, 'Your app idea is removed.')}
+      />
+      <div className="yourapp-toasts" role="status" aria-live="polite">
+        {toast && (
+          <p className="yourapp-toast" key={toast.id}>
+            {toast.message}
+          </p>
+        )}
+      </div>
     </SiteShell>
   );
 }

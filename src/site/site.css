@@ -208,7 +208,10 @@ a.brand:hover .brand__rule {
   z-index: 90;
   color: #f2f0ea;
   font-family: var(--font-sans);
-  transition: transform 0.6s var(--ease-out), background-color 0.4s ease, border-color 0.4s ease,
+  transition:
+    transform 0.6s var(--ease-out),
+    background-color 0.4s ease,
+    border-color 0.4s ease,
     backdrop-filter 0.4s ease;
   border-bottom: 1px solid transparent;
 }
@@ -265,7 +268,9 @@ a.brand:hover .brand__rule {
   font-weight: 500;
   color: rgba(242, 240, 234, 0.72);
   text-decoration: none;
-  transition: color 0.3s ease, background-color 0.3s ease;
+  transition:
+    color 0.3s ease,
+    background-color 0.3s ease;
 }
 
 .site-nav__link:hover {
@@ -324,7 +329,9 @@ a.brand:hover .brand__rule {
   right: 0;
   height: 1.5px;
   background: currentColor;
-  transition: transform 0.5s var(--ease-out), top 0.5s var(--ease-out);
+  transition:
+    transform 0.5s var(--ease-out),
+    top 0.5s var(--ease-out);
 }
 
 .menu-toggle__icon i:first-child {
@@ -386,7 +393,9 @@ a.brand:hover .brand__rule {
   text-decoration: none;
   opacity: 0;
   transform: translateY(40%);
-  transition: opacity 0.6s ease, transform 0.9s var(--ease-out);
+  transition:
+    opacity 0.6s ease,
+    transform 0.9s var(--ease-out);
   transition-delay: calc(0.12s + var(--i) * 0.07s);
 }
 
@@ -489,7 +498,9 @@ a.brand:hover .brand__rule {
   color: var(--fg);
   text-decoration: none;
   background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat;
-  transition: background-size 0.7s var(--ease-out), color 0.3s ease;
+  transition:
+    background-size 0.7s var(--ease-out),
+    color 0.3s ease;
   word-break: break-word;
 }
 
@@ -606,7 +617,10 @@ a.brand:hover .brand__rule {
   border: 1px solid rgba(255, 255, 255, 0.5);
   border-radius: 50%;
   transform: translate(-50%, -50%);
-  transition: width 0.45s var(--ease-out), height 0.45s var(--ease-out), background-color 0.35s ease,
+  transition:
+    width 0.45s var(--ease-out),
+    height 0.45s var(--ease-out),
+    background-color 0.35s ease,
     border-color 0.35s ease;
 }
 
@@ -847,7 +861,9 @@ a.brand:hover .brand__rule {
 [data-reveal] {
   opacity: 0;
   transform: translate3d(0, 28px, 0);
-  transition: opacity 1s ease, transform 1.2s var(--ease-out);
+  transition:
+    opacity 1s ease,
+    transform 1.2s var(--ease-out);
   transition-delay: var(--delay, 0s);
 }
 
@@ -893,7 +909,9 @@ a.brand:hover .brand__rule {
   text-decoration: none;
   white-space: nowrap;
   isolation: isolate;
-  transition: color 0.45s var(--ease-out), border-color 0.45s ease;
+  transition:
+    color 0.45s var(--ease-out),
+    border-color 0.45s ease;
 }
 
 .btn::before {
@@ -949,7 +967,9 @@ a.brand:hover .brand__rule {
   color: var(--fg-dim);
   text-decoration: none;
   background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat;
-  transition: background-size 0.5s var(--ease-out), color 0.3s ease;
+  transition:
+    background-size 0.5s var(--ease-out),
+    color 0.3s ease;
 }
 
 .text-link:hover {
@@ -1030,6 +1050,289 @@ a.brand:hover .brand__rule {
 }
 
 /* ==========================================================================
+   Your app — dialog + toast
+   ========================================================================== */
+
+html.has-cursor .site input {
+  cursor: text !important;
+}
+
+.yourapp {
+  position: fixed;
+  inset: 0;
+  z-index: 150;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  overflow-y: auto;
+}
+
+.yourapp__backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(4, 5, 8, 0.72);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  animation: yourapp-fade 0.4s ease both;
+}
+
+.yourapp__panel {
+  position: relative;
+  display: grid;
+  grid-template-columns: 200px minmax(0, 1fr);
+  gap: 40px;
+  width: min(760px, 100%);
+  padding: 40px;
+  border: 1px solid var(--line-strong);
+  border-radius: 28px;
+  background:
+    radial-gradient(420px 300px at 0% 0%, rgba(244, 193, 93, 0.09), transparent 70%),
+    linear-gradient(180deg, rgba(19, 22, 29, 0.96), rgba(12, 14, 19, 0.98));
+  box-shadow: 0 40px 120px -40px rgba(0, 0, 0, 0.9);
+  animation: yourapp-rise 0.7s var(--ease-out) both;
+}
+
+.yourapp__preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding-top: 8px;
+  text-align: center;
+}
+
+.yourapp__preview canvas {
+  width: 168px;
+  height: 168px;
+  border-radius: 23%;
+  box-shadow:
+    0 30px 60px -24px rgba(0, 0, 0, 0.9),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+  animation: yourapp-float 5s ease-in-out infinite;
+}
+
+.yourapp__preview span {
+  max-width: 100%;
+  overflow: hidden;
+  font-size: 15px;
+  font-weight: 550;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.yourapp__fields h2 {
+  margin: 12px 0 10px;
+  font-size: clamp(28px, 3.4vw, 38px);
+  font-weight: 620;
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+
+.yourapp__lede {
+  margin: 0 0 26px;
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--fg-dim);
+}
+
+.yourapp__field {
+  display: block;
+  margin-bottom: 16px;
+}
+
+.yourapp__field > span {
+  display: block;
+  margin-bottom: 8px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--fg-dim);
+}
+
+.yourapp__field em {
+  font-style: normal;
+  color: var(--fg-faint);
+}
+
+.yourapp__field input {
+  display: block;
+  width: 100%;
+  height: 52px;
+  padding: 0 18px;
+  border: 1px solid var(--line-strong);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--fg);
+  font: inherit;
+  font-size: 16px;
+  outline: none;
+  transition:
+    border-color 0.3s ease,
+    background-color 0.3s ease;
+}
+
+.yourapp__field input::placeholder {
+  color: var(--fg-faint);
+}
+
+.yourapp__field input:focus {
+  border-color: var(--accent);
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.yourapp__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-top: 26px;
+}
+
+.yourapp__actions .btn {
+  height: 50px;
+  padding: 0 22px;
+}
+
+.yourapp__actions .btn:disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.yourapp__remove {
+  margin-left: auto;
+  padding: 0;
+  border: 0;
+  font: inherit;
+  font-size: 14px;
+}
+
+.yourapp__note {
+  margin: 20px 0 0;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--fg-faint);
+}
+
+.yourapp-toasts {
+  position: fixed;
+  left: 50%;
+  bottom: 28px;
+  z-index: 140;
+  width: max-content;
+  max-width: calc(100% - 32px);
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.yourapp-toast {
+  margin: 0;
+  padding: 14px 22px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: rgba(19, 22, 29, 0.92);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 20px 50px -20px rgba(0, 0, 0, 0.9);
+  font-size: 14px;
+  line-height: 1.4;
+  text-align: center;
+  color: var(--fg);
+  animation: yourapp-toast 5.2s var(--ease-out) both;
+}
+
+@keyframes yourapp-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes yourapp-rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 28px, 0) scale(0.98);
+  }
+}
+
+@keyframes yourapp-float {
+  50% {
+    transform: translate3d(0, -6px, 0) rotate(-2deg);
+  }
+}
+
+@keyframes yourapp-toast {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 16px, 0);
+  }
+  8%,
+  88% {
+    opacity: 1;
+    transform: none;
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(0, 8px, 0);
+  }
+}
+
+@media (max-width: 640px) {
+  .yourapp {
+    align-items: end;
+    padding: 12px;
+  }
+
+  .yourapp__panel {
+    grid-template-columns: 1fr;
+    gap: 18px;
+    padding: 24px 20px 22px;
+    border-radius: 24px;
+  }
+
+  .yourapp__preview {
+    flex-direction: row;
+    justify-content: flex-start;
+    padding-top: 0;
+    text-align: left;
+  }
+
+  .yourapp__preview canvas {
+    width: 72px;
+    height: 72px;
+    animation: none;
+  }
+
+  .yourapp__fields h2 {
+    margin-top: 8px;
+  }
+
+  .yourapp__lede {
+    margin-bottom: 18px;
+    font-size: 14px;
+  }
+
+  .yourapp__actions {
+    margin-top: 18px;
+  }
+
+  .yourapp__actions .btn {
+    flex: 1 1 auto;
+  }
+
+  .yourapp__remove {
+    margin-left: 0;
+  }
+
+  .yourapp-toasts {
+    bottom: 18px;
+  }
+
+  .yourapp-toast {
+    border-radius: 18px;
+  }
+}
+
+/* ==========================================================================
    Reduced motion
    ========================================================================== */
 
@@ -1042,6 +1345,13 @@ a.brand:hover .brand__rule {
 
   .route-curtain {
     display: none;
+  }
+
+  .yourapp__backdrop,
+  .yourapp__panel,
+  .yourapp__preview canvas,
+  .yourapp-toast {
+    animation: none !important;
   }
 
   .split__piece,

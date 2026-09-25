@@ -9,7 +9,8 @@ import { Phone } from './objects/Phone';
 import { IconSlab, SLAB_SIZE, createSlabBackTexture } from './objects/IconSlab';
 import { createSlabGeometry } from './utils/geometry';
 import { ensureFonts, makeCanvas, toTexture } from './utils/canvas';
-import { clamp, damp, easeInOutCubic, smoothstep } from './utils/math';
+import { clamp, damp, easeInOutCubic, easeOutBack, smoothstep } from './utils/math';
+import { drawYourAppIcon, yourAppColors } from '../site/yourApp';
 import { ClipAuraWorld } from './worlds/ClipAuraWorld';
 import { SmartCleanerWorld } from './worlds/SmartCleanerWorld';
 import { ResumeStudioWorld } from './worlds/ResumeStudioWorld';
@@ -92,9 +93,14 @@ export function createHomeExperience(options) {
     disposed: false,
     experience: null,
     highlight: -1,
+    yourApp: null,
     setWebHover(index) {
       controller.highlight = index;
       if (controller.experience) controller.experience.setWebHover(index);
+    },
+    setYourApp(app) {
+      controller.yourApp = app;
+      if (controller.experience) controller.experience.setYourApp(app);
     },
     dispose() {
       controller.disposed = true;
@@ -109,6 +115,7 @@ export function createHomeExperience(options) {
       else {
         controller.experience = experience;
         experience.setWebHover(controller.highlight);
+        experience.setYourApp(controller.yourApp);
       }
     })
     .catch(error => {
@@ -128,6 +135,8 @@ async function build(options, controller) {
     onReady = () => {},
     onNavigate,
     onSelectApp,
+    onYourApp,
+    onBuildYourApp,
   } = options;
 
   const engine = new Engine({ canvas, fov: FOV });
@@ -320,7 +329,7 @@ async function build(options, controller) {
   // ---------------------------------------------------------------- interaction targets
   let phoneSpin = 0;
   let phoneSpinVelocity = 0;
-  const heroTargets = [
+  const appTargets = [
     ...slabs.map((slab, index) => ({
       object: slab.mesh,
       label: 'Open',
@@ -343,6 +352,21 @@ async function build(options, controller) {
       },
     },
   ];
+  // The eighth slot: an "Add yours" hit area, or the visitor's own icon.
+  const heroTargets = () => [
+    yourSlab
+      ? {
+          object: yourSlab.mesh,
+          label: 'Edit',
+          color: yourAppColors(yourApp).a,
+          onHover: active => {
+            yourSlab.hoverTarget = active ? 1 : 0;
+          },
+          onClick: () => onYourApp && onYourApp(),
+        }
+      : { object: phone.yourSlot, label: 'Add yours', color: '#f4c15d', onClick: () => onYourApp && onYourApp() },
+    ...appTargets,
+  ];
   const slabTarget = (slab, app) => ({
     object: slab.mesh,
     label: 'Spin',
@@ -360,12 +384,68 @@ async function build(options, controller) {
     },
   });
   const targetsFor = station => {
-    if (station === 0) return heroTargets;
+    if (station === 0) return heroTargets();
     const world = worlds.find(item => item.station === station);
     if (!world) return [];
     const list = [...world.targets];
     if (world.slab) list.unshift(slabTarget(world.slab, world.app));
     return list;
+  };
+
+  // ---------------------------------------------------------------- your app
+  let yourApp = null;
+  let yourSlab = null;
+  let yourTextures = null;
+  let yourPop = 1;
+  const disposeYourTextures = () => {
+    if (!yourTextures) return;
+    yourTextures.front.dispose();
+    yourTextures.back.dispose();
+    yourTextures = null;
+  };
+  const setYourApp = app => {
+    yourApp = app;
+    phone.setYourApp(app);
+    const previous = yourTextures;
+    yourTextures = null;
+    if (!app) {
+      if (yourSlab) {
+        scene.remove(yourSlab.group);
+        [yourSlab.front, yourSlab.side, yourSlab.back].forEach(material => material.dispose());
+        yourSlab = null;
+      }
+      finale.setYourApp(null);
+    } else {
+      const colors = yourAppColors(app);
+      yourTextures = {
+        front: toTexture(drawYourAppIcon(document.createElement('canvas'), app), { anisotropy: engine.maxAnisotropy }),
+        back: createSlabBackTexture({ name: app.name, colors }),
+        colors,
+      };
+      if (!yourSlab) {
+        yourSlab = new IconSlab({
+          geometry: slabGeometry,
+          texture: yourTextures.front,
+          backTexture: yourTextures.back,
+          colors,
+        });
+        scene.add(yourSlab.group);
+      } else {
+        yourSlab.front.map = yourTextures.front;
+        yourSlab.front.emissiveMap = yourTextures.front;
+        yourSlab.back.map = yourTextures.back;
+        yourSlab.back.emissiveMap = yourTextures.back;
+        yourSlab.side.color.set(colors.a).lerp(new THREE.Color('#1a1a22'), 0.35);
+      }
+      yourPop = 0;
+      finale.setYourApp(app, yourTextures, () => onBuildYourApp && onBuildYourApp());
+    }
+    if (previous) {
+      previous.front.dispose();
+      previous.back.dispose();
+    }
+    // Refresh pointer targets for whichever station is active.
+    activeStation = -1;
   };
 
   // ---------------------------------------------------------------- frame loop
@@ -506,8 +586,9 @@ async function build(options, controller) {
     // down the current to their own worlds. The camera follows afterwards.
     const heroHold = journey.holdProgress(0, scrollY);
     const hurry = smoothstep(0, 0.25, p);
-    slabs.forEach((slab, index) => {
-      const world = appWorlds[index];
+    // world is null for the visitor's app: it flies to the finale core and
+    // becomes the extra orbiter there.
+    const poseSlab = (slab, index, world, pop = 1) => {
       const lift = Math.max(smoothstep(0.03 + index * 0.03, 0.3 + index * 0.03, heroHold), hurry);
       const t = Math.max(easeInOutCubic(clamp((heroHold - (0.48 + index * 0.055)) / 0.36)), hurry);
       const slotScale = phone.slotPose(index, startPosition, startQuaternion);
@@ -518,8 +599,12 @@ async function build(options, controller) {
       formationLocal.z += 0.95;
       formation.copy(formationLocal).applyMatrix4(phone.body.matrixWorld);
       const formationScale = slotScale * 1.75;
-      endPosition.copy(world.slabAnchor.position).applyMatrix4(world.group.matrixWorld);
-      const endScale = world.slabAnchor.scale * world.group.scale.x;
+      if (world) {
+        endPosition.copy(world.slabAnchor.position).applyMatrix4(world.group.matrixWorld);
+      } else {
+        endPosition.setFromMatrixPosition(finale.group.matrixWorld);
+      }
+      const endScale = world ? world.slabAnchor.scale * world.group.scale.x : 0.5;
 
       let tiltX = 0;
       let tiltY = 0;
@@ -543,6 +628,8 @@ async function build(options, controller) {
         spinQuaternion.setFromAxisAngle(Y, Math.sin(t * Math.PI) * Math.PI);
         slab.group.quaternion.copy(flightQuaternion).multiply(spinQuaternion);
         slab.group.scale.setScalar(THREE.MathUtils.lerp(formationScale, endScale, smoothstep(0, 0.7, t)));
+      } else if (!world) {
+        slab.group.visible = false;
       } else {
         // Parked at its world; visible as a distant speck for the next couple
         // of stations so the camera can "follow" it in.
@@ -555,8 +642,14 @@ async function build(options, controller) {
         tiltY = -interaction.screen.y * 0.28 * near * engine.motion;
         idle = 1;
       }
+      if (pop < 1) slab.group.scale.multiplyScalar(Math.max(0.0001, easeOutBack(pop)));
       slab.update(delta, { tiltX, tiltY, idle, time: time + index, motion: engine.motion });
-    });
+    };
+    slabs.forEach((slab, index) => poseSlab(slab, index, appWorlds[index]));
+    if (yourSlab) {
+      yourPop = Math.min(1, yourPop + delta * 1.3);
+      poseSlab(yourSlab, slabs.length, null, yourPop);
+    }
 
     // Pointer targets follow whichever station the camera is parked at.
     const nearest = Math.round(p);
@@ -590,7 +683,9 @@ async function build(options, controller) {
     setWebHover(index) {
       web.setHighlight(index);
     },
+    setYourApp,
     dispose() {
+      disposeYourTextures();
       window.removeEventListener('resize', onWindowResize);
       interaction.dispose();
       journey.dispose();

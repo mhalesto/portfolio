@@ -16,7 +16,7 @@ const ROWS = [566, 778];
 
 const slotCentre = index => ({ x: COLUMNS[index % 4], y: ROWS[Math.floor(index / 4)] });
 
-function drawHomeScreen(apps, icons) {
+function drawHomeScreen(apps, icons, yourApp = null) {
   const { canvas, ctx } = makeCanvas(CANVAS_W, CANVAS_H);
 
   // Wallpaper: a dark aurora in the site's gold, violet and cyan.
@@ -133,7 +133,18 @@ function drawHomeScreen(apps, icons) {
 
   // "Your app" placeholder in the last slot.
   const extra = slotCentre(apps.length);
-  if (apps.length < 8) {
+  if (apps.length < 8 && yourApp) {
+    // The visitor's own app: a well like the others, with its name. The
+    // icon itself is a 3D slab that sits on top of it.
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
+    roundRectPath(ctx, extra.x - ICON / 2, extra.y - ICON / 2, ICON, ICON, 34);
+    ctx.fill();
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.92)';
+    ctx.font = `500 23px ${FONT_SANS}`;
+    let label = yourApp.name;
+    while (ctx.measureText(label).width > 160 && label.length > 2) label = label.slice(0, -1);
+    ctx.fillText(label === yourApp.name ? label : `${label.trimEnd()}…`, extra.x, extra.y + ICON / 2 + 32);
+  } else if (apps.length < 8) {
     ctx.setLineDash([10, 9]);
     ctx.strokeStyle = 'rgba(255, 255, 255, 0.45)';
     ctx.lineWidth = 2.5;
@@ -225,6 +236,7 @@ function drawHomeScreen(apps, icons) {
 export class Phone {
   constructor({ apps, icons, anisotropy = 4 }) {
     this.apps = apps;
+    this.icons = icons;
     this.group = new THREE.Group();
     this.body = new THREE.Group();
     this.group.add(this.body);
@@ -326,7 +338,8 @@ export class Phone {
 
     this.scratchScale = new THREE.Vector3();
     this.slotScale = ((ICON / CANVAS_W) * SCREEN_W) / SLAB_SIZE;
-    this.slotPositions = apps.map((app, index) => {
+    // One extra slot after the apps: the "Your app" placeholder.
+    this.slotPositions = Array.from({ length: apps.length + 1 }, (item, index) => {
       const { x, y } = slotCentre(index);
       return new THREE.Vector3(
         (x / CANVAS_W - 0.5) * SCREEN_W,
@@ -334,6 +347,21 @@ export class Phone {
         this.screenZ + 0.13 * this.slotScale + 0.004,
       );
     });
+    // Invisible hit area over the placeholder so it can be clicked.
+    const slotSize = (ICON / CANVAS_W) * SCREEN_W * 1.25;
+    this.yourSlot = new THREE.Mesh(
+      new THREE.PlaneGeometry(slotSize, slotSize * 1.3),
+      new THREE.MeshBasicMaterial({ visible: false }),
+    );
+    this.yourSlot.position.copy(this.slotPositions[apps.length]);
+    this.yourSlot.position.y -= slotSize * 0.12;
+    this.yourSlot.position.z = this.screenZ + 0.02;
+    this.body.add(this.yourSlot);
+  }
+
+  setYourApp(app) {
+    this.screenTexture.image = drawHomeScreen(this.apps, this.icons, app);
+    this.screenTexture.needsUpdate = true;
   }
 
   // World-space pose of an icon slot, used as the launch point of each slab.

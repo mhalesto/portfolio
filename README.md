@@ -6,6 +6,10 @@ The home page is a scroll-driven 3D journey built with three.js. The seven iOS a
 phone's home screen and fly down "the current" to their own interactive worlds. Client websites,
 an about section and a finale where every app orbits a core follow them.
 
+The phone's eighth slot is for visitors: they can name their own app idea, get a generated icon for
+it on the phone and in the finale orbit, and email it from there. It is stored only in their browser
+(`localStorage`); see `src/site/yourApp.js` and `src/site/components/YourAppDialog.js`.
+
 ## Scripts
 
 | Command | What it does |
