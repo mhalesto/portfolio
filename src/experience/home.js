@@ -66,7 +66,7 @@ const FRAMING = {
     fitX: 2.3,
     fitY: 1.8,
     wide: { v: 0.9, h: 0.56, fx: 0.71, fy: 0.5 },
-    stacked: { v: 0.5, h: 0.94, fx: 0.5, fy: 0.29 },
+    stacked: { v: 0.5, h: 0.86, fx: 0.5, fy: 0.29 },
   },
   finale: {
     fitX: 3.1,
@@ -181,7 +181,7 @@ async function build(options, controller) {
     return {
       kind,
       index,
-      framing: FRAMING[kind],
+      framing: kind === 'web' && webProjects.length > 4 ? { ...FRAMING.web, fitX: 2.6 } : FRAMING[kind],
       position: new THREE.Vector3(x, y, -index * GAP),
       palette: palettes[index],
       distance: 9,

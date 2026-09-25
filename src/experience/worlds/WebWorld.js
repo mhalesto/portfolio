@@ -13,6 +13,29 @@ const LAYOUT = [
   { position: [1.18, -0.62, 0.15], rotation: [-0.04, -0.24, 0.02] },
 ];
 
+// Up to four windows use the hand-placed 2x2 layout above. More than that
+// are staggered in two rows (e.g. three over two) at a slightly smaller size.
+function layoutFor(count) {
+  if (count <= LAYOUT.length) return { slots: LAYOUT, scale: 1 };
+  const top = Math.ceil(count / 2);
+  const bottom = count - top;
+  const spacing = 1.78;
+  const depths = [0, -0.45, 0.1, -0.3, 0.15];
+  const slots = [];
+  const row = (n, y, offset) => {
+    for (let i = 0; i < n; i += 1) {
+      const x = (i - (n - 1) / 2) * spacing;
+      slots.push({
+        position: [x, y, depths[(slots.length + offset) % depths.length]],
+        rotation: [y > 0 ? 0.05 : -0.05, -x * 0.13, (i % 2 ? -1 : 1) * 0.02],
+      });
+    }
+  };
+  row(top, 0.7, 0);
+  row(bottom, -0.72, 3);
+  return { slots, scale: 0.92 };
+}
+
 function paneTexture(project, image, anisotropy) {
   const { canvas, ctx } = makeCanvas(1024, 700);
   ctx.fillStyle = '#15171d';
@@ -49,14 +72,15 @@ function paneTexture(project, image, anisotropy) {
   return toTexture(canvas, { anisotropy });
 }
 
-// Client websites as floating browser windows. Hovering a row in the DOM
+// Websites as floating browser windows. Hovering a row in the DOM
 // list (or a window itself) lifts the matching window.
 export class WebWorld extends World {
   constructor({ projects, images, anisotropy = 4 }) {
     super();
     this.projects = projects;
+    const { slots, scale } = layoutFor(projects.length);
     this.panes = projects.map((project, index) => {
-      const layout = LAYOUT[index % LAYOUT.length];
+      const layout = slots[index];
       const material = new THREE.MeshBasicMaterial({ map: paneTexture(project, images[project.slug], anisotropy) });
       const mesh = new THREE.Mesh(roundedPlane(PANE_W, PANE_H, 0.07, 8), material);
       const holder = new THREE.Group();
@@ -84,7 +108,7 @@ export class WebWorld extends World {
         },
         onClick: () => window.open(project.url, '_blank', 'noopener'),
       });
-      return { holder, mesh, glow, lift: 0, base: new THREE.Vector3(...layout.position), phase: index * 1.3 };
+      return { holder, mesh, glow, lift: 0, scale, base: new THREE.Vector3(...layout.position), phase: index * 1.3 };
     });
     this.hovered = -1;
     this.highlighted = -1;
@@ -103,7 +127,7 @@ export class WebWorld extends World {
         pane.base.y + Math.sin(time * 0.8 + pane.phase) * 0.05 * motion,
         pane.base.z + pane.lift * 0.55,
       );
-      pane.holder.scale.setScalar(1 + pane.lift * 0.08);
+      pane.holder.scale.setScalar(pane.scale * (1 + pane.lift * 0.08));
       pane.glow.material.opacity = pane.lift * 0.9;
     });
   }

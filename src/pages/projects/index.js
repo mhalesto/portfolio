@@ -200,7 +200,7 @@ export default function Projects() {
               <SplitText text="work." mode="chars" className="work-hero__line serif" />
             </h1>
             <p className="work-hero__lede">
-              {apps.length} iOS apps, {webProjects.length} client websites and the projects that came before them.
+              {apps.length} iOS apps, {webProjects.length} websites and the projects that came before them.
               {webgl ? ' Every icon in the orbit opens its app.' : ''}
             </p>
           </div>

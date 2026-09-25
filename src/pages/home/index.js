@@ -311,9 +311,9 @@ export default function Home() {
         <section className="web" id="web" data-station={apps.length + 1} data-hold="0.7" aria-labelledby="web-title">
           <div className="web__sticky">
             <div className="web__panel" data-reveal>
-              <p className="eyebrow">Client websites</p>
+              <p className="eyebrow">Websites</p>
               <h2 className="web__title" id="web-title">
-                Websites for shops, schools <span className="serif">and practices.</span>
+                Websites for businesses, schools <span className="serif">and practices.</span>
               </h2>
               <ul className="web__list">
                 {webProjects.map((project, index) => (
@@ -361,7 +361,7 @@ export default function Home() {
                 <dd>{pad(apps.length)}</dd>
               </div>
               <div>
-                <dt>Client websites</dt>
+                <dt>Websites</dt>
                 <dd>{pad(webProjects.length)}</dd>
               </div>
               <div>

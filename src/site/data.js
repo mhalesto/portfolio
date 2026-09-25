@@ -186,6 +186,18 @@ export const apps = [
 
 export const webProjects = [
   {
+    slug: 'promosecret',
+    name: 'PromoSecret',
+    kind: 'A week of posts from a voice note',
+    description:
+      "Send a few photos and say what you're promoting, then get back three posters, a video, captions and a plan for the week, all on WhatsApp. Built for South African businesses.",
+    stack: ['WhatsApp', 'Card', 'Instant EFT', 'Capitec Pay', 'SnapScan', 'Zapper'],
+    url: 'https://promosecret.co.za',
+    domain: 'promosecret.co.za',
+    image: asset('/experience/web-promosecret.webp'),
+    color: '#e8a627',
+  },
+  {
     slug: 'icase',
     name: 'iCase',
     kind: 'Phone-case store',
