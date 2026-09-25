@@ -7,7 +7,7 @@ const Layout = ({ children }) => {
     window.scroll(0, 0)
   }, [])
   return (
-    <div>
+    <div className="legacy">
       <Header />
 
       <div className="content font-mont">

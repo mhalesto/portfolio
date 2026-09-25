@@ -30,7 +30,7 @@ import ClipAuraIOSPrivacy from './pages/clipaura-ios/privacy';
 import ClipAuraIOSDataCollection from './pages/clipaura-ios/data-collection';
 import ClipAuraIOSSupport from './pages/clipaura-ios/support';
 import ClipAuraIOSTerms from './pages/clipaura-ios/terms';
-import 'aos/dist/aos.css';
+import RouteCurtain from './site/components/RouteCurtain';
 
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
@@ -38,6 +38,7 @@ function App() {
   return (
     <div className="App">
       <BrowserRouter>
+        <RouteCurtain />
         <Routes>
           <Route path='/' element={<Home />} />
           <Route path='/projects' element={<Projects />} />

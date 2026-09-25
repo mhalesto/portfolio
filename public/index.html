@@ -4,9 +4,23 @@
 <head>
   <meta charset="utf-8" />
   <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="theme-color" content="#000000" />
-  <meta name="description" content="Web site created using create-react-app" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#06070a" />
+  <meta name="description"
+    content="Halalisani Mbanjwa is a full-stack developer in South Africa and the founder of CurrentTech. Explore his iOS apps (ClipAura, Smart Cleaner, ResumeStudio, SugarShifts, SoundFrame, LifeTrack and YouMine) and client websites in 3D." />
+  <link rel="canonical" href="https://www.halalisani.com/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Halalisani Mbanjwa" />
+  <meta property="og:title" content="Halalisani Mbanjwa — iOS apps & websites" />
+  <meta property="og:description"
+    content="Seven iOS apps and a set of client websites, each opening into its own interactive 3D world. Built by Halalisani Mbanjwa at CurrentTech, South Africa." />
+  <meta property="og:url" content="https://www.halalisani.com/" />
+  <meta property="og:image" content="https://www.halalisani.com/og-image.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Halalisani Mbanjwa — iOS apps & websites" />
+  <meta name="twitter:description"
+    content="Seven iOS apps and a set of client websites, each opening into its own interactive 3D world." />
+  <meta name="twitter:image" content="https://www.halalisani.com/og-image.jpg" />
   <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
   <!--
       manifest.json provides metadata used when your web app is installed on a
@@ -20,23 +34,31 @@
         sessionStorage.removeItem("redirectPath");
         window.history.replaceState(null, "", redirectPath);
       }
+      // The immersive pages are dark; paint that before React boots so they
+      // never flash white. Product and policy pages keep their light theme.
+      var path = window.location.pathname.replace(/\/+$/, "") || "/";
+      if (path === "/" || path === "/projects" || path === "/contact") {
+        document.documentElement.className += " theme-dark";
+      }
     })();
   </script>
-  <!--
-      Notice the use of %PUBLIC_URL% in the tags above.
-      It will be replaced with the URL of the `public` folder during the build.
-      Only files inside the `public` folder can be referenced from the HTML.
-
-      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
-      work correctly both with client-side routing and a non-root public URL.
-      Learn how to configure a non-root public URL by running `npm run build`.
-    -->
-  <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
-  <title>Halalisani Dev</title>
+  <style>
+    html.theme-dark,
+    html.theme-dark body {
+      background: #06070a;
+    }
+  </style>
+  <title>Halalisani Mbanjwa — iOS apps & websites</title>
 </head>
 
 <body>
-  <noscript>You need to enable JavaScript to run this app.</noscript>
+  <noscript>
+    <div style="font-family: system-ui, sans-serif; padding: 48px 24px; max-width: 640px;">
+      <h1>Halalisani Mbanjwa</h1>
+      <p>Full-stack developer and founder of CurrentTech, South Africa. This site needs JavaScript for its 3D
+        experience. Contact: <a href="mailto:currenttech.co.za@gmail.com">currenttech.co.za@gmail.com</a>.</p>
+    </div>
+  </noscript>
   <div id="root"></div>
   <!--
       This HTML file is a template.
