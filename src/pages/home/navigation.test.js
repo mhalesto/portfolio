@@ -36,3 +36,23 @@ test('selecting an app in the 3D phone passes a numeric scroll destination offse
   createHomeExperience.mock.calls[0][0].onSelectApp(0);
   expect(scrollToTarget).toHaveBeenLastCalledWith('#app-clipaura', { offset: window.innerHeight * 0.35 });
 });
+
+
+test('portrait chapter jumps show the world above its copy', async () => {
+  const width = window.innerWidth;
+  const height = window.innerHeight;
+  window.innerWidth = 390;
+  window.innerHeight = 844;
+  supportsWebGL.mockReturnValue(true);
+  try {
+    render(<MemoryRouter><Home /></MemoryRouter>);
+    await waitFor(() => expect(createHomeExperience).toHaveBeenCalled());
+    createHomeExperience.mock.calls[0][0].onSelectApp(3);
+    expect(scrollToTarget).toHaveBeenLastCalledWith('#app-sugarshifts', { offset: 0 });
+    fireEvent.click(screen.getByRole('button', { name: 'Go to SugarShifts (6 of 12)' }));
+    expect(scrollToTarget).toHaveBeenLastCalledWith('#app-sugarshifts', { offset: 0 });
+  } finally {
+    window.innerWidth = width;
+    window.innerHeight = height;
+  }
+});

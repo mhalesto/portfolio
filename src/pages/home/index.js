@@ -18,6 +18,9 @@ import { buildMailto, loadYourApp, saveYourApp, yourAppIconUrl } from '../../sit
 import './home.css';
 
 const pad = value => String(value).padStart(2, '0');
+// Wide chapters pin their copy; portrait chapters scroll below the world.
+const chapterOffset = ratio => window.innerWidth >= 760 && window.innerWidth / window.innerHeight >= 0.95
+  ? window.innerHeight * ratio : 0;
 const REEL_URL = `${process.env.PUBLIC_URL}/experience/clipaura-reel.webp`;
 const MANIFESTO =
   'I build apps end to end: the interface, the code, the payments, the privacy policy and the support page. Seven of them live on this phone. Keep scrolling and each one opens into a world of its own.';
@@ -201,7 +204,7 @@ export default function Home() {
           onNavigate: route => navigateRef.current(route),
           onSelectApp: index =>
             scrollToTarget(`#app-${apps[index].slug}`, {
-              offset: window.innerHeight * 0.35,
+              offset: chapterOffset(0.35),
             }),
           onYourApp: () => setDialogOpen(true),
           onBuildYourApp: () => {
@@ -234,14 +237,14 @@ export default function Home() {
         id: `app-${app.slug}`,
         label: app.name,
         color: app.colors.a,
-        offset: () => webgl && !sceneFailed ? window.innerHeight * 0.35 : 0,
+        offset: () => webgl && !sceneFailed ? chapterOffset(0.35) : 0,
       })),
-      { id: 'web', label: 'Websites', offset: () => webgl && !sceneFailed ? window.innerHeight * 0.3 : 0 },
+      { id: 'web', label: 'Websites', offset: () => webgl && !sceneFailed ? chapterOffset(0.3) : 0 },
       { id: 'about', label: 'About' },
       {
         id: 'contact-cta',
         label: 'Contact',
-        offset: () => webgl && !sceneFailed ? window.innerHeight * 0.25 : 0,
+        offset: () => webgl && !sceneFailed ? chapterOffset(0.25) : 0,
       },
     ],
     [webgl, sceneFailed],
