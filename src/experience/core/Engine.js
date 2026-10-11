@@ -118,7 +118,9 @@ export class Engine {
   }
 
   frame(delta) {
-    if (!this.running) return;
+    // Opaque menus and image previews cover the canvas. Resume immediately
+    // when their independently owned scroll locks are released.
+    if (!this.running || document.documentElement.classList.contains('scroll-locked')) return;
     this.time += delta;
     this.watchPerformance(delta);
     for (let i = 0; i < this.callbacks.length; i += 1) this.callbacks[i](this.time, delta);

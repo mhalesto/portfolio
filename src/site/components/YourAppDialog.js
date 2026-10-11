@@ -9,6 +9,7 @@ export default function YourAppDialog({ open, initial, scene = true, onSave, onR
   const [idea, setIdea] = useState('');
   const canvasRef = useRef(null);
   const nameRef = useRef(null);
+  const panelRef = useRef(null);
   const returnFocus = useRef(null);
 
   useEffect(() => {
@@ -16,16 +17,27 @@ export default function YourAppDialog({ open, initial, scene = true, onSave, onR
     setName(initial ? initial.name : '');
     setIdea(initial ? initial.idea : '');
     returnFocus.current = document.activeElement;
-    setScrollLocked(true);
+    setScrollLocked(true, 'your-app-dialog');
     const id = window.setTimeout(() => nameRef.current && nameRef.current.focus(), 60);
     const onKey = event => {
       if (event.key === 'Escape') onClose();
+      if (event.key !== 'Tab' || !panelRef.current) return;
+      const controls = Array.from(panelRef.current.querySelectorAll('input:not([disabled]), button:not([disabled]), a[href]'));
+      const first = controls[0];
+      const last = controls[controls.length - 1];
+      if (event.shiftKey && (document.activeElement === first || !panelRef.current.contains(document.activeElement))) {
+        event.preventDefault();
+        last?.focus();
+      } else if (!event.shiftKey && (document.activeElement === last || !panelRef.current.contains(document.activeElement))) {
+        event.preventDefault();
+        first?.focus();
+      }
     };
     window.addEventListener('keydown', onKey);
     return () => {
       window.clearTimeout(id);
       window.removeEventListener('keydown', onKey);
-      setScrollLocked(false);
+      setScrollLocked(false, 'your-app-dialog');
       if (returnFocus.current && returnFocus.current.focus) returnFocus.current.focus();
     };
     // Only re-run when the dialog opens or closes.
@@ -48,7 +60,7 @@ export default function YourAppDialog({ open, initial, scene = true, onSave, onR
   return (
     <div className="yourapp" role="dialog" aria-modal="true" aria-labelledby="yourapp-title">
       <div className="yourapp__backdrop" onClick={onClose} />
-      <form className="yourapp__panel" onSubmit={submit}>
+      <form className="yourapp__panel" ref={panelRef} onSubmit={submit}>
         <div className="yourapp__preview" aria-hidden="true">
           <canvas ref={canvasRef} width="320" height="320" />
           <span>{preview.name}</span>

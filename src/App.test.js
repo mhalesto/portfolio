@@ -71,6 +71,13 @@ test.each(legacyRoutes)('%s still renders inside the site layout', route => {
   expect(screen.getAllByRole('heading').length).toBeGreaterThan(0);
 });
 
+test('product and policy pages name themselves in the browser tab', () => {
+  visit('/projects/clipaura-ios/privacy');
+  expect(document.title).toBe('ClipAura Privacy Policy');
+  visit('/projects/sugarshifts-ios');
+  expect(document.title).toBe('SugarShifts — Swap fruit. Chain combos. Clear 200 levels.');
+});
+
 test('home introduces Halalisani and gives every app a chapter linked to its pages', () => {
   visit('/');
   expect(screen.getByRole('heading', { level: 1, name: person.name })).toBeInTheDocument();

@@ -32,16 +32,24 @@ export function createSlabBackTexture(app) {
   return toTexture(canvas);
 }
 
+// Pale icons (LifeTrack, SugarShifts) would otherwise light up past the bloom
+// threshold and read as a white square, so they are dimmed in proportion to
+// their mean brightness. Dark icons are left as they are.
+function exposureFor(brightness) {
+  return brightness > 0.32 ? Math.max(0.55, 0.32 / brightness) : 1;
+}
+
 export class IconSlab {
-  constructor({ geometry, texture, backTexture, colors }) {
+  constructor({ geometry, texture, backTexture, colors, brightness = 0 }) {
     // A dim diffuse plus an emissive copy of the art keeps icons saturated
     // (like a lit screen) while the clearcoat still catches reflections.
+    const exposure = exposureFor(brightness);
     this.front = new THREE.MeshPhysicalMaterial({
       map: texture,
-      color: new THREE.Color(0.35, 0.35, 0.35),
+      color: new THREE.Color(0.35, 0.35, 0.35).multiplyScalar(exposure),
       emissive: new THREE.Color('#ffffff'),
       emissiveMap: texture,
-      emissiveIntensity: 0.3,
+      emissiveIntensity: 0.3 * exposure,
       roughness: 0.3,
       metalness: 0,
       clearcoat: 0.6,

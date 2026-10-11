@@ -89,7 +89,7 @@ const Contact = () => {
                 style={{ '--delay': `${index * 0.05}s`, '--card-color': app.colors.a }}
               >
                 <Link to={app.route} className="support-card__head">
-                  <img src={app.icon} alt="" />
+                  <img src={app.icon} alt="" width="52" height="52" loading="lazy" decoding="async" />
                   <span>
                     <strong>{app.name}</strong>
                     <small>{app.category}</small>
@@ -107,7 +107,7 @@ const Contact = () => {
             {otherProjects.map(project => (
               <li key={project.slug} className="support-card" data-reveal style={{ '--card-color': project.color }}>
                 <Link to={project.route} className="support-card__head">
-                  <img src={project.image} alt="" />
+                  <img src={project.image} alt="" width="52" height="52" loading="lazy" decoding="async" />
                   <span>
                     <strong>{project.name}</strong>
                     <small>{project.kind}</small>

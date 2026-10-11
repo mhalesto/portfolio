@@ -47,6 +47,27 @@ export async function ensureFonts() {
   }
 }
 
+// Mean linear luminance (0-1) of an image or canvas, sampled at low resolution.
+export function imageBrightness(image) {
+  if (!image) return 0;
+  try {
+    const { ctx } = makeCanvas(24, 24);
+    ctx.drawImage(image, 0, 0, 24, 24);
+    const { data } = ctx.getImageData(0, 0, 24, 24);
+    const linear = value => {
+      const c = value / 255;
+      return c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+    };
+    let total = 0;
+    for (let i = 0; i < data.length; i += 4) {
+      total += 0.2126 * linear(data[i]) + 0.7152 * linear(data[i + 1]) + 0.0722 * linear(data[i + 2]);
+    }
+    return total / (data.length / 4);
+  } catch (error) {
+    return 0;
+  }
+}
+
 export function hexToRgba(hex, alpha) {
   const value = hex.replace('#', '');
   const r = parseInt(value.slice(0, 2), 16);

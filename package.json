@@ -27,6 +27,7 @@
     "generate:clipaura": "node scripts/generate-clipaura-pages.cjs",
     "prebuild": "npm run generate:resumestudio && npm run generate:smartcleaner && npm run generate:clipaura",
     "build": "react-scripts build",
+    "postbuild": "node scripts/postbuild.cjs",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "predeploy": "npm run build",

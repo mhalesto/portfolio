@@ -1,0 +1,32 @@
+.showcase {
+  position: fixed;
+  inset: 0;
+  z-index: 190;
+  display: grid;
+  place-items: center;
+  padding: max(12px, env(safe-area-inset-top)) 12px max(12px, env(safe-area-inset-bottom));
+  background: rgba(3, 4, 7, 0.92);
+  backdrop-filter: blur(12px);
+  pointer-events: auto;
+}
+.showcase__panel {
+  width: min(760px, 100%);
+  max-height: 95svh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border: 1px solid var(--line-strong);
+  border-radius: 20px;
+  padding: 16px 20px;
+  background: var(--bg-2);
+}
+.showcase__header { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 12px; }
+.showcase__header h2 { font-size: 21px; font-weight: 550; letter-spacing: -0.02em; }
+.showcase__close { min-width: 44px; height: 44px; font-size: 28px; border: 1px solid var(--line); border-radius: 50%; }
+.showcase__figure { margin: 0; }
+.showcase__figure img { display: block; width: auto; height: auto; max-width: 100%; max-height: 70svh; margin: auto; border-radius: 6px; object-fit: contain; }
+.showcase__figure figcaption { padding-top: 12px; text-align: center; font-size: 13px; color: var(--fg-dim); }
+.showcase__controls { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 12px; margin-top: 12px; }
+.showcase__controls button { width: 44px; height: 44px; border: 1px solid var(--line); border-radius: 50%; font-size: 20px; }
+.showcase__controls .mono { font-size: 12px; color: var(--fg-dim); }
+.showcase__controls a { font-size: 13px; padding: 12px; }
+.chapter__preview { font-size: 14px; min-height: 44px; color: var(--app-b); }

@@ -20,13 +20,13 @@ export default function Preloader({ onLeave, onDone }) {
     let shown = 0;
     let finished = false;
     let timer = 0;
-    setScrollLocked(true);
+    setScrollLocked(true, 'preloader');
 
     const finish = () => {
       if (finished) return;
       finished = true;
       setLeaving(true);
-      setScrollLocked(false);
+      setScrollLocked(false, 'preloader');
       if (onLeaveRef.current) onLeaveRef.current();
       timer = window.setTimeout(() => onDoneRef.current && onDoneRef.current(), 1100);
     };
@@ -47,7 +47,7 @@ export default function Preloader({ onLeave, onDone }) {
     return () => {
       removeTicker();
       window.clearTimeout(timer);
-      setScrollLocked(false);
+      setScrollLocked(false, 'preloader');
     };
   }, []);
 

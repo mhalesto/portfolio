@@ -8,7 +8,7 @@ import { Current } from './objects/Current';
 import { Phone } from './objects/Phone';
 import { IconSlab, SLAB_SIZE, createSlabBackTexture } from './objects/IconSlab';
 import { createSlabGeometry } from './utils/geometry';
-import { ensureFonts, makeCanvas, toTexture } from './utils/canvas';
+import { ensureFonts, imageBrightness, makeCanvas, toTexture } from './utils/canvas';
 import { clamp, damp, easeInOutCubic, easeOutBack, smoothstep } from './utils/math';
 import { drawYourAppIcon, yourAppColors } from '../site/yourApp';
 import { ClipAuraWorld } from './worlds/ClipAuraWorld';
@@ -21,6 +21,7 @@ import { YouMineWorld } from './worlds/YouMineWorld';
 import { WebWorld } from './worlds/WebWorld';
 import { FinaleWorld } from './worlds/FinaleWorld';
 import { resetSharedMaterials } from './worlds/materials';
+import { worldAssets } from '../site/showcase';
 
 const GAP = 24;
 const FOV = 35;
@@ -92,6 +93,7 @@ export function createHomeExperience(options) {
   const controller = {
     disposed: false,
     experience: null,
+    cleanup: null,
     highlight: -1,
     yourApp: null,
     setWebHover(index) {
@@ -103,8 +105,9 @@ export function createHomeExperience(options) {
       if (controller.experience) controller.experience.setYourApp(app);
     },
     dispose() {
+      if (controller.disposed) return;
       controller.disposed = true;
-      if (controller.experience) controller.experience.dispose();
+      if (controller.cleanup) controller.cleanup();
       controller.experience = null;
     },
   };
@@ -119,7 +122,9 @@ export function createHomeExperience(options) {
       }
     })
     .catch(error => {
-      if (options.onError) options.onError(error);
+      const wasDisposed = controller.disposed;
+      controller.dispose();
+      if (!wasDisposed && options.onError) options.onError(error);
     });
   return controller;
 }
@@ -143,9 +148,33 @@ async function build(options, controller) {
   const { scene, camera, renderer } = engine;
   // Nothing to draw until the scene is assembled and compiled.
   engine.setRunning(false);
-  const alive = () => !controller.disposed;
-  const abort = () => {
+  const cleanupTasks = [];
+  const resources = new Set();
+  let cleanedUp = false;
+  const own = resource => {
+    resources.add(resource);
+    const onDispose = () => {
+      resources.delete(resource);
+      resource.removeEventListener('dispose', onDispose);
+    };
+    resource.addEventListener('dispose', onDispose);
+    return resource;
+  };
+  const cleanup = () => {
+    if (cleanedUp) return;
+    cleanedUp = true;
+    cleanupTasks.reverse().forEach(task => task());
     engine.dispose();
+    // Some loaded assets only provide pixels for canvas textures, so they
+    // never join the scene that Engine disposes.
+    resources.forEach(resource => resource.dispose());
+    resources.clear();
+    resetSharedMaterials();
+  };
+  controller.cleanup = cleanup;
+  const alive = () => !controller.disposed && !cleanedUp;
+  const abort = () => {
+    cleanup();
     return null;
   };
 
@@ -155,25 +184,35 @@ async function build(options, controller) {
   if (!alive()) return abort();
 
   const manager = new THREE.LoadingManager();
-  manager.onProgress = (url, loaded, total) => onProgress(0.08 + (loaded / total) * 0.8);
+  manager.onProgress = (url, loaded, total) => {
+    if (alive()) onProgress(0.08 + (loaded / total) * 0.8);
+  };
   const loader = new THREE.TextureLoader(manager);
   const load = url =>
     new Promise(resolve => {
       loader.load(
         url,
         texture => {
+          if (!alive()) {
+            texture.dispose();
+            resolve(null);
+            return;
+          }
           texture.colorSpace = THREE.SRGBColorSpace;
           texture.anisotropy = engine.maxAnisotropy;
-          resolve(texture);
+          resolve(own(texture));
         },
         undefined,
         () => resolve(null),
       );
     });
-  const [icons, reel, previews] = await Promise.all([
+  const [icons, reel, previews, cleanerMedia, resumes, gameplay] = await Promise.all([
     Promise.all(apps.map(app => load(app.icon))),
     load(reelUrl),
     Promise.all(webProjects.map(project => load(project.image))),
+    load(worldAssets.cleaner),
+    Promise.all(worldAssets.resumes.map(load)),
+    load(worldAssets.gameplay),
   ]);
   if (!alive()) return abort();
 
@@ -258,28 +297,34 @@ async function build(options, controller) {
   phone.group.position.copy(stations[0].position);
   scene.add(phone.group);
 
-  const slabGeometry = createSlabGeometry({ size: SLAB_SIZE });
+  const slabGeometry = own(createSlabGeometry({ size: SLAB_SIZE }));
   const slabTextures = apps.map((app, index) => ({
-    front: icons[index] || fallbackTexture(app.colors.a),
-    back: createSlabBackTexture(app),
+    front: icons[index] || own(fallbackTexture(app.colors.a)),
+    back: own(createSlabBackTexture(app)),
+    brightness: icons[index] ? imageBrightness(icons[index].image) : 0,
   }));
   const slabs = apps.map(
-    (app, index) =>
-      new IconSlab({
+    (app, index) => {
+      const slab = new IconSlab({
         geometry: slabGeometry,
         texture: slabTextures[index].front,
         backTexture: slabTextures[index].back,
         colors: app.colors,
-      }),
+        brightness: slabTextures[index].brightness,
+      });
+      scene.add(slab.group);
+      return slab;
+    },
   );
-  slabs.forEach(slab => scene.add(slab.group));
 
   // ---------------------------------------------------------------- worlds
   const appWorlds = apps.map((app, index) => {
     const Type = WORLD_TYPES[app.slug];
     const world = new Type({
       app,
-      textures: { reel: reel || fallbackTexture(app.colors.a) },
+      textures: { reel: reel || own(fallbackTexture(app.colors.a)), gameplay: app.slug === 'sugarshifts' ? gameplay : null },
+      mediaTexture: app.slug === 'smartcleaner' ? cleanerMedia : null,
+      resumeTextures: app.slug === 'resumestudio' ? resumes : [],
       quality: engine.preset.particles,
     });
     world.station = index + 1;
@@ -302,7 +347,9 @@ async function build(options, controller) {
 
   // ---------------------------------------------------------------- camera rig
   const journey = new Journey(root);
+  cleanupTasks.push(() => journey.dispose());
   const interaction = new Interaction({ canvas, camera });
+  cleanupTasks.push(() => interaction.dispose());
   let layout = 'wide';
   let cameraPath = null;
   let lookPath = null;
@@ -325,6 +372,7 @@ async function build(options, controller) {
   engine.onResize(() => rebuildPaths());
   const onWindowResize = () => journey.measure();
   window.addEventListener('resize', onWindowResize);
+  cleanupTasks.push(() => window.removeEventListener('resize', onWindowResize));
 
   // ---------------------------------------------------------------- interaction targets
   let phoneSpin = 0;
@@ -403,6 +451,7 @@ async function build(options, controller) {
     yourTextures.back.dispose();
     yourTextures = null;
   };
+  cleanupTasks.push(disposeYourTextures);
   const setYourApp = app => {
     yourApp = app;
     phone.setYourApp(app);
@@ -675,8 +724,21 @@ async function build(options, controller) {
   }
   if (!alive()) return abort();
   journey.measure();
-  engine.setRunning(true);
+  // The fixed canvas remains in the viewport after the journey ends; watch
+  // its content root so the GPU can rest while the visitor reads the footer.
+  if (typeof IntersectionObserver !== 'undefined') {
+    const observer = new IntersectionObserver(([entry]) => {
+      if (alive()) engine.setRunning(entry.isIntersecting);
+    }, { threshold: 0 });
+    cleanupTasks.push(() => observer.disconnect());
+    observer.observe(root);
+    const bounds = root.getBoundingClientRect();
+    engine.setRunning(bounds.bottom > 0 && bounds.top < window.innerHeight);
+  } else {
+    engine.setRunning(true);
+  }
   onProgress(1);
+  if (!alive()) return abort();
   onReady();
 
   return {
@@ -684,13 +746,6 @@ async function build(options, controller) {
       web.setHighlight(index);
     },
     setYourApp,
-    dispose() {
-      disposeYourTextures();
-      window.removeEventListener('resize', onWindowResize);
-      interaction.dispose();
-      journey.dispose();
-      engine.dispose();
-      resetSharedMaterials();
-    },
+    dispose: cleanup,
   };
 }

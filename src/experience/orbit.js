@@ -7,7 +7,7 @@ import { Current } from './objects/Current';
 import { SLAB_SIZE, createSlabBackTexture } from './objects/IconSlab';
 import { FinaleWorld } from './worlds/FinaleWorld';
 import { createSlabGeometry } from './utils/geometry';
-import { ensureFonts } from './utils/canvas';
+import { ensureFonts, imageBrightness } from './utils/canvas';
 import { damp } from './utils/math';
 import { resetSharedMaterials } from './worlds/materials';
 
@@ -19,9 +19,11 @@ export function createOrbitExperience(options) {
   const controller = {
     disposed: false,
     experience: null,
+    cleanup: null,
     dispose() {
+      if (controller.disposed) return;
       controller.disposed = true;
-      if (controller.experience) controller.experience.dispose();
+      if (controller.cleanup) controller.cleanup();
       controller.experience = null;
     },
   };
@@ -32,7 +34,9 @@ export function createOrbitExperience(options) {
       else controller.experience = experience;
     })
     .catch(error => {
-      if (options.onError) options.onError(error);
+      const wasDisposed = controller.disposed;
+      controller.dispose();
+      if (!wasDisposed && options.onError) options.onError(error);
     });
   return controller;
 }
@@ -41,12 +45,36 @@ async function build({ canvas, apps, onNavigate, onReady = () => {} }, controlle
   const engine = new Engine({ canvas, fov: FOV });
   engine.setRunning(false);
   const { scene, camera, renderer } = engine;
-  const abort = () => {
+  const cleanupTasks = [];
+  const resources = new Set();
+  let cleanedUp = false;
+  const own = resource => {
+    resources.add(resource);
+    const onDispose = () => {
+      resources.delete(resource);
+      resource.removeEventListener('dispose', onDispose);
+    };
+    resource.addEventListener('dispose', onDispose);
+    return resource;
+  };
+  const cleanup = () => {
+    if (cleanedUp) return;
+    cleanedUp = true;
+    cleanupTasks.reverse().forEach(task => task());
     engine.dispose();
+    resources.forEach(resource => resource.dispose());
+    resources.clear();
+    resetSharedMaterials();
+  };
+  controller.cleanup = cleanup;
+  const alive = () => !controller.disposed && !cleanedUp;
+  const abort = () => {
+    cleanup();
     return null;
   };
 
   await ensureFonts();
+  if (!alive()) return abort();
   const loader = new THREE.TextureLoader();
   const icons = await Promise.all(
     apps.map(
@@ -55,9 +83,14 @@ async function build({ canvas, apps, onNavigate, onReady = () => {} }, controlle
           loader.load(
             app.icon,
             texture => {
+              if (!alive()) {
+                texture.dispose();
+                resolve(null);
+                return;
+              }
               texture.colorSpace = THREE.SRGBColorSpace;
               texture.anisotropy = engine.maxAnisotropy;
-              resolve(texture);
+              resolve(own(texture));
             },
             undefined,
             () => resolve(null),
@@ -65,7 +98,7 @@ async function build({ canvas, apps, onNavigate, onReady = () => {} }, controlle
         ),
     ),
   );
-  if (controller.disposed) return abort();
+  if (!alive()) return abort();
 
   scene.add(new THREE.HemisphereLight('#c9d6ff', '#1a1020', 0.5));
   const key = new THREE.DirectionalLight('#ffffff', 1.5);
@@ -95,15 +128,17 @@ async function build({ canvas, apps, onNavigate, onReady = () => {} }, controlle
   });
   scene.add(current.group);
 
-  const slabGeometry = createSlabGeometry({ size: SLAB_SIZE });
+  const slabGeometry = own(createSlabGeometry({ size: SLAB_SIZE }));
   const slabTextures = apps.map((app, index) => ({
-    front: icons[index] || new THREE.Texture(),
-    back: createSlabBackTexture(app),
+    front: icons[index] || own(new THREE.Texture()),
+    back: own(createSlabBackTexture(app)),
+    brightness: icons[index] ? imageBrightness(icons[index].image) : 0,
   }));
   const finale = new FinaleWorld({ apps, slabGeometry, slabTextures, onNavigate, radius: 2.6, iconScale: 0.5 });
   scene.add(finale.group);
 
   const interaction = new Interaction({ canvas, camera });
+  cleanupTasks.push(() => interaction.dispose());
   interaction.setTargets(finale.targets);
 
   let stacked = false;
@@ -157,24 +192,27 @@ async function build({ canvas, apps, onNavigate, onReady = () => {} }, controlle
     interaction.update();
   });
 
-  // Stop rendering once the header has scrolled away.
-  const observer = new IntersectionObserver(([entry]) => engine.setRunning(entry.isIntersecting), { threshold: 0 });
   try {
     if (renderer.compileAsync) await renderer.compileAsync(scene, camera);
   } catch (error) {
     // Compile lazily on first render instead.
   }
-  if (controller.disposed) return abort();
-  engine.setRunning(true);
-  observer.observe(canvas);
+  if (!alive()) return abort();
+  // Stop rendering once the header has scrolled away.
+  if (typeof IntersectionObserver !== 'undefined') {
+    const observer = new IntersectionObserver(([entry]) => {
+      if (alive()) engine.setRunning(entry.isIntersecting);
+    }, { threshold: 0 });
+    cleanupTasks.push(() => observer.disconnect());
+    observer.observe(canvas);
+    const bounds = canvas.getBoundingClientRect();
+    engine.setRunning(bounds.bottom > 0 && bounds.top < window.innerHeight);
+  } else {
+    engine.setRunning(true);
+  }
   onReady();
 
   return {
-    dispose() {
-      observer.disconnect();
-      interaction.dispose();
-      engine.dispose();
-      resetSharedMaterials();
-    },
+    dispose: cleanup,
   };
 }

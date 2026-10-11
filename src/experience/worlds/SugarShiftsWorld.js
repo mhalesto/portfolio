@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { World } from './World';
-import { roundedRectShape } from '../utils/geometry';
+import { roundedPlane, roundedRectShape } from '../utils/geometry';
 import { createRandom, easeOutBack } from '../utils/math';
 
 const SIZE = 5;
@@ -172,10 +172,10 @@ function banana() {
 
 const FRUIT_COLORS = ['#ff4d5e', '#ff2d55', '#ff4d6d', '#b04fd1', '#ffd23f'];
 
-// SugarShifts: a wooden board (like the icon's basket) of glossy fruit that
-// keeps making match-3 clears. Visitors can pop fruit themselves.
+// A capture from the actual iOS game sits beside the playful fruit board.
+// The screenshot stays intact; the separate 3D fruit remain interactive.
 export class SugarShiftsWorld extends World {
-  constructor({ app }) {
+  constructor({ app, textures = {} }) {
     super({ app });
     const random = createRandom(9);
     this.random = random;
@@ -199,6 +199,42 @@ export class SugarShiftsWorld extends World {
     this.board.position.set(0, -0.5, -0.2);
     this.board.rotation.x = 0.95;
     this.group.add(this.board);
+
+    if (textures.gameplay) {
+      const image = textures.gameplay.image;
+      const height = 3.7;
+      const aspect = image && image.width && image.height ? image.width / image.height : 1206 / 2622;
+      const width = height * aspect;
+      this.gameplay = new THREE.Group();
+      this.gameplay.position.set(0.99, 0.03, -0.08);
+      this.gameplay.rotation.y = -0.08;
+
+      const frameGeometry = new THREE.ExtrudeGeometry(roundedRectShape(width + 0.13, height + 0.13, 0.16), {
+        depth: 0.09,
+        bevelEnabled: true,
+        bevelThickness: 0.025,
+        bevelSize: 0.025,
+        bevelSegments: 3,
+        curveSegments: 10,
+      });
+      const frame = new THREE.Mesh(frameGeometry, new THREE.MeshPhysicalMaterial({
+        color: '#9b6573', metalness: 0.6, roughness: 0.3, clearcoat: 0.65,
+      }));
+      const screen = new THREE.Mesh(
+        roundedPlane(width, height, 0.12),
+        new THREE.MeshBasicMaterial({ map: textures.gameplay, toneMapped: false }),
+      );
+      screen.position.z = 0.12;
+      this.gameplay.add(frame, screen);
+      this.group.add(this.gameplay);
+
+      // Keep both surfaces within the existing camera framing and leave a
+      // clear gap so the phone capture never covers a fruit hit target.
+      this.board.position.set(-1.06, -0.56, 0.35);
+      this.board.scale.setScalar(0.65);
+      this.slabAnchor.position.set(-1.05, 1.28, 0.6);
+      this.slabAnchor.scale = 0.52;
+    }
 
     const base = new THREE.ExtrudeGeometry(roundedRectShape(3.25, 3.25, 0.36), {
       depth: 0.14,

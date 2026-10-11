@@ -41,9 +41,3 @@ one-page site for the visitor's idea. It works as a demo and brings in leads.
 - Anthropic API key
 - Cloudflare account and a domain for user sites
 - Firebase project (the existing one is fine)
-
-## Also
-
-- Replace the PromoSecret preview (`public/experience/web-promosecret.webp`) with a real screenshot of
-  promosecret.co.za. The current image is a card in its brand colours because the site couldn't be reached
-  when it was added.

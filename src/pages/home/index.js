@@ -7,6 +7,8 @@ import Magnetic from '../../site/components/Magnetic';
 import Marquee from '../../site/components/Marquee';
 import ChapterRail from '../../site/components/ChapterRail';
 import YourAppDialog from '../../site/components/YourAppDialog';
+import ShowcaseDialog from '../../site/components/ShowcaseDialog';
+import { showcases } from '../../site/showcase';
 import useReveal from '../../site/useReveal';
 import { addTicker, loadStore } from '../../site/ticker';
 import { scrollToTarget } from '../../site/scroll';
@@ -48,6 +50,7 @@ function Manifesto() {
     let last = -1;
     return addTicker(() => {
       const rect = section.getBoundingClientRect();
+      if ((rect.top > window.innerHeight && last === 0) || (rect.bottom < 0 && last === 1)) return;
       const travel = rect.height - window.innerHeight;
       const progress = Math.min(1, Math.max(0, -rect.top / Math.max(travel, 1)));
       if (Math.abs(progress - last) < 0.001) return;
@@ -75,7 +78,7 @@ function Manifesto() {
   );
 }
 
-function AppChapter({ app, index, total, webgl }) {
+function AppChapter({ app, index, total, webgl, onPreview }) {
   return (
     <section
       id={`app-${app.slug}`}
@@ -129,6 +132,7 @@ function AppChapter({ app, index, total, webgl }) {
                 </Link>
               ))}
             </nav>
+            {showcases[app.slug] && <button type="button" className="text-link chapter__preview" aria-haspopup="dialog" onClick={() => onPreview(showcases[app.slug])}>{showcases[app.slug].action} ↗</button>}
           </div>
         </div>
         {webgl ? (
@@ -137,7 +141,7 @@ function AppChapter({ app, index, total, webgl }) {
             {app.hint}
           </p>
         ) : (
-          <img className="chapter__fallback" src={app.icon} alt="" loading="lazy" />
+          <img className="chapter__fallback" src={app.icon} alt="" loading="lazy" decoding="async" width="512" height="512" />
         )}
       </div>
     </section>
@@ -151,13 +155,14 @@ export default function Home() {
   const mainRef = useRef(null);
   const canvasRef = useRef(null);
   const experienceRef = useRef(null);
-  const [webgl] = useState(() => supportsWebGL());
+  const [webgl] = useState(() => !prefersReducedMotion() && supportsWebGL());
   const [preloading, setPreloading] = useState(() => !introPlayed && webgl && !prefersReducedMotion());
   const [heroIn, setHeroIn] = useState(false);
   const [sceneFailed, setSceneFailed] = useState(false);
   const [yourApp, setYourApp] = useState(() => loadYourApp());
   const [dialogOpen, setDialogOpen] = useState(false);
   const [toast, setToast] = useState(null);
+  const [showcase, setShowcase] = useState(null);
   const yourAppRef = useRef(yourApp);
   yourAppRef.current = yourApp;
 
@@ -224,21 +229,22 @@ export default function Home() {
   const railItems = useMemo(
     () => [
       { id: 'top', label: 'Intro' },
+      { id: 'manifesto', label: 'The story' },
       ...apps.map(app => ({
         id: `app-${app.slug}`,
         label: app.name,
         color: app.colors.a,
-        offset: window.innerHeight * 0.35,
+        offset: () => webgl && !sceneFailed ? window.innerHeight * 0.35 : 0,
       })),
-      { id: 'web', label: 'Websites', offset: window.innerHeight * 0.3 },
+      { id: 'web', label: 'Websites', offset: () => webgl && !sceneFailed ? window.innerHeight * 0.3 : 0 },
       { id: 'about', label: 'About' },
       {
         id: 'contact-cta',
         label: 'Contact',
-        offset: window.innerHeight * 0.25,
+        offset: () => webgl && !sceneFailed ? window.innerHeight * 0.25 : 0,
       },
     ],
-    [],
+    [webgl, sceneFailed],
   );
 
   const setWebHover = index => {
@@ -353,7 +359,7 @@ export default function Home() {
                         scrollToTarget(`#app-${app.slug}`);
                       }}
                     >
-                      <img src={app.icon} alt="" />
+                      <img src={app.icon} alt="" width="84" height="84" decoding="async" />
                       <span>{app.name}</span>
                     </a>
                   </li>
@@ -377,7 +383,7 @@ export default function Home() {
         <Manifesto />
 
         {apps.map((app, index) => (
-          <AppChapter key={app.slug} app={app} index={index} total={apps.length} webgl={webglActive} />
+          <AppChapter key={app.slug} app={app} index={index} total={apps.length} webgl={webglActive} onPreview={setShowcase} />
         ))}
 
         <section className="web" id="web" data-station={apps.length + 1} data-hold="0.7" aria-labelledby="web-title">
@@ -409,7 +415,7 @@ export default function Home() {
                         {project.domain}
                         <span aria-hidden="true"> ↗</span>
                       </span>
-                      {!webglActive && <img className="web__thumb" src={project.image} alt="" loading="lazy" />}
+                      {!webglActive && <img className="web__thumb" src={project.image} alt="" loading="lazy" decoding="async" width="800" height="500" />}
                     </a>
                   </li>
                 ))}
@@ -441,6 +447,22 @@ export default function Home() {
                 <dd>01</dd>
               </div>
             </dl>
+            <figure className="about__studio" data-reveal>
+              <img
+                src={`${process.env.PUBLIC_URL}/experience/studio-editorial.webp`}
+                srcSet={`${process.env.PUBLIC_URL}/experience/studio-editorial-small.webp 640w, ${process.env.PUBLIC_URL}/experience/studio-editorial.webp 1200w`}
+                sizes="(max-width: 760px) 100vw, 46vw"
+                width="1200"
+                height="800"
+                loading="lazy"
+                decoding="async"
+                alt="A sunlit creative workspace with a laptop, notebook and coastal view"
+              />
+              <figcaption>
+                <span>Space to think. Room to build.</span>
+                <span className="mono">Studio study · AI image</span>
+              </figcaption>
+            </figure>
           </div>
           <div className="about__body">
             <p className="about__lede" data-reveal>
@@ -548,6 +570,7 @@ export default function Home() {
         onSave={app => changeYourApp(app, savedMessage(app, webglActive))}
         onRemove={() => changeYourApp(null, 'Your app idea is removed.')}
       />
+      <ShowcaseDialog showcase={showcase} onClose={() => setShowcase(null)} />
       <div className="yourapp-toasts" role="status" aria-live="polite">
         {toast && (
           <p className="yourapp-toast" key={toast.id}>

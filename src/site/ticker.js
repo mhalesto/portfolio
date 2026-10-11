@@ -6,29 +6,53 @@ const subscribers = [];
 let rafId = 0;
 let lastTime = 0;
 
+function scheduleFrame() {
+  if (!rafId && subscribers.length && !document.hidden) rafId = requestAnimationFrame(frame);
+}
+
 function frame(time) {
-  rafId = requestAnimationFrame(frame);
+  rafId = 0;
+  if (document.hidden) return;
   const delta = lastTime ? Math.min((time - lastTime) / 1000, 0.1) : 1 / 60;
   lastTime = time;
-  for (let i = 0; i < subscribers.length; i += 1) {
-    subscribers[i].fn(time, delta);
+  // A subscriber can unsubscribe itself during a frame. A snapshot prevents
+  // that from skipping the next effect; newly added effects start next frame.
+  try {
+    subscribers.slice().forEach(entry => {
+      if (entry.active) entry.fn(time, delta);
+    });
+  } finally {
+    scheduleFrame();
   }
 }
 
+function onVisibilityChange() {
+  lastTime = 0;
+  if (document.hidden && rafId) {
+    cancelAnimationFrame(rafId);
+    rafId = 0;
+  }
+  scheduleFrame();
+}
+
 export function addTicker(fn, priority = 0) {
-  const entry = { fn, priority };
+  const entry = { fn, priority, active: true };
   subscribers.push(entry);
   subscribers.sort((a, b) => a.priority - b.priority);
-  if (!rafId) {
+  if (subscribers.length === 1) {
     lastTime = 0;
-    rafId = requestAnimationFrame(frame);
+    document.addEventListener('visibilitychange', onVisibilityChange);
   }
+  scheduleFrame();
   return () => {
+    entry.active = false;
     const index = subscribers.indexOf(entry);
     if (index !== -1) subscribers.splice(index, 1);
-    if (!subscribers.length && rafId) {
-      cancelAnimationFrame(rafId);
+    if (!subscribers.length) {
+      if (rafId) cancelAnimationFrame(rafId);
       rafId = 0;
+      lastTime = 0;
+      document.removeEventListener('visibilitychange', onVisibilityChange);
     }
   };
 }

@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import LocalTime from './LocalTime';
 import { apps, person } from '../data';
+import { setScrollLocked } from '../scroll';
+import './header.css';
 
 const navItems = [
   { to: '/', label: 'Home', end: true },
@@ -17,6 +19,9 @@ export default function Header({ tone = 'solid' }) {
   const [scrolled, setScrolled] = useState(false);
   const [hidden, setHidden] = useState(false);
   const lastY = useRef(0);
+  const headerRef = useRef(null);
+  const menuRef = useRef(null);
+  const toggleRef = useRef(null);
 
   useEffect(() => {
     setOpen(false);
@@ -47,13 +52,56 @@ export default function Header({ tone = 'solid' }) {
   useEffect(() => {
     document.documentElement.classList.toggle('menu-open', open);
     if (!open) return undefined;
+    const menu = menuRef.current;
+    const toggle = toggleRef.current;
+    const background = Array.from(headerRef.current.parentElement.children)
+      .filter(element => element !== headerRef.current && element !== menu)
+      .map(element => ({ element, inert: element.getAttribute('inert') }));
+    background.forEach(({ element }) => element.setAttribute('inert', ''));
+    setScrollLocked(true, 'mobile-menu');
+    const links = () => Array.from(menu.querySelectorAll('a[href], button:not([disabled])'));
+    const firstLink = links()[0];
+    if (firstLink) firstLink.focus({ preventScroll: true });
     const onKey = event => {
-      if (event.key === 'Escape') setOpen(false);
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        setOpen(false);
+      }
+      if (event.key !== 'Tab') return;
+      const focusable = [toggle, ...links()];
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
     };
+    const onFocus = event => {
+      if (event.target !== toggle && !menu.contains(event.target)) firstLink?.focus({ preventScroll: true });
+    };
+    const desktop = window.matchMedia?.('(min-width: 821px)');
+    const onResize = event => {
+      if (event.matches) setOpen(false);
+    };
+    desktop?.addEventListener?.('change', onResize);
     window.addEventListener('keydown', onKey);
+    document.addEventListener('focusin', onFocus);
     return () => {
+      desktop?.removeEventListener?.('change', onResize);
       window.removeEventListener('keydown', onKey);
+      document.removeEventListener('focusin', onFocus);
       document.documentElement.classList.remove('menu-open');
+      background.forEach(({ element, inert }) => {
+        if (inert === null) element.removeAttribute('inert');
+        else element.setAttribute('inert', inert);
+      });
+      setScrollLocked(false, 'mobile-menu');
+      // A route change may remove this header. In that case the new page
+      // owns focus; do not send it back to a detached menu control.
+      if (toggle?.isConnected) toggle.focus({ preventScroll: true });
     };
   }, [open]);
 
@@ -67,7 +115,7 @@ export default function Header({ tone = 'solid' }) {
 
   return (
     <>
-      <header className={classes}>
+      <header className={classes} ref={headerRef}>
         <div className="site-header__inner">
           <Link to="/" className="brand" aria-label={`${person.name}, home`}>
             <span>HG</span>
@@ -91,6 +139,7 @@ export default function Header({ tone = 'solid' }) {
 
           <button
             type="button"
+            ref={toggleRef}
             className="menu-toggle"
             aria-expanded={open}
             aria-controls="site-menu"
@@ -107,8 +156,13 @@ export default function Header({ tone = 'solid' }) {
 
       <div
         id="site-menu"
+        ref={menuRef}
         className={`site-menu${open ? ' is-open' : ''}`}
         aria-hidden={!open}
+        data-lenis-prevent
+        onClick={event => {
+          if (event.target.closest('a')) setOpen(false);
+        }}
         {...(!open ? { inert: '' } : {})}
       >
         <nav className="site-menu__nav" aria-label="Menu">

@@ -13,17 +13,50 @@ export default function Marquee({ items, speed = 70 }) {
     if (!track || prefersReducedMotion()) return undefined;
     let x = 0;
     let direction = -1;
+    let half = 0;
+    let disposed = false;
+    let removeTicker = null;
 
-    return addTicker((time, delta) => {
-      const half = track.scrollWidth / 2;
+    const measure = () => {
+      half = track.scrollWidth / 2;
+      if (half) x = -(((-x % half) + half) % half);
+    };
+    measure();
+    const resizeObserver = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(measure) : null;
+    if (resizeObserver) resizeObserver.observe(track);
+    else window.addEventListener('resize', measure);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => {
+      if (!disposed) measure();
+    });
+
+    const update = (time, delta) => {
       if (!half) return;
       const velocity = scrollState.velocity || 0;
       if (Math.abs(velocity) > 0.4) direction = velocity > 0 ? -1 : 1;
       x += direction * (speed + Math.min(Math.abs(velocity) * 45, 1100)) * delta;
-      if (x <= -half) x += half;
-      if (x > 0) x -= half;
+      x = -(((-x % half) + half) % half);
       track.style.transform = `translate3d(${x.toFixed(1)}px, 0, 0)`;
-    }, 10);
+    };
+    const setVisible = visible => {
+      if (visible && !removeTicker) removeTicker = addTicker(update, 10);
+      else if (!visible && removeTicker) {
+        removeTicker();
+        removeTicker = null;
+      }
+    };
+    const observer = typeof IntersectionObserver !== 'undefined'
+      ? new IntersectionObserver(([entry]) => setVisible(entry.isIntersecting), { rootMargin: '160px' })
+      : null;
+    if (observer) observer.observe(track.parentElement);
+    else setVisible(true);
+
+    return () => {
+      disposed = true;
+      if (removeTicker) removeTicker();
+      if (observer) observer.disconnect();
+      if (resizeObserver) resizeObserver.disconnect();
+      else window.removeEventListener('resize', measure);
+    };
   }, [speed]);
 
   const renderRow = prefix =>

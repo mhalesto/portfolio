@@ -16,7 +16,7 @@ it on the phone and in the finale orbit, and email it from there. It is stored o
 | --- | --- |
 | `npm start` | Development server on http://localhost:3000 |
 | `npm test` | Jest tests, including a check that every product, privacy, data-collection, support and terms route still renders |
-| `npm run build` | Regenerates the static ClipAura, ResumeStudio and Smart Cleaner pages, then builds to `build/` |
+| `npm run build` | Regenerates the static ClipAura, ResumeStudio and Smart Cleaner pages, builds to `build/`, then (`scripts/postbuild.cjs`) gives every route without a static page its own copy of the app shell, so direct visits return 200 with the right title and canonical URL, and writes `sitemap.xml` |
 | `npm run deploy` | Builds and publishes `build/` to the `gh-pages` branch (served at www.halalisani.com) |
 
 ## Where things live

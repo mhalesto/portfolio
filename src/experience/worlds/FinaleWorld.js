@@ -82,6 +82,7 @@ export class FinaleWorld extends World {
         texture: slabTextures[index].front,
         backTexture: slabTextures[index].back,
         colors: app.colors,
+        brightness: slabTextures[index].brightness,
       });
       slab.group.scale.setScalar(iconScale);
       this.group.add(slab.group);

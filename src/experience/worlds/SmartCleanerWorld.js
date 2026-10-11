@@ -6,8 +6,7 @@ import { createRandom, damp, smoothstep } from '../utils/math';
 
 const RING_RADIUS = 1.98;
 
-// A 4x4 atlas of tiny generated "photos": skies, hills, portraits, city
-// lights. They drift inward and shrink as they are compressed.
+// Lightweight fallback when the generated media atlas cannot be loaded.
 function photoAtlas() {
   const { canvas, ctx } = makeCanvas(512, 512);
   const random = createRandom(42);
@@ -74,8 +73,9 @@ function photoAtlas() {
 // Smart Cleaner: the storage gauge from the app's own home screen, and a
 // storm of photos that get compressed (not deleted) as they reach the icon.
 export class SmartCleanerWorld extends World {
-  constructor({ app, quality = 1 }) {
+  constructor({ app, quality = 1, mediaTexture = null }) {
     super({ app });
+    this.hasMedia = Boolean(mediaTexture);
 
     this.ring = new THREE.Group();
     this.ring.rotation.set(-0.35, 0.28, 0);
@@ -105,27 +105,43 @@ export class SmartCleanerWorld extends World {
       return { mesh, share: segment.share, fill: 0 };
     });
 
-    // Photo tiles
-    const count = Math.round(150 * quality);
+    // One atlas and one instanced draw call for the entire media collection.
+    // A few larger cards keep the photos recognizable within the swirl.
+    const columns = this.hasMedia ? 3 : 4;
+    const rows = this.hasMedia ? 2 : 4;
+    const count = Math.round((this.hasMedia ? 108 : 150) * quality);
     const random = createRandom(11);
     this.tiles = [];
     const offsets = new Float32Array(count * 2);
+    const crops = new Float32Array(count * 2);
+    const mediaKinds = new Float32Array(count);
     for (let i = 0; i < count; i += 1) {
-      const cell = Math.floor(random() * 16);
-      offsets[i * 2] = (cell % 4) * 0.25;
-      offsets[i * 2 + 1] = 0.75 - Math.floor(cell / 4) * 0.25;
+      const cell = Math.floor(random() * columns * rows);
+      const aspect = this.hasMedia ? [4 / 3, 1, 3 / 4][i % 3] : 1;
+      offsets[i * 2] = (cell % columns) / columns;
+      offsets[i * 2 + 1] = 1 - (Math.floor(cell / columns) + 1) / rows;
+      crops[i * 2] = Math.min(1, aspect);
+      crops[i * 2 + 1] = Math.min(1, 1 / aspect);
+      mediaKinds[i] = this.hasMedia && i % 5 === 0 ? 1 : 0;
       this.tiles.push({
         angle: random() * Math.PI * 2,
         life: random(),
         speed: 0.05 + random() * 0.06,
         lane: random(),
         spin: (random() - 0.5) * 1.2,
-        size: 0.16 + random() * 0.14,
+        size: (this.hasMedia ? (i % 9 === 0 ? 0.5 : 0.24) : 0.16) + random() * 0.14,
+        aspect,
       });
     }
     const geometry = new THREE.PlaneGeometry(1, 1);
     geometry.setAttribute('aOffset', new THREE.InstancedBufferAttribute(offsets, 2));
-    this.tileUniforms = { uAtlas: { value: photoAtlas() }, uBrightness: { value: 1 } };
+    geometry.setAttribute('aCrop', new THREE.InstancedBufferAttribute(crops, 2));
+    geometry.setAttribute('aMediaKind', new THREE.InstancedBufferAttribute(mediaKinds, 1));
+    this.tileUniforms = {
+      uAtlas: { value: mediaTexture || photoAtlas() },
+      uCellSize: { value: new THREE.Vector2(1 / columns, 1 / rows) },
+      uBrightness: { value: 1 },
+    };
     this.tileMesh = new THREE.InstancedMesh(
       geometry,
       new THREE.ShaderMaterial({
@@ -133,11 +149,17 @@ export class SmartCleanerWorld extends World {
         side: THREE.DoubleSide,
         vertexShader: /* glsl */ `
           attribute vec2 aOffset;
+          attribute vec2 aCrop;
+          attribute float aMediaKind;
+          uniform vec2 uCellSize;
           varying vec2 vUv;
           varying vec2 vLocal;
+          varying float vMediaKind;
           void main() {
             vLocal = uv;
-            vUv = uv * 0.25 + aOffset;
+            vMediaKind = aMediaKind;
+            // Crop to each card's aspect and inset from neighboring cells.
+            vUv = ((uv - 0.5) * aCrop * 0.97 + 0.5) * uCellSize + aOffset;
             gl_Position = projectionMatrix * modelViewMatrix * instanceMatrix * vec4(position, 1.0);
           }
         `,
@@ -146,6 +168,7 @@ export class SmartCleanerWorld extends World {
           uniform float uBrightness;
           varying vec2 vUv;
           varying vec2 vLocal;
+          varying float vMediaKind;
           float box(vec2 p, vec2 b, float r) {
             vec2 q = abs(p) - b + r;
             return length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - r;
@@ -155,7 +178,17 @@ export class SmartCleanerWorld extends World {
             if (d > 0.0) discard;
             vec3 color = texture2D(uAtlas, vUv).rgb;
             float border = smoothstep(-0.03, 0.0, d);
-            color = mix(color, vec3(1.0), border * 0.8);
+            color = mix(color, vec3(0.82, 0.88, 1.0), border * 0.65);
+            // A simple play glyph distinguishes video stills without baking
+            // interface text or invented application screens into the atlas.
+            if (vMediaKind > 0.5) {
+              vec2 p = vLocal - 0.5;
+              float disc = 1.0 - smoothstep(0.14, 0.16, length(p));
+              color = mix(color, vec3(0.02, 0.03, 0.05), disc * 0.58);
+              float play = step(-0.045, p.x) * step(p.x, 0.075)
+                * (1.0 - step((0.075 - p.x) * 0.64, abs(p.y)));
+              color = mix(color, vec3(0.95), play);
+            }
             gl_FragColor = vec4(color * uBrightness, 1.0);
           }
         `,
@@ -204,7 +237,7 @@ export class SmartCleanerWorld extends World {
     this.ring.rotation.z = Math.sin(time * 0.2) * 0.1;
 
     const speed = (1 + this.burst * 5) * motion;
-    this.tileUniforms.uBrightness.value = 0.95 + this.burst * 0.6;
+    this.tileUniforms.uBrightness.value = 0.95 + this.burst * (this.hasMedia ? 0.2 : 0.6);
     const dummy = this.dummy;
     this.tiles.forEach((tile, index) => {
       tile.life = (tile.life + delta * tile.speed * speed) % 1;
@@ -219,7 +252,8 @@ export class SmartCleanerWorld extends World {
         (tile.lane - 0.5) * 1.2 - life * 0.4,
       );
       dummy.rotation.set(0, 0, tile.spin * life * 3);
-      dummy.scale.setScalar(tile.size * shrink * appear);
+      const scale = tile.size * shrink * appear;
+      dummy.scale.set(scale * tile.aspect, scale, scale);
       dummy.updateMatrix();
       this.tileMesh.setMatrixAt(index, dummy.matrix);
     });

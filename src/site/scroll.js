@@ -61,7 +61,7 @@ export async function startSmoothScroll() {
       scrollState.velocity = instance.velocity;
       scrollState.direction = instance.direction || scrollState.direction;
     });
-    if (locked) lenis.stop();
+    if (scrollLocks.size) lenis.stop();
     removeTicker = addTicker(time => lenis && lenis.raf(time), -10);
   } catch (error) {
     if (current === generation && users > 0) removeNative = trackNative();
@@ -81,25 +81,41 @@ export function stopSmoothScroll() {
 }
 
 export function scrollToTarget(target, options = {}) {
-  const element = typeof target === 'string' ? document.querySelector(target) : target;
+  let element = target;
+  if (typeof target === 'string') {
+    try {
+      element = document.querySelector(target);
+    } catch (error) {
+      return;
+    }
+    if (!element) return;
+  }
   if (lenis) {
     lenis.scrollTo(element ?? target, { duration: 1.6, ...options });
     return;
   }
-  if (element && element.scrollIntoView) {
-    element.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth', block: 'start' });
-  } else if (typeof target === 'number') {
-    window.scrollTo(0, target);
-  }
+  const top = typeof target === 'number'
+    ? target
+    : element && element.getBoundingClientRect
+      ? element.getBoundingClientRect().top + window.scrollY
+      : null;
+  if (top === null || !Number.isFinite(top)) return;
+  window.scrollTo({
+    top: Math.max(0, top + (Number(options.offset) || 0)),
+    behavior: options.immediate || options.duration === 0 || prefersReducedMotion() ? 'instant' : 'smooth',
+  });
 }
 
-let locked = false;
+// Each overlay owns its lock, so closing a menu cannot unlock an open dialog.
+const scrollLocks = new Set();
 
-export function setScrollLocked(value) {
-  locked = value;
-  document.documentElement.classList.toggle('scroll-locked', value);
+export function setScrollLocked(value, owner = 'default') {
+  if (value) scrollLocks.add(owner);
+  else scrollLocks.delete(owner);
+  const locked = scrollLocks.size > 0;
+  document.documentElement.classList.toggle('scroll-locked', locked);
   if (!lenis) return;
-  if (value) lenis.stop();
+  if (locked) lenis.stop();
   else lenis.start();
 }
 

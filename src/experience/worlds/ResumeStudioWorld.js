@@ -7,7 +7,7 @@ const SHEETS = 7;
 const PAPER_W = 0.92;
 const PAPER_H = 1.3;
 
-// Procedural résumé layouts: each sheet is a different "template".
+// Offline fallback when the app-rendered sample documents cannot be loaded.
 function resumeTexture(index) {
   const random = createRandom(100 + index * 17);
   const accents = ['#f05a13', '#1f3a68', '#0f8b7f', '#6b3fa0', '#c2410c', '#334155', '#be185d'];
@@ -65,9 +65,12 @@ function resumeTexture(index) {
 // ResumeStudio: a fan of résumé templates around the icon, with the
 // "Recruiter Scan" magnifier following the pointer across the pages.
 export class ResumeStudioWorld extends World {
-  constructor({ app }) {
+  constructor({ app, resumeTextures = [] }) {
     super({ app });
     this.slabAnchor.position.set(0, 0, 0.35);
+    // Genuine first-page previews from ResumeStudio's own PDF renderer. These
+    // use its fictional Avery Sample fixture; no personal résumés are shown.
+    const documents = resumeTextures.filter(texture => texture && texture.isTexture);
 
     this.bendUniforms = { uTime: { value: 0 } };
     const geometry = new THREE.PlaneGeometry(PAPER_W, PAPER_H, 12, 16);
@@ -85,15 +88,16 @@ export class ResumeStudioWorld extends World {
     }
     this.sheets = [];
     for (let i = 0; i < SHEETS; i += 1) {
+      const document = documents.length ? documents[i % documents.length] : null;
       const material = new THREE.MeshStandardMaterial({
-        map: resumeTexture(i),
+        map: document || resumeTexture(i),
         color: new THREE.Color(0.5, 0.5, 0.5),
         roughness: 0.82,
         metalness: 0,
         side: THREE.DoubleSide,
         emissive: new THREE.Color('#ffffff'),
-        emissiveMap: null,
-        emissiveIntensity: 0,
+        emissiveMap: document,
+        emissiveIntensity: document ? 0.05 : 0,
       });
       const seed = i * 1.7;
       material.onBeforeCompile = shader => {
@@ -116,7 +120,7 @@ export class ResumeStudioWorld extends World {
           );
       };
       const sheet = new THREE.Mesh(geometry, material);
-      sheet.userData = { slot: i, from: i, blend: 1, lift: 0, seed };
+      sheet.userData = { slot: i, from: i, blend: 1, lift: 0, seed, realDocument: Boolean(document) };
       this.group.add(sheet);
       this.sheets.push(sheet);
     }
@@ -217,7 +221,7 @@ export class ResumeStudioWorld extends World {
       sheet.scale.setScalar(1 + data.lift * 0.06);
       const shader = sheet.material.userData.shader;
       if (shader) shader.uniforms.uLift.value = data.lift;
-      sheet.material.emissiveIntensity = data.lift * 0.08;
+      sheet.material.emissiveIntensity = (data.realDocument ? 0.05 : 0) + data.lift * 0.08;
     });
   }
 }

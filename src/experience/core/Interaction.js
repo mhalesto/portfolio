@@ -19,6 +19,8 @@ export class Interaction {
     this.hit = null;
     this.drag = null;
     this.pointerType = 'mouse';
+    this.clientX = 0;
+    this.clientY = 0;
 
     this.onMove = this.onMove.bind(this);
     this.onDown = this.onDown.bind(this);
@@ -29,9 +31,11 @@ export class Interaction {
     window.addEventListener('pointerup', this.onUp, { passive: true });
     window.addEventListener('pointercancel', this.onUp, { passive: true });
     document.documentElement.addEventListener('mouseleave', this.onLeave);
+    window.addEventListener('blur', this.onLeave);
   }
 
   setTargets(targets) {
+    if (this.drag && !targets.includes(this.drag.target)) this.releaseDrag();
     this.targets = targets;
     this.moved = true;
   }
@@ -39,14 +43,28 @@ export class Interaction {
   updatePosition(event) {
     const width = window.innerWidth;
     const height = window.innerHeight;
-    this.ndc.set((event.clientX / width) * 2 - 1, -(event.clientY / height) * 2 + 1);
-    this.screen.copy(this.ndc);
+    this.clientX = event.clientX;
+    this.clientY = event.clientY;
+    // Parallax follows the viewport, while raycasting follows the actual
+    // canvas (the project header scrolls and the home canvas uses lvh).
+    this.screen.set((event.clientX / width) * 2 - 1, -(event.clientY / height) * 2 + 1);
+    this.updateCanvasPosition();
     this.pointerType = event.pointerType || 'mouse';
     this.overCanvas = event.target === this.canvas;
     this.moved = true;
   }
 
+  updateCanvasPosition() {
+    const rect = this.canvas.getBoundingClientRect();
+    if (!rect.width || !rect.height) return false;
+    const x = (this.clientX - rect.left) / rect.width;
+    const y = (this.clientY - rect.top) / rect.height;
+    this.ndc.set(x * 2 - 1, -y * 2 + 1);
+    return x >= 0 && x <= 1 && y >= 0 && y <= 1;
+  }
+
   onMove(event) {
+    if (this.drag && event.pointerId !== this.drag.pointerId) return;
     this.updatePosition(event);
     if (this.drag && this.drag.target.onDrag) {
       const dx = event.clientX - this.drag.lastX;
@@ -59,6 +77,7 @@ export class Interaction {
   }
 
   onDown(event) {
+    if (this.drag || (event.button !== undefined && event.button !== 0)) return;
     this.updatePosition(event);
     if (!this.overCanvas) return;
     this.pick();
@@ -72,28 +91,35 @@ export class Interaction {
       lastY: event.clientY,
       distance: 0,
       time: performance.now(),
+      pointerId: event.pointerId,
     };
     if (this.hovered.onPress) this.hovered.onPress(this.hit);
   }
 
   onUp(event) {
     const drag = this.drag;
-    this.drag = null;
-    if (!drag || event.type === 'pointercancel') return;
+    if (!drag || event.pointerId !== drag.pointerId) return;
+    this.releaseDrag();
     const quick = performance.now() - drag.time < 600;
-    if (drag.distance < 8 && quick && drag.target.onClick) drag.target.onClick(drag.hit);
-    if (drag.target.onRelease) drag.target.onRelease();
+    if (event.type !== 'pointercancel' && drag.distance < 8 && quick && drag.target.onClick) drag.target.onClick(drag.hit);
     if (this.pointerType !== 'mouse') this.clearHover();
   }
 
+  releaseDrag() {
+    const drag = this.drag;
+    this.drag = null;
+    if (drag && drag.target.onRelease) drag.target.onRelease();
+  }
+
   onLeave() {
+    this.releaseDrag();
     this.overCanvas = false;
     this.clearHover();
   }
 
   pick() {
     this.hit = null;
-    if (!this.targets.length) return this.setHovered(null);
+    if (!this.targets.length || !this.updateCanvasPosition()) return this.setHovered(null);
     this.raycaster.setFromCamera(this.ndc, this.camera);
     let best = null;
     for (let i = 0; i < this.targets.length; i += 1) {
@@ -141,11 +167,13 @@ export class Interaction {
   }
 
   dispose() {
+    this.releaseDrag();
     window.removeEventListener('pointermove', this.onMove);
     window.removeEventListener('pointerdown', this.onDown);
     window.removeEventListener('pointerup', this.onUp);
     window.removeEventListener('pointercancel', this.onUp);
     document.documentElement.removeEventListener('mouseleave', this.onLeave);
+    window.removeEventListener('blur', this.onLeave);
     cursorStore.set({ active: false, label: '', color: '' });
   }
 }
