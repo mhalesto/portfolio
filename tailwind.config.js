@@ -10,7 +10,7 @@ module.exports = {
         primary: "#5F9EA0"
       },
       fontFamily: {
-        mont: ['Montserrat', 'sans-serif']
+        mont: ['"Inter Tight Variable"', '"Inter Tight"', 'system-ui', '-apple-system', 'sans-serif']
       }
     },
     screens: {

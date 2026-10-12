@@ -25,13 +25,11 @@ const SoundframeIOSDataCollection = () => {
             </div>
             <div>
               <h2 className="text-xl font-semibold text-theme">Media and Project Data</h2>
-              <p className="mt-2">
-                Videos, images, audio, captions, and timeline edits are processed on device for editing
-                and export. Imported media stays local unless you choose to share or export it elsewhere.
-                If you use cloud captions, AI Studio, generated images, or related connected features,
-                selected audio, text, prompts, project context, or generated outputs may be sent to
-                service providers to complete that request.
-              </p>
+              <p className="mt-2">Core video, photo, audio, caption and timeline editing is processed on your device. Using cloud captions, AI Director, Product Ad, image or video generation, music videos, 3D creation or other connected tools sends the selected media, sampled frames, audio, prompts, product details, lyrics, transcripts or project context to our backend and the provider needed for that request. Cloud job records, source references and generated outputs may be stored to run or resume work and show your Library. We do not automatically upload your entire Photos library. A reference photo or selected video frame may contain a face. It is used as creative reference or scene context for the feature you request, rather than to identify a real person. On-device motion tracking can follow a subject for editable effects. These workflows do not create a face-recognition account or identity database.</p>
+            </div>
+            <div>
+              <h2 className="text-xl font-semibold text-theme">Account and Diagnostic Data</h2>
+              <p className="mt-2">Optional Apple or Google sign-in can provide your name and email address to authenticate and link your account. Cloud photos/videos, audio, prompts, lyrics and briefs are used for the creation or caption feature you request and can be linked to a guest or linked account ID. Firebase Crashlytics receives crash reports, non-fatal errors and diagnostic context associated with that ID to improve reliability. These account, media and diagnostic categories are used for app functionality, not by our app for advertising tracking. Existing identifiers, purchase events and product interactions used by the TikTok attribution SDK remain subject to the tracking disclosures below.</p>
             </div>
             <div>
               <h2 className="text-xl font-semibold text-theme">Identifiers and App Events</h2>
@@ -74,6 +72,10 @@ const SoundframeIOSDataCollection = () => {
                 This data may be used for tracking as defined by Apple. On iOS, you can allow or deny
                 tracking when prompted, and you can change that choice later in iOS Settings.
               </p>
+            </div>
+            <div>
+              <h2 className="text-xl font-semibold text-theme">Your Privacy Choices</h2>
+              <p className="mt-2">You can choose local editing without optional AI requests, choose which media to submit, decline tracking, and manage permissions in iOS Settings. Apple and Google linking are optional; the app can use a guest cloud identity. Sign-out does not by itself delete server records. To request access, correction or deletion of your SoundFrame account or cloud data, contact currenttech.co.za@gmail.com and identify the account or creation involved. We may need to verify ownership. Manage subscription cancellation through your Apple account; deleting app data does not cancel a subscription.</p>
             </div>
             <div>
               <h2 className="text-xl font-semibold text-theme">Changes</h2>

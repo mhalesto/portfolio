@@ -8,33 +8,17 @@ const SoundframeIOSPrivacy = () => {
         <div className="bg-white shadow-2xl rounded-2xl p-8">
           <p className="text-sm uppercase tracking-widest text-gray-500">SoundFrame iOS</p>
           <h1 className="text-3xl md:text-2xl font-bold text-theme mt-2">Privacy Policy</h1>
-          <p className="text-sm text-gray-500 mt-2">Last updated: May 24, 2026</p>
+          <p className="text-sm text-gray-500 mt-2">Last updated: October 12, 2026</p>
 
           <div className="mt-6 space-y-6">
-            <p>
-              SoundFrame is a video editing app for building beat-synced edits, captions, and layered
-              visual clips on iPhone and iPad. We aim to keep core media editing private and local,
-              while supporting optional account, subscription, cloud caption, AI, and advertising
-              attribution features.
-            </p>
+            <p>SoundFrame is a video editor and AI creation app for iPhone and iPad. Core timeline editing and export run on your device. Optional account, subscription, cloud caption, AI Director, product-ad, image, video, music-video, 3D and advertising attribution features use connected services. This policy explains the information involved when you choose those features.</p>
             <div>
               <h2 className="text-xl font-semibold text-theme">Information We Collect</h2>
-              <p className="mt-2">
-                Depending on the features you use, SoundFrame may process app or user identifiers,
-                device identifiers, subscription or purchase status, product interaction events, and
-                media or project content needed to provide editing, caption, account, subscription, AI,
-                support, analytics, and advertising measurement features.
-              </p>
+              <p className="mt-2">Depending on the features you use, we process your optional account name and email address, guest or linked account ID, device identifiers, subscription transactions, product interaction events, selected photos or videos, audio, prompts, lyrics, captions, product briefs and other project content. Crash reports and technical diagnostics help us investigate errors. Cloud creation records and diagnostics can be linked to your guest or linked account ID. These records support account access, requested creation tools, purchases, saved work, security, reliability and advertising measurement.</p>
             </div>
             <div>
               <h2 className="text-xl font-semibold text-theme">How Media Is Processed</h2>
-              <p className="mt-2">
-                Videos, photos, audio, captions, and timeline edits are primarily processed on your
-                device. Imported media remains under your control unless you choose to export or share it.
-                When you use cloud captioning, AI Studio, generated visuals, or similar connected
-                features, selected audio, text, prompts, project context, or generated outputs may be
-                sent to service providers only to perform the requested feature.
-              </p>
+              <p className="mt-2">Core video, photo, audio, caption and timeline editing is processed on your device. Using cloud captions, AI Director, Product Ad, image or video generation, music videos, 3D creation or other connected tools sends the selected media, sampled frames, audio, prompts, product details, lyrics, transcripts or project context to our backend and the provider needed for that request. Cloud job records, source references and generated outputs may be stored to run or resume work and show your Library. We do not automatically upload your entire Photos library. A reference photo or selected video frame may contain a face. It is used as creative reference or scene context for the feature you request, rather than to identify a real person. On-device motion tracking can follow a subject for editable effects. These workflows do not create a face-recognition account or identity database.</p>
             </div>
             <div>
               <h2 className="text-xl font-semibold text-theme">Permissions</h2>
@@ -59,12 +43,7 @@ const SoundframeIOSPrivacy = () => {
             </div>
             <div>
               <h2 className="text-xl font-semibold text-theme">Third-Party Services</h2>
-              <p className="mt-2">
-                SoundFrame may use trusted third-party services for authentication, subscriptions,
-                crash diagnostics, cloud features, AI-assisted tools, and advertising attribution.
-                These services may process data on our behalf to provide the feature you request or to
-                measure app performance and campaign effectiveness.
-              </p>
+              <p className="mt-2">Connected services include Firebase for authentication, cloud records, storage and Crashlytics diagnostics; Apple for optional sign-in and StoreKit subscriptions; Google for optional sign-in and Gemini-based AI; and the selected media providers used by the app, including OpenAI, BytePlus/ByteDance, Hyper3D and Hitem3D. Availability depends on the feature and selected model. These providers receive the inputs needed for the requested workflow and apply their own processing and retention policies. TikTok Business SDK handles advertising attribution as described below. Photos, audio, prompts and product briefs are not sent to TikTok by our sharing workflow; when you choose Share, the selected destination receives the files you select.</p>
             </div>
             <div>
               <h2 className="text-xl font-semibold text-theme">Advertising Attribution and TikTok SDK</h2>
@@ -88,12 +67,11 @@ const SoundframeIOSPrivacy = () => {
             </div>
             <div>
               <h2 className="text-xl font-semibold text-theme">Data Retention</h2>
-              <p className="mt-2">
-                Your local projects and exported files stay on your device unless you choose to share
-                them or use a connected feature. Server-side records, such as account, subscription,
-                attribution, support, and cloud feature logs, are retained only as needed to provide the
-                service, operate the app, meet legal obligations, and protect against abuse.
-              </p>
+              <p className="mt-2">Local projects and downloaded or exported files stay on your device until you remove them or share them. Cloud generation records and outputs are retained for limited periods to run jobs, recover interrupted work and show saved creations; some cloud assets expire, so download a copy if you want to keep it. Account, entitlement, anti-abuse, attribution and diagnostic records may be retained as needed to operate the service, investigate issues or meet legal obligations. Provider retention policies also apply to inputs sent to them.</p>
+            </div>
+            <div>
+              <h2 id="choices" className="text-xl font-semibold text-theme">Your Privacy Choices</h2>
+              <p className="mt-2">You can choose local editing without optional AI requests, choose which media to submit, decline tracking, and manage permissions in iOS Settings. Apple and Google linking are optional; the app can use a guest cloud identity. Sign-out does not by itself delete server records. To request access, correction or deletion of your SoundFrame account or cloud data, contact currenttech.co.za@gmail.com and identify the account or creation involved. We may need to verify ownership. Manage subscription cancellation through your Apple account; deleting app data does not cancel a subscription.</p>
             </div>
             <div>
               <h2 className="text-xl font-semibold text-theme">Children’s Privacy</h2>

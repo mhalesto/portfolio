@@ -1,19 +1,22 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap');
-
-html {
-  overflow-x: hidden;
-  scroll-behavior: smooth;
-}
-
-::-webkit-scrollbar {
-  width: 12px !important
-}
-
-::-webkit-scrollbar-thumb {
-  background-color: tomato;
-  border-radius: 7px
-}
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+html {
+  overflow-x: hidden;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(128, 128, 128, 0.45);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  border-radius: 999px;
+}

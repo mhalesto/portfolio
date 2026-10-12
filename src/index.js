@@ -1,6 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import '@fontsource-variable/inter-tight';
+import '@fontsource/instrument-serif/400';
+import '@fontsource/instrument-serif/400-italic';
+import '@fontsource-variable/jetbrains-mono';
 import './index.css';
+import './site/site.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 

@@ -1,0 +1,16 @@
+.site-header.is-hidden:focus-within {
+  transform: none;
+}
+
+.site-menu {
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-header,
+  .site-menu,
+  .site-menu__link {
+    transition: none;
+  }
+}
