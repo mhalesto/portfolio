@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import LocalTime from './LocalTime';
-import { apps, person, webProjects } from '../data';
+import { portfolioApps as apps, person, webProjects } from '../data';
 
 export default function Footer() {
   const year = new Date().getFullYear();

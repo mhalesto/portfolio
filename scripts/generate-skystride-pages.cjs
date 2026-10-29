@@ -1,0 +1,34 @@
+// Static App Store destinations and React routes read the same product content.
+const fs = require('fs');
+const path = require('path');
+const root = path.resolve(__dirname, '..');
+const folder = path.join(root, 'src/pages/skystride-ios');
+const content = JSON.parse(fs.readFileSync(path.join(folder, 'content.json'), 'utf8'));
+const css = fs.readFileSync(path.join(folder, 'skystride.css'), 'utf8');
+const base = '/projects/skystride-ios/';
+const origin = 'https://www.halalisani.com';
+const image = `${origin}/skystride-ios.png`;
+const escape = value => String(value).replace(/[&<>"]/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[character]);
+const email = `mailto:${content.email}?subject=Skystride%20Support`;
+
+const nav = (project = true) => `<nav class="ss-actions" aria-label="Skystride information"><a class="ss-button" href="${base}privacy/">Privacy Policy</a><a class="ss-button" href="${base}data-collection/">Data Collection</a><a class="ss-button" href="${base}support/">Support</a>${project ? `<a class="ss-button" href="${base}">Back to Skystride</a>` : ''}</nav>`;
+const document = (title, description, suffix, body) => `<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${escape(title)}</title><meta name="description" content="${escape(description)}"><link rel="canonical" href="${origin}${base}${suffix}"><meta property="og:type" content="website"><meta property="og:title" content="${escape(title)}"><meta property="og:description" content="${escape(description)}"><meta property="og:url" content="${origin}${base}${suffix}"><meta property="og:image" content="${image}"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="${escape(title)}"><meta name="twitter:description" content="${escape(description)}"><meta name="twitter:image" content="${image}"><style>body{margin:0;background:#eef5f1}.ss-site-nav{position:absolute;top:26px;left:0;right:0;max-width:1144px;margin:auto;padding:0 28px;display:flex;justify-content:space-between;gap:20px;font:700 14px system-ui;color:#0a292c}.ss-site-nav a{color:inherit;text-underline-offset:4px}${css}</style></head><body><header class="ss-site-nav"><a href="/">Halalisani Mbanjwa</a><a href="/projects/">All projects</a></header><main class="skystride-page">${body}<footer class="ss-footer"><span>© 2026 Halalisani Mbanjwa · CurrentTech</span><a href="${email}">${escape(content.email)}</a></footer></main></body></html>`;
+const write = (suffix, title, description, body) => {
+  const target = path.join(root, 'public', base, suffix, 'index.html');
+  fs.mkdirSync(path.dirname(target), { recursive: true });
+  fs.writeFileSync(target, document(title, description, suffix, body));
+};
+const policy = (title, body) => `<article class="ss-policy"><p class="ss-eyebrow">Skystride for iPhone · CurrentTech</p><h1>${escape(title)}</h1><p class="ss-date">Effective ${escape(content.effectiveDate)}</p>${body}${nav()}</article>`;
+const sections = content.privacySections.map(section => `<section class="ss-section"><h2>${escape(section.title)}</h2>${section.paragraphs.map(paragraph => `<p>${escape(paragraph)}</p>`).join('')}${section.link ? `<p><a href="${escape(section.link.href)}">${escape(section.link.label)}</a></p>` : ''}</section>`).join('');
+write('privacy/', 'Skystride Privacy Policy', 'How Skystride handles local progress, Apple Game Center, photo saving and voluntary support email. No developer gameplay collection, advertising or tracking.', policy('Privacy Policy', `<p>${escape(content.privacySummary)}</p>${sections}`));
+
+const dataCards = content.dataCards.map(card => `<section class="ss-card"><h2>${escape(card.title)}</h2><ul>${card.items.map(item => `<li>${escape(item)}</li>`).join('')}</ul></section>`).join('');
+write('data-collection/', 'Skystride Data Collection', 'What stays on your iPhone, what Apple Game Center handles, and what you choose to send to Skystride support.', policy('Data Collection', `<p>${escape(content.privacySummary)}</p><div class="ss-grid">${dataCards}</div><section class="ss-section ss-bottom"><h2>Your controls</h2><p>Manage Game Center sign-in and sharing in iPhone Settings. Photo saving is optional and its add-only permission can be changed in Settings. Deleting Skystride removes local progress, so contact support before reinstalling if you are trying to recover a save.</p><p><a href="${content.applePrivacyURL}">Apple’s Game Center &amp; Privacy information</a></p></section>`));
+
+const supportCards = content.supportCards.map(card => `<section class="ss-card"><h2>${escape(card.title)}</h2><p>${escape(card.body)}</p></section>`).join('');
+write('support/', 'Skystride Support', 'Official Skystride support for controls, Game Center, saved progress, music, photo mode and troubleshooting on iPhone.', policy('Skystride Support', `<p>${escape(content.supportIntro)}</p><a class="ss-button ss-primary" href="${email}">Email ${escape(content.email)}</a><p class="ss-diagnostic">${escape(content.supportDiagnostic)}</p><div class="ss-grid">${supportCards}</div>`));
+
+const features = content.features.map(([number, title, copy]) => `<article class="ss-card"><span class="ss-number">${escape(number)}</span><h2>${escape(title)}</h2><p>${escape(copy)}</p></article>`).join('');
+write('', 'Skystride — Run beyond the clouds.', 'Discover Skystride, a 3D iPhone runner through six fantasy worlds, with SKYBREAK events, Game Center, offline play and an earned-in-play wardrobe. Coming soon.', `<section class="ss-hero"><div><p class="ss-eyebrow">Skystride · A fantasy runner for iPhone</p><h1>${escape(content.tagline)}</h1><p class="ss-lede">${escape(content.intro)}</p><p class="ss-status">${escape(content.status)}</p>${nav(false)}</div><div class="ss-visual"><img class="ss-icon" src="/skystride-ios.png" width="1024" height="1024" alt="Skystride app icon: Ryder above a city in the clouds"></div></section><section class="ss-features" aria-label="Game features">${features}</section><section class="ss-note"><h2>Your journey stays with you.</h2><p>Play on iPhone with iOS 17 or later. Core play works offline and progress is saved on your device. Game Center adds online leaderboards and achievements when you sign in; it does not back up your local save.</p><p>No ads. No in-app purchases. No separate Skystride account required.</p></section><div class="ss-actions ss-bottom"><a class="ss-button" href="/projects/">All projects</a><a class="ss-button ss-primary" href="${email}">Email support</a></div>`);
+console.log('Generated Skystride product, privacy, data collection and support pages.');

@@ -1,6 +1,6 @@
 import { fireEvent, render, screen, within } from '@testing-library/react';
 import App from './App';
-import { apps, otherProjects, person, webProjects } from './site/data';
+import { apps, portfolioApps, otherProjects, person, webProjects } from './site/data';
 
 jest.mock('lenis', () => ({
   __esModule: true,
@@ -45,6 +45,10 @@ const legacyRoutes = [
   '/projects/clipaura-ios/data-collection',
   '/projects/clipaura-ios/support',
   '/projects/clipaura-ios/terms',
+  '/projects/skystride-ios',
+  '/projects/skystride-ios/privacy',
+  '/projects/skystride-ios/data-collection',
+  '/projects/skystride-ios/support',
 ];
 
 const visit = route => {
@@ -122,7 +126,7 @@ test('a visitor can add their own app idea and email it from the finale', () => 
 
 test('projects lists every app, website and earlier project', () => {
   visit('/projects');
-  [...apps, ...webProjects, ...otherProjects].forEach(project => {
+  [...portfolioApps, ...webProjects, ...otherProjects].forEach(project => {
     expect(screen.getByText(project.name, { selector: '.index-row__name' })).toBeInTheDocument();
   });
 });

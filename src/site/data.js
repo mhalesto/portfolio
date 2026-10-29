@@ -184,6 +184,28 @@ export const apps = [
   },
 ];
 
+// Product listings that do not yet have a dedicated 3D chapter. Keep the
+// established phone journey and its visitor-created eighth icon unchanged.
+export const additionalApps = [
+  {
+    slug: 'skystride',
+    name: 'Skystride',
+    route: '/projects/skystride-ios',
+    category: 'Fantasy endless runner',
+    tagline: 'Run beyond the clouds.',
+    meta: ['iPhone · Coming soon', 'iOS 17+', 'Offline core play'],
+    icon: asset('/skystride-icon.png'),
+    colors: { a: '#63e6ca', b: '#e5b654', bg: '#042429' },
+    links: [
+      { label: 'Privacy', to: '/projects/skystride-ios/privacy' },
+      { label: 'Data', to: '/projects/skystride-ios/data-collection' },
+      { label: 'Support', to: '/projects/skystride-ios/support' },
+    ],
+  },
+];
+
+export const portfolioApps = [...apps, ...additionalApps];
+
 export const webProjects = [
   {
     slug: 'promosecret',

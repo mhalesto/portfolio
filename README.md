@@ -16,7 +16,7 @@ it on the phone and in the finale orbit, and email it from there. It is stored o
 | --- | --- |
 | `npm start` | Development server on http://localhost:3000 |
 | `npm test` | Jest tests, including a check that every product, privacy, data-collection, support and terms route still renders |
-| `npm run build` | Regenerates the static ClipAura, ResumeStudio and Smart Cleaner pages, builds to `build/`, then (`scripts/postbuild.cjs`) gives every route without a static page its own copy of the app shell, so direct visits return 200 with the right title and canonical URL, and writes `sitemap.xml` |
+| `npm run build` | Regenerates the static ClipAura, ResumeStudio, Smart Cleaner and Skystride pages, builds to `build/`, then (`scripts/postbuild.cjs`) gives every route without a static page its own copy of the app shell, so direct visits return 200 with the right title and canonical URL, and writes `sitemap.xml` |
 | `npm run deploy` | Builds and publishes `build/` to the `gh-pages` branch (served at www.halalisani.com) |
 
 ## Where things live
@@ -43,3 +43,9 @@ To add an app, add it to `apps` in `src/site/data.js`, drop a 512px WebP icon in
 
 The 3D layer is progressive enhancement. Without WebGL, or with reduced motion, every page still
 renders its full content, and the canvas is hidden from assistive technology.
+
+Skystride's product, privacy, data-collection and support pages share content in
+`src/pages/skystride-ios/content.json`; `npm run generate:skystride` creates their static copies.
+Its listing lives in `additionalApps` and `portfolioApps` for Projects and navigation, leaving the
+existing seven-app 3D home journey and visitor-created eighth icon unchanged. Its public status is
+coming soon; add an App Store download link only when the app is released.

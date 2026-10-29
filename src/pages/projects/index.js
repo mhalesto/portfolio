@@ -6,13 +6,13 @@ import useReveal from '../../site/useReveal';
 import { addTicker } from '../../site/ticker';
 import { scrollToTarget } from '../../site/scroll';
 import { hasFinePointer, prefersReducedMotion, supportsWebGL } from '../../site/motion';
-import { apps, otherProjects, person, webProjects } from '../../site/data';
+import { apps, portfolioApps, otherProjects, person, webProjects } from '../../site/data';
 import './projects.css';
 
 const pad = value => String(value).padStart(2, '0');
 
 const items = [
-  ...apps.map(app => ({
+  ...portfolioApps.map(app => ({
     key: app.slug,
     name: app.name,
     kind: app.category,
@@ -221,7 +221,7 @@ export default function Projects() {
               <SplitText text="work." mode="chars" className="work-hero__line serif" />
             </h1>
             <p className="work-hero__lede">
-              {apps.length} iOS apps, {webProjects.length} websites and the projects that came before them.
+              {portfolioApps.length} iOS apps, {webProjects.length} websites and the projects that came before them.
               {webgl ? ' Every icon in the orbit opens its app.' : ''}
             </p>
             <a

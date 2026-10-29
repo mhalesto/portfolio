@@ -1,4 +1,4 @@
-import { apps, otherProjects } from './data';
+import { portfolioApps as apps, otherProjects } from './data';
 
 const SECTIONS = {
   privacy: 'Privacy Policy',

@@ -1,0 +1,162 @@
+{
+  "effectiveDate": "30 October 2026",
+  "name": "Skystride",
+  "tagline": "Run beyond the clouds.",
+  "status": "App Store release coming soon",
+  "email": "currenttech.co.za@gmail.com",
+  "applePrivacyURL": "https://www.apple.com/legal/privacy/data/en/game-center/",
+  "intro": "A portrait 3D endless runner through floating cities, ancient forests and glowing festival nights. Swipe to change lanes, jump and slide, then link aerial tricks and close escapes to build Flow.",
+  "features": [
+    [
+      "01",
+      "Six worlds to discover",
+      "Explore Sky Arches, Wonderfall, Aethrion, Wonderdark, Reverie and Luminara. Build a Grand Tour through your favourite worlds, with changing landscapes, weather and music."
+    ],
+    [
+      "02",
+      "The road comes alive",
+      "SKYBREAK events transform a run into an escape across falling bridges, an impossible road or a storm. Midnight Encore brings crimson skies and an extended amber-lit garden."
+    ],
+    [
+      "03",
+      "Make every run count",
+      "Race your own Echo in the Daily Sky Trial, deliver Sky Courier parcels, complete missions and climb 60 Sky Rank levels. Choose from six runners and earn your wardrobe in play."
+    ],
+    [
+      "04",
+      "Chase a new best",
+      "Six Game Center leaderboards and 50 achievements celebrate scores, distance, combos and milestones. Personal records remain available when you play offline."
+    ],
+    [
+      "05",
+      "Set your own atmosphere",
+      "Adjust music, world sounds and effects separately. Calm Motion softens camera movement and decorative effects while preserving the route and its timing."
+    ],
+    [
+      "06",
+      "Keep the moment",
+      "Pause a run to compose a photo, then choose whether to save it to Photos. Core play works offline, with no ads or in-app purchases."
+    ]
+  ],
+  "privacySummary": "Skystride is developed by Halalisani Mbanjwa at CurrentTech. The game does not send gameplay, device or personal data to developer-operated servers. Progress stays on your device. Optional Game Center features use Apple’s service, and contacting support shares only the information you choose to email.",
+  "privacySections": [
+    {
+      "title": "Progress stays on your device",
+      "paragraphs": [
+        "Your records, earned coins and gems, rank, achievement progress, missions, wardrobe, selected worlds and runners, settings, and Daily Sky Trial Echo are stored locally in the app. Skystride has no developer account system or cloud-save service. Game Center scores are not a backup of your local progress.",
+        "Deleting the app removes its local save. Offloading and restoring a device are controlled by iOS; do not rely on Game Center to recover coins, wardrobe or run progress. Photos you save remain in your Photos library until you delete them there."
+      ]
+    },
+    {
+      "title": "Apple Game Center",
+      "paragraphs": [
+        "If you are signed in to Game Center, Skystride sends scores and achievement progress to Apple and requests leaderboard entries so it can display standings and identify your player row. Apple’s service provides player identifiers and display names for this feature. Your Game Center name and scores may be visible to other players through leaderboards.",
+        "Game Center is optional for core play. Manage sign-in and sharing in your iPhone’s Game Center settings. Apple handles its service under its own privacy policy; Skystride does not copy Game Center account information into a developer-run database."
+      ],
+      "link": {
+        "label": "Read Apple’s Game Center & Privacy information",
+        "href": "https://www.apple.com/legal/privacy/data/en/game-center/"
+      }
+    },
+    {
+      "title": "Photos permission",
+      "paragraphs": [
+        "Photo mode asks for permission to add a shot to Photos only when you choose to save. Skystride does not read or scan your photo library and does not upload your shots. You can decline or change this permission in iOS Settings and continue playing."
+      ]
+    },
+    {
+      "title": "Advertising, purchases and measurement",
+      "paragraphs": [
+        "Skystride contains no advertising SDK, third-party analytics SDK, tracking system or in-app purchases. It does not request advertising identifiers, location, contacts, microphone or camera access. No gameplay analytics are sent to CurrentTech. Apple may process App Store or Game Center information under its own policies and your Apple settings."
+      ]
+    },
+    {
+      "title": "When you contact support",
+      "paragraphs": [
+        "If you email us, we receive your email address and whatever message, device details or attachments you choose to send. We use this information to answer your question and resolve the issue. Email is handled by our email provider, and we do not sell support correspondence or use it for advertising.",
+        "We retain support correspondence only as needed to handle the request and related support or legal obligations. You can ask us to access, correct or delete your support correspondence by emailing currenttech.co.za@gmail.com. Never send passwords, verification codes or payment-card details."
+      ]
+    },
+    {
+      "title": "Your choices and questions",
+      "paragraphs": [
+        "You can play without Game Center, adjust Game Center sharing through Apple, decline photo-saving access, or delete the app’s local data by deleting the app. We cannot restore or remotely delete a save that exists only on your device.",
+        "This policy applies to the Skystride iPhone app. We will update this page if its data handling changes. For privacy questions, contact currenttech.co.za@gmail.com."
+      ]
+    }
+  ],
+  "dataCards": [
+    {
+      "title": "Stored on your iPhone",
+      "items": [
+        "Records, rank, earned currency, missions and wardrobe",
+        "Runner and world selections, sound and motion settings",
+        "Achievement progress and the Daily Sky Trial Echo",
+        "Photo-mode shots you explicitly save to Photos"
+      ]
+    },
+    {
+      "title": "Handled by Apple",
+      "items": [
+        "Optional Game Center sign-in",
+        "Scores and achievement reports when signed in",
+        "Player identities and leaderboard entries for standings",
+        "Apple account, service and sharing settings under Apple’s policies"
+      ]
+    },
+    {
+      "title": "Not collected by CurrentTech from gameplay",
+      "items": [
+        "No gameplay or device analytics sent to a developer server",
+        "No advertising identifier or cross-app tracking",
+        "No location, contacts, microphone or camera data",
+        "No access to your existing Photos library"
+      ]
+    },
+    {
+      "title": "Only if you email support",
+      "items": [
+        "Your email address and message",
+        "Device or app information you choose to include",
+        "Any attachments you decide to send",
+        "Used to respond and resolve your request"
+      ]
+    }
+  ],
+  "supportIntro": "Need help with a run, Game Center, sound or saved progress? Contact CurrentTech and tell us what happened.",
+  "supportDiagnostic": "Include Skystride, your iPhone model, iOS version, the app version, and the steps that led to the issue. A screenshot is optional. Please do not send passwords or Apple verification codes.",
+  "supportCards": [
+    {
+      "title": "Getting started",
+      "body": "Swipe left or right to change lanes, up to jump, and down to slide. In the air, swipes can add tricks or bring you down faster. Choose a world from Home or combine worlds in Grand Tour. Pause is always available during a run."
+    },
+    {
+      "title": "Game Center and scoreboards",
+      "body": "Check that you are signed in under Settings → Game Center on your iPhone and have an internet connection. Open Scoreboard in Skystride to see leaderboards and achievements. Core play and personal records work while signed out; Open Game Center is disabled until you sign in."
+    },
+    {
+      "title": "Saved progress",
+      "body": "Your progress is stored on this iPhone. Game Center stores scores and achievements, not your wallet, wardrobe or local save. If something looks wrong, contact support before deleting or reinstalling the app; we cannot retrieve a local save from a developer server."
+    },
+    {
+      "title": "Music and motion",
+      "body": "In Settings, open Audio to adjust music, music in runs, world sounds and effects. Experience includes Calm Motion and vibration controls. For reduced motion, turn on Calm Motion in the game, or enable Reduce Motion in iPhone Settings before opening Skystride."
+    },
+    {
+      "title": "Saving a photo",
+      "body": "Use photo mode during a paused run, then choose Save. If permission was declined, review Skystride’s Photos access in iOS Settings. Permission is add-only: the game does not need to read your library."
+    },
+    {
+      "title": "Crashes or performance",
+      "body": "Tell us the world, selected runner and what happened immediately before the issue. Check that your iPhone has free storage and close and reopen the app. Avoid deleting the app as a first troubleshooting step, because that removes local progress."
+    },
+    {
+      "title": "Availability and purchases",
+      "body": "Skystride is being prepared for an App Store release for iPhone with iOS 17 or later. There are no ads or in-app purchases. Coins and gems are earned during play."
+    },
+    {
+      "title": "Privacy questions",
+      "body": "Email currenttech.co.za@gmail.com with questions about local saves, Game Center or information you sent to support. The Privacy Policy and Data Collection pages explain what stays on your phone and what Apple handles."
+    }
+  ]
+}

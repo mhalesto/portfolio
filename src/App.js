@@ -30,6 +30,10 @@ import ClipAuraIOSPrivacy from './pages/clipaura-ios/privacy';
 import ClipAuraIOSDataCollection from './pages/clipaura-ios/data-collection';
 import ClipAuraIOSSupport from './pages/clipaura-ios/support';
 import ClipAuraIOSTerms from './pages/clipaura-ios/terms';
+import SkystrideIOS from './pages/skystride-ios';
+import SkystrideIOSPrivacy from './pages/skystride-ios/privacy';
+import SkystrideIOSDataCollection from './pages/skystride-ios/data-collection';
+import SkystrideIOSSupport from './pages/skystride-ios/support';
 import RouteCurtain from './site/components/RouteCurtain';
 
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
@@ -70,6 +74,10 @@ function App() {
           <Route path='/projects/clipaura-ios/data-collection' element={<ClipAuraIOSDataCollection />} />
           <Route path='/projects/clipaura-ios/support' element={<ClipAuraIOSSupport />} />
           <Route path='/projects/clipaura-ios/terms' element={<ClipAuraIOSTerms />} />
+          <Route path='/projects/skystride-ios' element={<SkystrideIOS />} />
+          <Route path='/projects/skystride-ios/privacy' element={<SkystrideIOSPrivacy />} />
+          <Route path='/projects/skystride-ios/data-collection' element={<SkystrideIOSDataCollection />} />
+          <Route path='/projects/skystride-ios/support' element={<SkystrideIOSSupport />} />
           <Route path='/contact' element={<Contact />} />
           <Route path='/contact/' element={<Contact />} />
         </Routes>

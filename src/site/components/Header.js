@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import LocalTime from './LocalTime';
-import { apps, person } from '../data';
+import { portfolioApps as apps, person } from '../data';
 import { setScrollLocked } from '../scroll';
 import './header.css';
 
