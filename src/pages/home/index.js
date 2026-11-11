@@ -6,6 +6,7 @@ import SplitText from '../../site/components/SplitText';
 import Magnetic from '../../site/components/Magnetic';
 import Marquee from '../../site/components/Marquee';
 import ChapterRail from '../../site/components/ChapterRail';
+import Spaceman from '../../site/components/Spaceman';
 import YourAppDialog from '../../site/components/YourAppDialog';
 import ShowcaseDialog from '../../site/components/ShowcaseDialog';
 import { showcases } from '../../site/showcase';
@@ -349,6 +350,7 @@ export default function Home() {
       <main id="main" className="home-main" ref={mainRef}>
         <section className="hero" id="top" data-station="0" data-hold="0.85" data-in={heroIn ? '' : undefined}>
           <div className="hero__sticky">
+            <Spaceman />
             <div className="hero__top">
               <p className="eyebrow">Full-stack developer · Founder of {person.studio}</p>
               <p className="hero__meta mono">

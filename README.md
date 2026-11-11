@@ -76,6 +76,19 @@ scrolled; a link, or a reload, opens at the top. An in-page jump (the skip link)
 change and plays nothing. With reduced motion, or in a browser without the whole Web Animations
 API, pages simply change at once.
 
+## The logo and the spaceman
+
+The glass HM mark is `src/site/components/Logo.js` (header, loading screen, page-change curtain).
+It is one image, `public/experience/hm-logo.webp`; the glow and the band of light that crosses it
+are CSS, the band masked to the mark's own shape.
+
+The astronaut in the home hero is `src/site/components/Spaceman.js`. He and the universe he holds
+are two images (`astronaut.webp`, `universe.webp`) so each floats on its own rhythm, and both lean
+toward the pointer. `src/site/spaceman.js` decides where he fits from the hero's measured boxes:
+above the name when the window is tall, otherwise in the band between the end of the name and
+the 3D phone, and nowhere when neither leaves him room. He is decoration only: hidden from
+assistive technology, never clickable, and still under reduced motion.
+
 ## Layout that is measured, not guessed
 
 - **Pinned panels** (`useFitPanels`): a chapter panel taller than its screen is scaled down just

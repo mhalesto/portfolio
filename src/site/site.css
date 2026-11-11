@@ -216,6 +216,90 @@ a.brand:hover .brand__rule {
   width: 34px;
 }
 
+/* The glass HM mark. Its glow is drawn from its own two colours, and a band
+   of light crosses the glass now and then, masked to the mark's shape. */
+.logo {
+  position: relative;
+  display: inline-block;
+  height: var(--logo-h, 46px);
+  aspect-ratio: 384 / 240;
+  flex: none;
+}
+
+.logo__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 0 6px rgba(132, 92, 255, 0.5)) drop-shadow(0 0 14px rgba(98, 232, 74, 0.2));
+  transition:
+    filter 0.5s ease,
+    transform 0.7s var(--ease-out);
+  user-select: none;
+}
+
+.logo__sheen {
+  position: absolute;
+  inset: 0;
+  -webkit-mask: var(--logo-mask) center / 100% 100% no-repeat;
+  mask: var(--logo-mask) center / 100% 100% no-repeat;
+  background: linear-gradient(108deg, transparent 43%, rgba(255, 255, 255, 0.55) 50%, transparent 57%) 140% 0 / 260% 100% no-repeat;
+  mix-blend-mode: screen;
+  pointer-events: none;
+  animation: logo-sheen 7.5s ease-in-out 1.6s infinite;
+}
+
+@keyframes logo-sheen {
+  0%,
+  64% {
+    background-position: 140% 0;
+  }
+  100% {
+    background-position: -140% 0;
+  }
+}
+
+a.brand:hover .logo__img,
+a.brand:focus-visible .logo__img {
+  filter: drop-shadow(0 0 9px rgba(150, 110, 255, 0.8)) drop-shadow(0 0 22px rgba(98, 232, 74, 0.45));
+  transform: scale(1.07) rotate(-2deg);
+}
+
+a.brand:hover .logo__sheen {
+  animation-duration: 1.4s;
+  animation-delay: 0s;
+}
+
+/* On the loading screen the mark breathes while the scene charges. */
+.brand--static .logo__img {
+  animation: logo-breathe 2.4s ease-in-out infinite alternate;
+}
+
+@keyframes logo-breathe {
+  from {
+    filter: drop-shadow(0 0 5px rgba(132, 92, 255, 0.4)) drop-shadow(0 0 12px rgba(98, 232, 74, 0.14));
+  }
+  to {
+    filter: drop-shadow(0 0 11px rgba(150, 110, 255, 0.85)) drop-shadow(0 0 26px rgba(98, 232, 74, 0.42));
+  }
+}
+
+@media (max-width: 759.98px) {
+  .logo {
+    --logo-h: 38px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .logo__sheen,
+  .brand--static .logo__img {
+    animation: none;
+  }
+
+  .logo__img {
+    transition: none;
+  }
+}
+
 /* ==========================================================================
    Header
    ========================================================================== */
@@ -861,10 +945,9 @@ a.brand:hover .brand__rule {
 }
 
 .route-curtain__mark {
-  font-family: var(--font-mono);
-  font-size: 13px;
-  letter-spacing: 0.3em;
-  color: rgba(236, 234, 228, 0.6);
+  --logo-h: clamp(72px, 9vw, 120px);
+  display: block;
+  line-height: 0;
   opacity: 0;
 }
 

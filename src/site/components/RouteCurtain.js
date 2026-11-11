@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { prefersReducedMotion } from '../motion';
 import { scrollToTarget } from '../scroll';
 import { internalDestination, isLinkToThisPage, samePage, setLeaveHandler } from '../transition';
+import Logo from './Logo';
 
 // The cover eases both ways; the reveal sets off at once and settles slowly,
 // so the dark pause between the two stays short.
@@ -180,7 +181,7 @@ export default function RouteCurtain() {
   return (
     <div className="route-curtain" ref={panelRef} aria-hidden="true">
       <span className="route-curtain__mark" ref={markRef}>
-        HG — M
+        <Logo />
       </span>
     </div>
   );

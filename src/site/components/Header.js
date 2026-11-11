@@ -3,6 +3,7 @@ import { Link, NavLink, useLocation } from 'react-router-dom';
 import LocalTime from './LocalTime';
 import { portfolioApps as apps, person } from '../data';
 import { setScrollLocked } from '../scroll';
+import Logo from './Logo';
 import './header.css';
 
 const navItems = [
@@ -118,9 +119,7 @@ export default function Header({ tone = 'solid' }) {
       <header className={classes} ref={headerRef}>
         <div className="site-header__inner">
           <Link to="/" className="brand" aria-label={`${person.name}, home`}>
-            <span>HG</span>
-            <span className="brand__rule" aria-hidden="true" />
-            <span>M</span>
+            <Logo />
           </Link>
 
           <nav className="site-nav" aria-label="Primary">
