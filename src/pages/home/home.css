@@ -1073,8 +1073,10 @@
   opacity: 1;
 }
 
+/* Paused: it lingers a moment, so a visitor sees the tour stopped where
+   they took over, then gets out of the way. */
 .tour-bar.is-paused {
-  opacity: 0.5;
+  transition-delay: 1.4s;
 }
 
 .tour-bar span {
