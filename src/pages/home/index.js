@@ -425,7 +425,7 @@ export default function Home() {
 
             <div className="hero__cue mono">
               {tour.available && (
-                <button type="button" className="hero__tour" data-tour-control="" data-cursor="Play" onClick={tour.play}>
+                <button type="button" className="hero__tour" data-tour-control="" onClick={tour.play}>
                   <span className="hero__tour-disc" aria-hidden="true">
                     <TourIcon />
                   </span>

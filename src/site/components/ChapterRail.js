@@ -61,7 +61,6 @@ export default function ChapterRail({ items, tour = null }) {
             type="button"
             className={`rail__tour${playing ? ' is-playing' : ''}`}
             data-tour-control=""
-            data-cursor={playing ? 'Pause' : 'Play'}
             aria-pressed={playing}
             onClick={tour.toggle}
           >
