@@ -64,6 +64,8 @@
   height: 100vh;
   height: 100svh;
   padding: calc(var(--header-h) + 26px) var(--gutter) 34px;
+  /* The orb's glow may reach past the screen edge; it must not widen the page. */
+  overflow-x: clip;
 }
 
 .hero__top {
@@ -164,7 +166,9 @@
   top: -1.5%;
   width: 13.9%;
   aspect-ratio: 203 / 209;
-  transform: translate3d(calc(var(--lean-x, 0) * 24px), calc(var(--lean-y, 0) * 18px), 0);
+  /* It follows the pointer down freely, but only a little way up: the top
+     line of the hero is just above it. */
+  transform: translate3d(calc(var(--lean-x, 0) * 24px), calc(max(var(--lean-y, 0), -0.3) * 18px), 0);
 }
 
 .spaceman__universe {

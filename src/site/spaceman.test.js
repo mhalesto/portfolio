@@ -79,3 +79,15 @@ test('the phone edge follows the scene: further right in a wide window, further 
   expect(phoneLeftEdge(1920, 1080)).toBeGreaterThan(phoneLeftEdge(1440, 900));
   expect(phoneLeftEdge(1280, 1024)).toBeLessThan(phoneLeftEdge(1280, 610));
 });
+
+test('in the phone layout he is never taller than the name beside him', () => {
+  // A tablet: plenty of room to the right of a small name. Unchecked he would
+  // grow into the paragraph underneath.
+  const tablet = { ...phone, width: 820, height: 1180, gutter: 28, title: { top: 760, height: 110 }, nameRight: 420, rightLimit: 792 };
+  const place = placeSpaceman(tablet);
+  expect(place.width / FIGURE_ASPECT).toBeLessThanOrEqual(tablet.title.height + 0.01);
+  expect(place.top).toBeGreaterThanOrEqual(tablet.title.top - 8);
+  expect(bottom(place)).toBeLessThanOrEqual(tablet.title.top + tablet.title.height + 0.01);
+  // And he stops short of the gutter, leaving the orb's glow on screen.
+  expect(place.left + place.width).toBeLessThan(tablet.width - tablet.gutter);
+});

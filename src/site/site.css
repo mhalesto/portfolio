@@ -292,8 +292,9 @@ a.brand:hover .logo__sheen {
   }
 }
 
+/* Only where it is the page's mark; the curtain sets its own, larger size. */
 @media (max-width: 759.98px) {
-  .logo {
+  .brand .logo {
     --logo-h: 38px;
   }
 }

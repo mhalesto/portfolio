@@ -25,9 +25,11 @@ export function placeSpaceman({ width, height, gutter, stacked, title, nameRight
 
   if (stacked) {
     // Beside the name, as an accent: there is no sky here, the phone has it.
+    // Never taller than the name he is level with, or he would run into the
+    // copy under it; and a little short of the gutter, for the orb's glow.
     const left = nameRight + 10;
-    const size = Math.min(width - gutter - left, width * 0.42);
-    if (size < 70) return null;
+    const size = Math.min((width - gutter - left) * 0.94, width * 0.42, title.height * FIGURE_ASPECT);
+    if (size < 64) return null;
     const tall = size / FIGURE_ASPECT;
     return { left, top: title.top + title.height * 0.46 - tall / 2, width: size, mode: 'beside' };
   }

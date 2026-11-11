@@ -17,7 +17,10 @@ function measure(node) {
   const gutter = parseFloat(style.paddingLeft) || 0;
   const width = hero.clientWidth;
   const height = Math.min(hero.clientHeight, window.innerHeight || hero.clientHeight);
-  const stacked = width < 760 || width / (window.innerHeight || height) < 0.95;
+  // The stylesheet's own test for the phone layout, so the two can never
+  // disagree (a scrollbar makes the hero narrower than the window).
+  const query = typeof window.matchMedia === 'function' ? window.matchMedia('(max-width: 759.98px), (max-aspect-ratio: 95/100)') : null;
+  const stacked = query ? query.matches : width < 760 || width / (window.innerHeight || height) < 0.95;
   const words = Array.from(title.querySelectorAll('.split__word'));
   const nameRight = words.reduce((right, word) => Math.max(right, word.getBoundingClientRect().right - heroBox.left), 0);
   const top = hero.querySelector('.hero__top');
