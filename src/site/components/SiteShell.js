@@ -23,8 +23,8 @@ export default function SiteShell({ children, className = '' }) {
     // The browser's own restoration runs before the page exists and lands
     // somewhere arbitrary on a page this long; do it here instead.
     const history = window.history;
-    const previous = history && 'scrollRestoration' in history ? history.scrollRestoration : null;
-    if (previous) history.scrollRestoration = 'manual';
+    const ownsRestoration = Boolean(history) && 'scrollRestoration' in history;
+    if (ownsRestoration) history.scrollRestoration = 'manual';
 
     // Back and forward return to where the visitor was; a link starts at the top.
     const remembered = back ? recallScroll(key) : null;
@@ -37,7 +37,13 @@ export default function SiteShell({ children, className = '' }) {
 
     return () => {
       window.removeEventListener('scroll', remember);
-      if (previous) history.scrollRestoration = previous;
+      // The mode belongs to whichever history entry is current when it is
+      // set, and by now that is the page being opened. Product and policy
+      // pages rely on the browser's own restoration, so hand it back
+      // outright: "whatever it was before" could be the manual mode this
+      // shell left on its own entry the last time round. If the next page is
+      // one of ours, its shell takes over again straight after this.
+      if (ownsRestoration) history.scrollRestoration = 'auto';
       root.classList.remove('theme-dark');
       stopSmoothScroll();
     };

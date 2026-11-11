@@ -83,3 +83,32 @@ test('scrolling after the page has gone is not recorded against it', () => {
   renderSite(0);
   expect(setScrollPosition).toHaveBeenCalledWith(500);
 });
+
+test('takes over scroll restoration while mounted and always hands it back to the browser', () => {
+  // jsdom has no scrollRestoration; a browser keeps one per history entry.
+  let mode = 'auto';
+  Object.defineProperty(window.history, 'scrollRestoration', {
+    configurable: true,
+    get: () => mode,
+    set: value => {
+      mode = value;
+    },
+  });
+  try {
+    const first = renderSite(0);
+    expect(mode).toBe('manual');
+    first.unmount();
+    expect(mode).toBe('auto');
+
+    // Coming Back to an entry this shell had already set to manual: leaving it
+    // again must still give the next page the browser's own restoration, not
+    // "the previous value", which here is manual.
+    mode = 'manual';
+    const again = renderSite(0);
+    expect(mode).toBe('manual');
+    again.unmount();
+    expect(mode).toBe('auto');
+  } finally {
+    delete window.history.scrollRestoration;
+  }
+});
