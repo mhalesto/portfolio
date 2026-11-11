@@ -564,6 +564,21 @@ async function build(options, controller) {
   const bezier = new THREE.CubicBezierCurve3(startPosition, control1, control2, endPosition);
   let lastScroll = window.scrollY;
   let velocity = 0;
+  // The pointer, as the current feels it.
+  const stirRay = new THREE.Raycaster();
+  const stirDirection = new THREE.Vector3(0, 0, -1);
+  const lastPointer = new THREE.Vector2();
+  const ripplePoint = new THREE.Vector3();
+  let stir = 0;
+  // A click or tap on empty space sends a ripple through the current, from
+  // the point under the pointer at the depth the camera is looking at.
+  interaction.onEmpty = () => {
+    stirRay.setFromCamera(interaction.ndc, camera);
+    ripplePoint
+      .copy(stirRay.ray.origin)
+      .addScaledVector(stirRay.ray.direction, camera.position.distanceTo(lookPosition));
+    current.pulse(ripplePoint);
+  };
 
   const frameState = {
     time: 0,
@@ -617,6 +632,17 @@ async function build(options, controller) {
       engine.height,
     );
     engine.finalPass.uniforms.uAberration.value = 0.004 + speed * 0.02 * engine.motion;
+
+    // The current parts and brightens under the pointer: a little while it
+    // rests, more the faster it sweeps, and it lets go slowly.
+    camera.updateMatrixWorld();
+    stirRay.setFromCamera(interaction.ndc, camera);
+    stirDirection.lerp(stirRay.ray.direction, 1 - Math.exp(-delta * 10)).normalize();
+    const pointerSpeed = lastPointer.distanceTo(interaction.screen) / Math.max(delta, 1 / 240);
+    lastPointer.copy(interaction.screen);
+    const stirTarget = interaction.hovering ? clamp(0.3 + pointerSpeed * 0.5) : 0;
+    stir = damp(stir, stirTarget, stirTarget > stir ? 9 : 1.6, delta);
+    current.setPointer(camera.position, stirDirection, stir * engine.motion);
 
     // Palette
     const paletteBlend = smoothstep(0.2, 0.8, p - i0);
