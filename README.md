@@ -72,7 +72,9 @@ with the 3D scene, never with reduced motion, and pauses on any wheel, touch, pr
 takes over ordinary clicks on links to other pages of the site and leaves everything else to the
 browser. Code that changes page without a link calls `travel(path, navigate)` from
 `src/site/transition.js` to get the same exit. Back and Forward return to where each page was
-scrolled; a link, or a reload, opens at the top.
+scrolled; a link, or a reload, opens at the top. An in-page jump (the skip link) is not a page
+change and plays nothing. With reduced motion, or in a browser without the whole Web Animations
+API, pages simply change at once.
 
 ## Layout that is measured, not guessed
 
