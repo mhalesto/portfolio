@@ -1,5 +1,5 @@
-import { fireEvent, render, screen } from '@testing-library/react';
-import { Link, MemoryRouter, Route, Routes, useNavigate } from 'react-router-dom';
+import { act, fireEvent, render, screen } from '@testing-library/react';
+import { BrowserRouter, Link, MemoryRouter, Route, Routes, useNavigate } from 'react-router-dom';
 import SiteShell from './SiteShell';
 import { resetScroll, setScrollPosition, startSmoothScroll, stopSmoothScroll } from '../scroll';
 import { forgetScroll } from '../scrollMemory';
@@ -138,4 +138,94 @@ test('positions are remembered against the entry that is current, even when it c
   // Back to the original entry: where it was when the visitor left it.
   site(0);
   expect(setScrollPosition).toHaveBeenCalledWith(1200);
+});
+
+test('two pages that share a router key do not share a remembered position', () => {
+  // The first page of a visit and any entry the browser makes for an in-page
+  // jump are both keyed "default" by the router. Here: Home, then Projects.
+  const visit = path => render(
+    <MemoryRouter initialEntries={[path]}>
+      <Routes>
+        <Route path="/" element={<SiteShell><main>Home</main></SiteShell>} />
+        <Route path="/projects" element={<SiteShell><main>Projects</main></SiteShell>} />
+      </Routes>
+    </MemoryRouter>,
+  );
+  const home = visit('/');
+  scrollTo(8400);
+  home.unmount();
+  jest.clearAllMocks();
+
+  // Projects opens on an entry with the same key and must not inherit 8400.
+  visit('/projects');
+  expect(setScrollPosition).not.toHaveBeenCalled();
+  expect(resetScroll).toHaveBeenCalledTimes(1);
+});
+
+test('Back and Forward between two entries of the same page return to where each was left', () => {
+  function Controls() {
+    const navigate = useNavigate();
+    return (
+      <>
+        <button type="button" onClick={() => navigate('/?filter=ios')}>Filter</button>
+        <button type="button" onClick={() => navigate(-1)}>Back</button>
+        <button type="button" onClick={() => navigate(1)}>Forward</button>
+      </>
+    );
+  }
+  render(
+    <MemoryRouter initialEntries={['/']}>
+      <Routes>
+        <Route path="/" element={<SiteShell><Controls /></SiteShell>} />
+      </Routes>
+    </MemoryRouter>,
+  );
+  scrollTo(1200);
+  fireEvent.click(screen.getByRole('button', { name: 'Filter' }));
+  // A new entry starts out where the page already is: nothing moves.
+  expect(setScrollPosition).not.toHaveBeenCalled();
+  scrollTo(2900);
+
+  fireEvent.click(screen.getByRole('button', { name: 'Back' }));
+  expect(setScrollPosition).toHaveBeenLastCalledWith(1200);
+  scrollTo(1200);
+  fireEvent.click(screen.getByRole('button', { name: 'Forward' }));
+  expect(setScrollPosition).toHaveBeenLastCalledWith(2900);
+  // The page never remounted to do it.
+  expect(resetScroll).toHaveBeenCalledTimes(1);
+});
+
+test('an in-page jump lands where the browser put it, not where an earlier entry was read to', () => {
+  window.history.replaceState(null, '', '/');
+  const { unmount } = render(
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<SiteShell><main id="main">Home</main></SiteShell>} />
+      </Routes>
+    </BrowserRouter>,
+  );
+  try {
+    scrollTo(3000);
+    jest.clearAllMocks();
+    // What a click on the skip link does: the browser adds an entry of its own
+    // (no state, so the router keys it "default" like the first page of the
+    // visit), reports it as a history move and scrolls to the target. The
+    // scroll event for that arrives a frame later.
+    act(() => {
+      window.history.pushState(null, '', '/#main');
+      window.dispatchEvent(new PopStateEvent('popstate', { state: null }));
+    });
+    scrollTo(0);
+    expect(setScrollPosition).not.toHaveBeenCalled();
+
+    // Back to the entry before the jump: where it was read to.
+    act(() => {
+      window.history.replaceState(null, '', '/');
+      window.dispatchEvent(new PopStateEvent('popstate', { state: null }));
+    });
+    expect(setScrollPosition).toHaveBeenLastCalledWith(3000);
+  } finally {
+    unmount();
+    window.history.replaceState(null, '', '/');
+  }
 });

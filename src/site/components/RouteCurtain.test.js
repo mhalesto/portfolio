@@ -21,7 +21,7 @@ const renderSite = () => render(
     <RouteCurtain />
     <Where />
     <Routes>
-      <Route path="/" element={<><Link to="/">Logo</Link><Link to="/projects">Projects</Link><OrbitIcon /></>} />
+      <Route path="/" element={<><Link to="/">Logo</Link><Link to="/projects">Projects</Link><Link to="/#main">Skip to content</Link><OrbitIcon /></>} />
       <Route path="/projects" element={<Link to="/">Home</Link>} />
       <Route path="/contact" element={<Link to="/">Home</Link>} />
     </Routes>
@@ -47,6 +47,9 @@ function installAnimations() {
     return animation;
   });
   HTMLElement.prototype.getAnimations = jest.fn(() => []);
+  // The curtain also checks that animations report when they finish.
+  window.Animation = function Animation() {};
+  Object.defineProperty(window.Animation.prototype, 'finished', { configurable: true, get: () => Promise.resolve() });
 }
 
 const where = () => screen.getByTestId('where').textContent;
@@ -61,6 +64,7 @@ beforeEach(() => {
 afterEach(() => {
   delete HTMLElement.prototype.animate;
   delete HTMLElement.prototype.getAnimations;
+  delete window.Animation;
   jest.useRealTimers();
 });
 
@@ -154,4 +158,44 @@ test('visitors who prefer reduced motion change page at once', () => {
   } finally {
     window.matchMedia = matchMedia;
   }
+});
+
+test('an engine with animate() but not the rest of Web Animations changes page at once instead of crashing', () => {
+  // Chromium 36 to 83 and Firefox 48 to 74: element.animate() exists, getAnimations() does not.
+  HTMLElement.prototype.animate = jest.fn();
+  renderSite();
+  fireEvent.click(screen.getByRole('link', { name: 'Projects' }));
+  expect(where()).toBe('/projects');
+  expect(HTMLElement.prototype.animate).not.toHaveBeenCalled();
+  // And on to another page: the app is still standing.
+  window.history.pushState({}, '', '/projects');
+  fireEvent.click(screen.getByRole('link', { name: 'Home' }));
+  expect(where()).toBe('/');
+});
+
+test('an engine that throws part-way through still takes the visitor to the page', () => {
+  installAnimations();
+  HTMLElement.prototype.animate = jest.fn(() => {
+    throw new Error('not today');
+  });
+  const { container } = renderSite();
+  fireEvent.click(screen.getByRole('link', { name: 'Projects' }));
+  expect(where()).toBe('/projects');
+  expect(container.querySelector('.route-curtain').style.visibility).toBe('hidden');
+  // Not left believing a page is still on its way out.
+  HTMLElement.prototype.animate = jest.fn(() => {
+    throw new Error('still not');
+  });
+  window.history.pushState({}, '', '/projects');
+  fireEvent.click(screen.getByRole('link', { name: 'Home' }));
+  expect(where()).toBe('/');
+});
+
+test('an in-page jump is not a page change: no curtain', () => {
+  installAnimations();
+  renderSite();
+  // The skip link leaves the path alone and only adds a #target.
+  fireEvent.click(screen.getByRole('link', { name: 'Skip to content' }));
+  expect(where()).toBe('/');
+  expect(animations).toHaveLength(0);
 });

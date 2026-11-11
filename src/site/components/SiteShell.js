@@ -10,12 +10,17 @@ import { recallScroll, rememberScroll } from '../scrollMemory';
 export default function SiteShell({ children, className = '' }) {
   const location = useLocation();
   const navigationType = useNavigationType();
+  // The router's key alone does not identify a history entry: every entry it
+  // did not create itself (the first page of a visit, the one the browser
+  // adds for an in-page jump such as the skip link) is keyed "default". The
+  // address tells those apart.
+  const memoryKey = `${location.pathname.replace(/\/+$/, '')}${location.search}${location.hash}|${location.key}`;
   // How this page was opened decides where it starts.
-  const entry = useRef({ key: location.key, back: navigationType === 'POP' });
+  const entry = useRef({ key: memoryKey, back: navigationType === 'POP' });
   // The entry can change while this page stays mounted (a link to the same
   // route with a different query, say). Positions belong to the current one.
-  const currentKey = useRef(location.key);
-  currentKey.current = location.key;
+  const currentKey = useRef(memoryKey);
+  currentKey.current = memoryKey;
 
   // A layout effect: the theme and the scroll position are settled before
   // the first paint, so a page never shows at the wrong place for a frame.
@@ -52,6 +57,19 @@ export default function SiteShell({ children, className = '' }) {
       stopSmoothScroll();
     };
   }, []);
+
+  // The entry changed under a page that stays mounted: an in-page jump, a
+  // changed query, or Back and Forward between two such entries. Returning to
+  // an entry goes back to where it was left, as the browser would do for
+  // itself; a new one starts out wherever the page is now.
+  const shownKey = useRef(memoryKey);
+  useLayoutEffect(() => {
+    if (shownKey.current === memoryKey) return;
+    shownKey.current = memoryKey;
+    const remembered = navigationType === 'POP' ? recallScroll(memoryKey) : null;
+    if (remembered === null) rememberScroll(memoryKey, window.scrollY);
+    else setScrollPosition(remembered);
+  }, [memoryKey, navigationType]);
 
   return (
     <div className={`site ${className}`}>
