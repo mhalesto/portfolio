@@ -1576,7 +1576,14 @@
 .home--static .hero__fallback { top: 32%; }
 .home--static .hero__title { font-size: clamp(56px, 8vw, 142px); }
 
-@media (max-width: 759.98px), (max-aspect-ratio: 95/100) {
+/* The chapter picker stands in for the rail wherever the rail cannot work:
+   the phone layout, and any window too short to hold all of it under the
+   header (the rail is about 400px tall and centred). */
+@media (max-width: 759.98px), (max-aspect-ratio: 95/100), (max-height: 580px) {
+  .rail {
+    display: none;
+  }
+
   .chapter-jump {
     position: fixed;
     right: var(--gutter);
@@ -1611,6 +1618,17 @@
   .chapter-jump select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
   .chapter-jump option { background: var(--bg-2); color: var(--fg); }
   .chapter-jump.is-hidden { opacity: 0; pointer-events: none; }
+}
+
+/* In a short wide window the picker takes the corner the chapter's hint
+   normally has, so the hint moves up out of its way. */
+@media (min-width: 760px) and (min-aspect-ratio: 95/100) and (max-height: 580px) {
+  .chapter__hint {
+    bottom: 74px;
+  }
+}
+
+@media (max-width: 759.98px), (max-aspect-ratio: 95/100) {
   .home--static .hero__fallback { position: static; grid-row: 1; margin-top: 32px; }
   .home--static .chapter__sticky { padding-top: 310px; }
   .home--static .chapter__fallback { top: 165px; width: 180px; height: 180px; }

@@ -425,9 +425,15 @@ export default function Home() {
 
             <div className="hero__cue mono">
               {tour.available && (
-                <button type="button" className="hero__tour" data-tour-control="" onClick={tour.play}>
+                <button
+                  type="button"
+                  className="hero__tour"
+                  data-tour-control=""
+                  aria-pressed={tour.status === 'playing'}
+                  onClick={tour.toggle}
+                >
                   <span className="hero__tour-disc" aria-hidden="true">
-                    <TourIcon />
+                    <TourIcon playing={tour.status === 'playing'} />
                   </span>
                   Watch the tour
                 </button>

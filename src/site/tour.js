@@ -1,5 +1,5 @@
 import { addTicker } from './ticker';
-import { scrollToTarget, setScrollPosition } from './scroll';
+import { haltScroll, onScrollIntent, scrollToTarget, setScrollPosition } from './scroll';
 
 // The tour plays the scroll-driven journey by itself: it moves the page the
 // way a visitor would, slowly through each pinned chapter and quickly between
@@ -48,7 +48,9 @@ export function measureTour(plan) {
       pinSpeed: pin && step.hold ? pin / step.hold : 0,
       readSpeed: (step.reading || TRAVEL) * viewport,
     });
-    if (step.end !== undefined) end = top + pin * step.end;
+    // Pinned: stop part-way through the pin. Not pinned (phones): there is no
+    // pin to stop in, so stop where the whole section has come into view.
+    if (step.end !== undefined) end = pin ? top + pin * step.end : Math.max(top, bottom - viewport);
   });
   return { zones, viewport, travel: TRAVEL * viewport, end: Math.min(end === null ? limit : end, limit) };
 }
@@ -82,6 +84,10 @@ export function advance(tour, state, delta) {
 
 const fromControl = event =>
   Boolean(event.target && event.target.closest && event.target.closest('[data-tour-control]'));
+// Space on a focused control is about to become that control's click, which
+// decides for itself. Every other key means what it means anywhere else:
+// focus stays on the control that started the tour, and Escape must still stop it.
+const isOwnActivation = event => fromControl(event) && (event.key === ' ' || event.key === 'Spacebar');
 
 // status: 'idle' (not touring), 'playing', or 'paused' (the visitor took
 // over part-way; play() carries on from wherever they are now).
@@ -93,6 +99,7 @@ export function createTour(plan, { onStatus = () => {}, onProgress = () => {}, o
   let frames = 0;
   let rewinding = false;
   let removeTicker = null;
+  let removeIntent = null;
 
   const setStatus = next => {
     if (next === status) return;
@@ -104,7 +111,7 @@ export function createTour(plan, { onStatus = () => {}, onProgress = () => {}, o
     if (status === 'playing') halt('paused');
   };
   const onKey = event => {
-    if (SCROLL_KEYS.has(event.key) && !fromControl(event)) pause();
+    if (SCROLL_KEYS.has(event.key) && !isOwnActivation(event)) pause();
   };
   const onPointer = event => {
     if (!fromControl(event)) pause();
@@ -115,12 +122,18 @@ export function createTour(plan, { onStatus = () => {}, onProgress = () => {}, o
     window[method]('touchstart', onPointer, { passive: true });
     window[method]('pointerdown', onPointer, { passive: true });
     window[method]('keydown', onKey);
+    // A jump asked for by keyboard or assistive technology arrives with no
+    // pointer or scrolling key to announce it: stand down for those too.
+    if (removeIntent) removeIntent();
+    removeIntent = on ? onScrollIntent(pause) : null;
   };
 
   function halt(next) {
     if (removeTicker) removeTicker();
     removeTicker = null;
     listen(false);
+    // Taking over during the trip back to the top stops that trip too.
+    if (rewinding) haltScroll();
     rewinding = false;
     setStatus(next);
   }
@@ -166,8 +179,10 @@ export function createTour(plan, { onStatus = () => {}, onProgress = () => {}, o
     state = { y: window.scrollY, speed: 0 };
     expected = state.y;
     // Already at the end (or below it, by the footer): play it again from the top.
-    rewinding = state.y >= tour.end - 4;
-    if (rewinding) scrollToTarget(0, { duration: 1.4 });
+    // Asked for before listening, so the tour does not take this for a takeover.
+    const rewind = state.y >= tour.end - 4;
+    if (rewind) scrollToTarget(0, { duration: 1.4 });
+    rewinding = rewind;
     onProgress(rewinding ? 0 : state.y / tour.end);
     listen(true);
     // Before smooth scrolling (-10), so the page is in place for everything

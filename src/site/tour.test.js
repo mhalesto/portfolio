@@ -1,9 +1,14 @@
 import { TRAVEL, advance, createTour, measureTour, speedAt } from './tour';
 import { addTicker } from './ticker';
-import { scrollToTarget, setScrollPosition } from './scroll';
+import { haltScroll, onScrollIntent, scrollToTarget, setScrollPosition } from './scroll';
 
 jest.mock('./ticker', () => ({ addTicker: jest.fn() }));
-jest.mock('./scroll', () => ({ scrollToTarget: jest.fn(), setScrollPosition: jest.fn() }));
+jest.mock('./scroll', () => ({
+  haltScroll: jest.fn(),
+  onScrollIntent: jest.fn(),
+  scrollToTarget: jest.fn(),
+  setScrollPosition: jest.fn(),
+}));
 
 const VIEWPORT = 800;
 
@@ -44,6 +49,7 @@ function desktopPage() {
 
 let innerHeight;
 let frame;
+let intent;
 beforeEach(() => {
   jest.clearAllMocks();
   document.body.innerHTML = '';
@@ -54,6 +60,14 @@ beforeEach(() => {
   // The page follows wherever the tour puts it, as a browser would.
   setScrollPosition.mockImplementation(y => setScroll(y));
   frame = null;
+  // Stands in for scroll.js: remembers who asked to hear about scroll requests.
+  intent = null;
+  onScrollIntent.mockImplementation(listener => {
+    intent = listener;
+    return jest.fn(() => {
+      intent = null;
+    });
+  });
   addTicker.mockImplementation(fn => {
     frame = fn;
     return jest.fn(() => {
@@ -203,6 +217,7 @@ test('using the tour controls themselves does not count as taking over', () => {
   const tour = createTour(plan);
   tour.play();
   control.dispatchEvent(new Event('pointerdown', { bubbles: true }));
+  // Space on a focused button becomes its click, which toggles the tour itself.
   control.dispatchEvent(new KeyboardEvent('keydown', { key: ' ', bubbles: true }));
   expect(tour.getStatus()).toBe('playing');
   tour.toggle();
@@ -210,6 +225,49 @@ test('using the tour controls themselves does not count as taking over', () => {
   tour.toggle();
   expect(tour.getStatus()).toBe('playing');
   tour.dispose();
+});
+
+test('Escape and the scrolling keys stop the tour even while its own control has focus', () => {
+  desktopPage();
+  // Focus stays on the button that started the tour for as long as it plays.
+  const control = document.createElement('button');
+  control.setAttribute('data-tour-control', '');
+  document.body.appendChild(control);
+  const tour = createTour(plan);
+  ['Escape', 'ArrowDown', 'PageDown', 'End'].forEach(key => {
+    tour.play();
+    control.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true }));
+    expect(tour.getStatus()).toBe('paused');
+  });
+});
+
+test('a scroll asked for by other means (a keyboard "Start the journey") pauses the tour instead of being fought', () => {
+  desktopPage();
+  const tour = createTour(plan);
+  tour.play();
+  run(0.5);
+  expect(intent).toEqual(expect.any(Function));
+  // scroll.js calls this at the start of every scrollToTarget.
+  intent();
+  expect(tour.getStatus()).toBe('paused');
+  expect(intent).toBeNull();
+});
+
+test('on a phone, where the finale is not pinned, the tour ends with the whole finale in view', () => {
+  section('top', 0, 1600, true);
+  section('chapter', 1600, 1300, false);
+  // 58svh of world, then the title, the buttons and the hint: taller than the screen.
+  section('finale', 2900, 950, false);
+  Object.defineProperty(document.documentElement, 'scrollHeight', { value: 4800, configurable: true });
+  const tour = measureTour(plan);
+  // Its bottom edge meets the bottom of the 800px screen: 2900 + 950 - 800.
+  expect(tour.end).toBe(3050);
+
+  // A finale shorter than the screen simply ends at its top.
+  document.body.innerHTML = '';
+  section('top', 0, 1600, true);
+  section('finale', 1600, 700, false);
+  expect(measureTour(plan).end).toBe(1600);
 });
 
 test('a jump made by something else (the scrollbar, the chapter rail) pauses the tour', () => {
@@ -244,6 +302,8 @@ test('asked to play at the end, it returns to the top and starts again', () => {
   const tour = createTour(plan);
   tour.play();
   expect(scrollToTarget).toHaveBeenCalledWith(0, expect.any(Object));
+  // Its own trip to the top is not a visitor taking over.
+  expect(tour.getStatus()).toBe('playing');
   // Still rewinding: the tour leaves the page alone.
   run(0.5);
   expect(setScrollPosition).not.toHaveBeenCalled();
@@ -251,7 +311,21 @@ test('asked to play at the end, it returns to the top and starts again', () => {
   run(1);
   expect(window.scrollY).toBeGreaterThan(0);
   expect(tour.getStatus()).toBe('playing');
+  expect(haltScroll).not.toHaveBeenCalled();
   tour.dispose();
+});
+
+test('taking over during the trip back to the top stops that trip', () => {
+  desktopPage();
+  setScroll(6000);
+  const tour = createTour(plan);
+  tour.play();
+  setScroll(3700);
+  run(0.3);
+  window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+  expect(tour.getStatus()).toBe('paused');
+  // Without this the page would carry on to the top by itself.
+  expect(haltScroll).toHaveBeenCalledTimes(1);
 });
 
 test('does nothing on a page with none of the planned sections', () => {
