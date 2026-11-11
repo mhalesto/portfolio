@@ -27,7 +27,7 @@ export function placeSpaceman({ width, height, gutter, stacked, title, nameRight
     // Beside the name, as an accent: there is no sky here, the phone has it.
     const left = nameRight + 10;
     const size = Math.min(width - gutter - left, width * 0.42);
-    if (size < 92) return null;
+    if (size < 70) return null;
     const tall = size / FIGURE_ASPECT;
     return { left, top: title.top + title.height * 0.46 - tall / 2, width: size, mode: 'beside' };
   }

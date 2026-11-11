@@ -41,6 +41,21 @@ function measure(node) {
 export default function Spaceman() {
   const ref = useRef(null);
   const [place, setPlace] = useState(null);
+  // Out of sight further down the journey, he rests: no floating, no leaning.
+  const [inView, setInView] = useState(true);
+  const inViewRef = useRef(true);
+
+  useEffect(() => {
+    const node = ref.current;
+    if (!node || typeof IntersectionObserver === 'undefined') return undefined;
+    const observer = new IntersectionObserver(entries => {
+      const visible = entries[entries.length - 1].isIntersecting;
+      inViewRef.current = visible;
+      setInView(visible);
+    });
+    observer.observe(node.parentElement);
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     const node = ref.current;
@@ -89,6 +104,7 @@ export default function Spaceman() {
     };
     window.addEventListener('pointermove', onMove, { passive: true });
     const removeTicker = addTicker((time, delta) => {
+      if (!inViewRef.current) return;
       const dx = target.x - shown.x;
       const dy = target.y - shown.y;
       if (Math.abs(dx) < 0.002 && Math.abs(dy) < 0.002) return;
@@ -111,20 +127,25 @@ export default function Spaceman() {
   return (
     <div
       ref={ref}
-      className={`spaceman${place ? ` is-placed spaceman--${place.mode}` : ''}`}
+      className={`spaceman${place ? ` is-placed spaceman--${place.mode}` : ''}${inView ? '' : ' is-resting'}`}
       style={style}
       aria-hidden="true"
     >
-      <div className="spaceman__lean">
-        <img className="spaceman__figure" src={FIGURE} alt="" width="960" height="594" decoding="async" draggable="false" />
-      </div>
-      <div className="spaceman__orb">
-        <span className="spaceman__halo" />
-        <img className="spaceman__universe" src={ORB} alt="" width="203" height="209" decoding="async" draggable="false" />
-        <i className="spaceman__star spaceman__star--a" />
-        <i className="spaceman__star spaceman__star--b" />
-        <i className="spaceman__star spaceman__star--c" />
-      </div>
+      {/* Where there is no room for him, nothing is fetched or animated. */}
+      {place && (
+        <>
+          <div className="spaceman__lean">
+            <img className="spaceman__figure" src={FIGURE} alt="" width="960" height="594" decoding="async" draggable="false" />
+          </div>
+          <div className="spaceman__orb">
+            <span className="spaceman__halo" />
+            <img className="spaceman__universe" src={ORB} alt="" width="203" height="209" decoding="async" draggable="false" />
+            <i className="spaceman__star spaceman__star--a" />
+            <i className="spaceman__star spaceman__star--b" />
+            <i className="spaceman__star spaceman__star--c" />
+          </div>
+        </>
+      )}
     </div>
   );
 }

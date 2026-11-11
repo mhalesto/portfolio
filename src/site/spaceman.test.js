@@ -61,6 +61,8 @@ test('on a phone he is an accent beside the name, inside the screen', () => {
 test('he stays away where there is no room for him', () => {
   // A 320px phone: the name runs almost to the edge.
   expect(placeSpaceman({ ...phone, width: 320, nameRight: 232, rightLimit: 302 })).toBeNull();
+  // A 360px phone leaves him 74px: small, but he is there.
+  expect(placeSpaceman({ ...phone, width: 360, nameRight: 258, rightLimit: 342 })).not.toBeNull();
   // A narrow desktop window with the name against the phone and no sky.
   expect(placeSpaceman({ ...squat, width: 800, nameRight: 470, rightLimit: 520, title: { top: 150, height: 200 } })).toBeNull();
   // Something on the right that starts left of where the name ends.

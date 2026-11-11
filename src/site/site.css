@@ -258,6 +258,15 @@ a.brand:hover .brand__rule {
   }
 }
 
+.logo--text {
+  display: inline-flex;
+  align-items: center;
+  aspect-ratio: auto;
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
 a.brand:hover .logo__img,
 a.brand:focus-visible .logo__img {
   filter: drop-shadow(0 0 9px rgba(150, 110, 255, 0.8)) drop-shadow(0 0 22px rgba(98, 232, 74, 0.45));

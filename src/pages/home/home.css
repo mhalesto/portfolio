@@ -250,6 +250,13 @@
   }
 }
 
+.spaceman.is-resting .spaceman__figure,
+.spaceman.is-resting .spaceman__universe,
+.spaceman.is-resting .spaceman__halo,
+.spaceman.is-resting .spaceman__star {
+  animation-play-state: paused;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .spaceman {
     transition: none;
