@@ -24,7 +24,9 @@ export default function RouteCurtain() {
   const navigate = useNavigate();
   const panelRef = useRef(null);
   const markRef = useRef(null);
-  const first = useRef(true);
+  // The entry the curtain last settled on. Comparing keys, rather than
+  // skipping "the first run", also holds when React replays effects on mount.
+  const settled = useRef(location.key);
   const run = useRef({ id: 0, leaving: false, covered: false, timer: 0 });
 
   const canPlay = () => {
@@ -84,10 +86,8 @@ export default function RouteCurtain() {
   // The route has changed: lift away. A layout effect, so the panel is in
   // place before the new page's first paint and nothing flashes.
   useLayoutEffect(() => {
-    if (first.current) {
-      first.current = false;
-      return undefined;
-    }
+    if (settled.current === location.key) return undefined;
+    settled.current = location.key;
     const state = run.current;
     const arrivedCovered = state.covered;
     state.id += 1;
