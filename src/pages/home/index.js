@@ -11,6 +11,8 @@ import ShowcaseDialog from '../../site/components/ShowcaseDialog';
 import { showcases } from '../../site/showcase';
 import useReveal from '../../site/useReveal';
 import useFitPanels from '../../site/useFitPanels';
+import useTour from '../../site/useTour';
+import TourIcon from '../../site/components/TourIcon';
 import { addTicker, loadStore } from '../../site/ticker';
 import { scrollToTarget } from '../../site/scroll';
 import { travel } from '../../site/transition';
@@ -33,6 +35,16 @@ const chapterOffset = ratio =>
     ? window.innerHeight * ratio
     : 0;
 const PINNED_PANELS = '.chapter__panel, .web__panel';
+// The tour's pacing, section by section (see site/tour.js): seconds to hold a
+// pinned section, and a reading speed for layouts where its copy scrolls.
+const TOUR_PLAN = [
+  { id: 'top', hold: 6 },
+  { id: 'manifesto', hold: 9 },
+  ...apps.map(app => ({ id: `app-${app.slug}`, hold: 6, reading: 0.2 })),
+  { id: 'web', hold: 5.5, reading: 0.2 },
+  { id: 'about', reading: 0.28 },
+  { id: 'contact-cta', hold: 4.6, reading: 0.2, end: 0.62 },
+];
 const REEL_URL = `${process.env.PUBLIC_URL}/experience/clipaura-reel.webp`;
 const MANIFESTO =
   'I build apps end to end: the interface, the code, the payments, the privacy policy and the support page. Seven of them live on this phone. Keep scrolling and each one opens into a world of its own.';
@@ -293,6 +305,18 @@ export default function Home() {
 
   const webglActive = webgl && !sceneFailed;
 
+  // The journey can play itself. It is only offered with the 3D scene: the
+  // static fallback is an ordinary page, and reduced motion rules it out.
+  const toured = useRef(false);
+  const tour = useTour(TOUR_PLAN, webglActive, {
+    onStart: () => {
+      // Say once how to take over; after that the controls speak for themselves.
+      if (toured.current) return;
+      toured.current = true;
+      setToast({ id: Date.now(), message: 'The tour is playing. Scroll or tap anywhere to take over.' });
+    },
+  });
+
   return (
     <SiteShell className={`home${webglActive ? '' : ' home--static'}`}>
       {preloading && (
@@ -305,7 +329,12 @@ export default function Home() {
         />
       )}
       {webgl && <canvas ref={canvasRef} className="home-canvas" aria-hidden="true" />}
-      <ChapterRail items={railItems} />
+      <ChapterRail items={railItems} tour={tour} />
+      {tour.available && (
+        <div className={`tour-bar is-${tour.status}`} aria-hidden="true">
+          <span ref={tour.barRef} />
+        </div>
+      )}
 
       <main id="main" className="home-main" ref={mainRef}>
         <section className="hero" id="top" data-station="0" data-hold="0.85" data-in={heroIn ? '' : undefined}>
@@ -394,10 +423,26 @@ export default function Home() {
               </ul>
             )}
 
-            <p className="hero__cue mono" aria-hidden="true">
-              <span>{webglActive ? 'Scroll to launch the apps' : 'Scroll'}</span>
-              <i />
-            </p>
+            <div className="hero__cue mono">
+              {tour.available && (
+                <button type="button" className="hero__tour" data-tour-control="" data-cursor="Play" onClick={tour.play}>
+                  <span className="hero__tour-disc" aria-hidden="true">
+                    <TourIcon />
+                  </span>
+                  Watch the tour
+                </button>
+              )}
+              <span className="hero__cue-hint" aria-hidden="true">
+                {tour.available ? (
+                  <>
+                    or scroll<span className="hero__cue-more"> to launch the apps</span>
+                  </>
+                ) : (
+                  'Scroll'
+                )}
+              </span>
+              <i aria-hidden="true" />
+            </div>
           </div>
         </section>
 
