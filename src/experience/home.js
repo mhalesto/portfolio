@@ -362,8 +362,12 @@ async function build(options, controller) {
     const copy = root.querySelector('.hero__top');
     if (!sticky || !copy || !sticky.offsetHeight) return null;
     const header = parseFloat(window.getComputedStyle(document.documentElement).getPropertyValue('--header-h')) || 64;
-    // offsetTop ignores the copy's entrance transform, unlike its client rect.
-    return { visible: sticky.offsetHeight, top: header + 4, bottom: copy.offsetTop - 12 };
+    // The pinned hero is exactly one small-viewport tall. On a phone on its
+    // side it is not pinned and runs taller than the screen: the window is
+    // the best measure there. offsetTop ignores the copy's entrance
+    // transform, unlike its client rect.
+    const visible = Math.min(sticky.offsetHeight, window.innerHeight || sticky.offsetHeight);
+    return { visible, top: header + 4, bottom: copy.offsetTop - 12 };
   };
   const rebuildPaths = () => {
     const aspect = engine.width / engine.height;
@@ -799,8 +803,10 @@ async function build(options, controller) {
   // The fixed canvas remains in the viewport after the journey ends; watch
   // its content root so the GPU can rest while the visitor reads the footer.
   if (typeof IntersectionObserver !== 'undefined') {
-    const observer = new IntersectionObserver(([entry]) => {
-      if (alive()) engine.setRunning(entry.isIntersecting);
+    // Several changes can arrive in one call when frames run late; only the
+    // newest says where things stand now.
+    const observer = new IntersectionObserver(entries => {
+      if (alive()) engine.setRunning(entries[entries.length - 1].isIntersecting);
     }, { threshold: 0 });
     cleanupTasks.push(() => observer.disconnect());
     observer.observe(root);

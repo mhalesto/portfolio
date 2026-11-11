@@ -313,9 +313,19 @@ export default function Home() {
       // Say once how to take over; after that the controls speak for themselves.
       if (toured.current) return;
       toured.current = true;
-      setToast({ id: Date.now(), message: 'The tour is playing. Scroll or tap anywhere to take over.' });
+      const touch = typeof window.matchMedia === 'function' && window.matchMedia('(pointer: coarse)').matches;
+      setToast({
+        id: Date.now(),
+        kind: 'tour',
+        message: `The tour is playing. Scroll or ${touch ? 'tap' : 'click'} anywhere to take over.`,
+      });
     },
   });
+  // Once the visitor has taken over, the notice would no longer be true.
+  const tourStatus = tour.status;
+  useEffect(() => {
+    if (tourStatus !== 'playing') setToast(current => (current && current.kind === 'tour' ? null : current));
+  }, [tourStatus]);
 
   return (
     <SiteShell className={`home${webglActive ? '' : ' home--static'}`}>
@@ -643,7 +653,7 @@ export default function Home() {
         onRemove={() => changeYourApp(null, 'Your app idea is removed.')}
       />
       <ShowcaseDialog showcase={showcase} onClose={() => setShowcase(null)} />
-      <div className="yourapp-toasts" role="status" aria-live="polite">
+      <div className={`yourapp-toasts${toast && toast.kind === 'tour' ? ' yourapp-toasts--top' : ''}`} role="status" aria-live="polite">
         {toast && (
           <p className="yourapp-toast" key={toast.id}>
             {toast.message}

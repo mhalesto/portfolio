@@ -1273,6 +1273,8 @@ html.has-cursor .site input {
   line-height: 1.4;
   text-align: center;
   color: var(--fg);
+  /* A tap on the message must not reach a button hidden underneath it. */
+  pointer-events: auto;
   animation: yourapp-toast 5.2s var(--ease-out) both;
 }
 
@@ -1360,6 +1362,13 @@ html.has-cursor .site input {
 
   .yourapp-toasts {
     bottom: 18px;
+  }
+
+  /* On a phone the foot of the screen belongs to the hero's buttons and the
+     chapter picker; a notice shown while those are in use goes up top. */
+  .yourapp-toasts--top {
+    top: calc(var(--header-h) + 10px);
+    bottom: auto;
   }
 
   .yourapp-toast {

@@ -225,8 +225,9 @@ async function build({ canvas, apps, onNavigate, onReady = () => {} }, controlle
   if (!alive()) return abort();
   // Stop rendering once the header has scrolled away.
   if (typeof IntersectionObserver !== 'undefined') {
-    const observer = new IntersectionObserver(([entry]) => {
-      if (alive()) engine.setRunning(entry.isIntersecting);
+    // The newest entry is the current state; older ones may ride along.
+    const observer = new IntersectionObserver(entries => {
+      if (alive()) engine.setRunning(entries[entries.length - 1].isIntersecting);
     }, { threshold: 0 });
     cleanupTasks.push(() => observer.disconnect());
     observer.observe(canvas);

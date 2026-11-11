@@ -6,6 +6,8 @@ import TourIcon from './TourIcon';
 // same destinations. Observe a real band of the viewport, not a zero-height line.
 // Both also carry the tour's play and pause control when a tour is on offer
 // (tour: the object from useTour), so it can be started from any chapter.
+// That control is named for what it will do next, "Play the tour" or "Pause
+// the tour", which is also the text the rail shows beside it.
 export default function ChapterRail({ items, tour = null }) {
   const [active, setActive] = useState(items[0] ? items[0].id : '');
   const [hidden, setHidden] = useState(false);
@@ -30,7 +32,12 @@ export default function ChapterRail({ items, tour = null }) {
     measure();
     window.addEventListener('resize', measure);
     const footer = document.querySelector('.site-footer');
-    const footerObserver = new IntersectionObserver(([entry]) => setHidden(entry.isIntersecting), { threshold: 0.2 });
+    // Several changes can be delivered together when frames run late (a fast
+    // flick to the footer and back): the newest one is where things stand.
+    const footerObserver = new IntersectionObserver(
+      entries => setHidden(entries[entries.length - 1].isIntersecting),
+      { threshold: 0.2 },
+    );
     if (footer) footerObserver.observe(footer);
     return () => {
       observer.disconnect();
@@ -61,12 +68,11 @@ export default function ChapterRail({ items, tour = null }) {
             type="button"
             className={`rail__tour${playing ? ' is-playing' : ''}`}
             data-tour-control=""
-            aria-pressed={playing}
             onClick={tour.toggle}
           >
-            <span className="rail__label" aria-hidden="true">{tourLabel}</span>
+            {/* The label a visitor sees on hover is also the button's name. */}
+            <span className="rail__label">{tourLabel}</span>
             <span className="rail__tour-disc"><TourIcon playing={playing} /></span>
-            <span className="sr-only">Tour: play the journey by itself</span>
           </button>
         )}
         <ol>
@@ -93,8 +99,7 @@ export default function ChapterRail({ items, tour = null }) {
             type="button"
             className={`chapter-jump__tour${playing ? ' is-playing' : ''}`}
             data-tour-control=""
-            aria-pressed={playing}
-            aria-label="Tour: play the journey by itself"
+            aria-label={tourLabel}
             onClick={tour.toggle}
           >
             <TourIcon playing={playing} size={11} />

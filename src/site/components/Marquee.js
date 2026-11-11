@@ -45,7 +45,7 @@ export default function Marquee({ items, speed = 70, ...rest }) {
       }
     };
     const observer = typeof IntersectionObserver !== 'undefined'
-      ? new IntersectionObserver(([entry]) => setVisible(entry.isIntersecting), { rootMargin: '160px' })
+      ? new IntersectionObserver(entries => setVisible(entries[entries.length - 1].isIntersecting), { rootMargin: '160px' })
       : null;
     if (observer) observer.observe(track.parentElement);
     else setVisible(true);

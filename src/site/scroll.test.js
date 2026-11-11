@@ -119,3 +119,46 @@ test('an eased scroll can be stopped where it is, but a locked page is left lock
   expect(lenis.stop).not.toHaveBeenCalled();
   expect(lenis.start).not.toHaveBeenCalled();
 });
+
+test('a jump asked for while an overlay holds the page happens when the overlay lets go', async () => {
+  // The phone menu is open and one of its links points at the page already open.
+  setScrollLocked(true, 'menu');
+  scrollToTarget(0);
+  expect(window.scrollTo).not.toHaveBeenCalled();
+  setScrollLocked(false, 'menu');
+  expect(window.scrollTo).toHaveBeenCalledWith({ top: 0, behavior: 'smooth' });
+
+  // With smooth scrolling running, Lenis is restarted first and then asked.
+  await startSmoothScroll();
+  const lenis = Lenis.mock.results[0].value;
+  setScrollLocked(true, 'menu');
+  scrollToTarget(0);
+  expect(lenis.scrollTo).not.toHaveBeenCalled();
+  // A second overlay still holds the page: nothing moves yet.
+  setScrollLocked(true, 'dialog');
+  setScrollLocked(false, 'menu');
+  expect(lenis.scrollTo).not.toHaveBeenCalled();
+  setScrollLocked(false, 'dialog');
+  expect(lenis.start).toHaveBeenCalledTimes(1);
+  expect(lenis.scrollTo).toHaveBeenCalledWith(0, { duration: 1.6 });
+  expect(lenis.start.mock.invocationCallOrder[0]).toBeLessThan(lenis.scrollTo.mock.invocationCallOrder[0]);
+});
+
+test('a jump left waiting too long is forgotten, and whoever drives the scroll still hears of it at once', () => {
+  const now = jest.spyOn(performance, 'now');
+  const listener = jest.fn();
+  const stopListening = onScrollIntent(listener);
+  try {
+    now.mockReturnValue(1000);
+    setScrollLocked(true, 'dialog');
+    scrollToTarget(900);
+    // The tour stands down when the visitor asks, not when the page finally moves.
+    expect(listener).toHaveBeenCalledTimes(1);
+    now.mockReturnValue(1000 + 60000);
+    setScrollLocked(false, 'dialog');
+    expect(window.scrollTo).not.toHaveBeenCalled();
+  } finally {
+    stopListening();
+    now.mockRestore();
+  }
+});
