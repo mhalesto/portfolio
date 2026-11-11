@@ -5,6 +5,7 @@ import SplitText from '../../site/components/SplitText';
 import useReveal from '../../site/useReveal';
 import { addTicker } from '../../site/ticker';
 import { scrollToTarget } from '../../site/scroll';
+import { travel } from '../../site/transition';
 import { hasFinePointer, prefersReducedMotion, supportsWebGL } from '../../site/motion';
 import { apps, portfolioApps, otherProjects, person, webProjects } from '../../site/data';
 import './projects.css';
@@ -190,7 +191,7 @@ export default function Projects() {
         controller = createOrbitExperience({
           canvas: canvasRef.current,
           apps,
-          onNavigate: route => navigateRef.current(route),
+          onNavigate: route => travel(route, to => navigateRef.current(to)),
           onReady: () => canvasRef.current && canvasRef.current.classList.add('is-ready'),
         });
       })

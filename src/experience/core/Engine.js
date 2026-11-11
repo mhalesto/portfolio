@@ -75,6 +75,8 @@ export class Engine {
     this.height = 1;
     this.dpr = 1;
     this.running = true;
+    // Set by a scene while opaque page content hides the whole canvas.
+    this.covered = false;
     this.callbacks = [];
     this.resizeCallbacks = [];
     this.perf = { frames: 0, time: 0, windows: 0 };
@@ -122,8 +124,11 @@ export class Engine {
     // when their independently owned scroll locks are released.
     if (!this.running || document.documentElement.classList.contains('scroll-locked')) return;
     this.time += delta;
-    this.watchPerformance(delta);
     for (let i = 0; i < this.callbacks.length; i += 1) this.callbacks[i](this.time, delta);
+    // The scene keeps moving so it is in the right place when it reappears,
+    // but there is no reason to draw frames nobody can see.
+    if (this.covered) return;
+    this.watchPerformance(delta);
     this.composer.render(delta);
   }
 
@@ -155,6 +160,7 @@ export class Engine {
       const materials = Array.isArray(object.material) ? object.material : [object.material];
       materials.forEach(material => {
         if (!material) return;
+        this.releaseSharedTextures(material);
         Object.values(material).forEach(value => {
           if (value && value.isTexture) value.dispose();
         });
@@ -172,5 +178,19 @@ export class Engine {
     this.finalPass.dispose();
     this.renderer.dispose();
     this.renderer.forceContextLoss();
+  }
+
+  // three keeps one lookup texture for all renderers on the page, and every
+  // renderer that draws a lit material leaves a listener on it. Those
+  // listeners would keep this renderer, its canvas and the whole page around
+  // the canvas alive for as long as the tab is open, one more copy per visit.
+  // Disposing the texture drops them; a renderer still at work uploads it
+  // again the next time it draws.
+  releaseSharedTextures(material) {
+    const properties = this.renderer.properties;
+    if (!properties || typeof properties.get !== 'function') return;
+    const uniforms = properties.get(material).uniforms;
+    const shared = uniforms && uniforms.dfgLUT && uniforms.dfgLUT.value;
+    if (shared && typeof shared.dispose === 'function') shared.dispose();
   }
 }

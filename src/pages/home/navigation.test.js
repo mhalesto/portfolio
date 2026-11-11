@@ -11,7 +11,7 @@ jest.mock('../../site/motion', () => ({
   hasFinePointer: () => false,
 }));
 jest.mock('../../site/scroll', () => ({
-  scrollToTarget: jest.fn(), resetScroll: jest.fn(), startSmoothScroll: jest.fn(), stopSmoothScroll: jest.fn(), setScrollLocked: jest.fn(),
+  scrollToTarget: jest.fn(), resetScroll: jest.fn(), setScrollPosition: jest.fn(), haltScroll: jest.fn(), onScrollIntent: jest.fn(() => jest.fn()), startSmoothScroll: jest.fn(), stopSmoothScroll: jest.fn(), setScrollLocked: jest.fn(),
 }));
 jest.mock('../../site/components/Preloader', () => () => null);
 jest.mock('../../experience/home', () => ({

@@ -80,7 +80,32 @@ export function stopSmoothScroll() {
   removeNative = null;
 }
 
+// Anything that drives the scroll position itself (the tour) listens here, so
+// a scroll someone asked for by other means is not fought frame by frame.
+const intentListeners = new Set();
+
+export function onScrollIntent(listener) {
+  intentListeners.add(listener);
+  return () => intentListeners.delete(listener);
+}
+
+// Each overlay owns its lock, so closing a menu cannot unlock an open dialog.
+const scrollLocks = new Set();
+
+// A jump asked for while an overlay holds the page (the phone menu's link to
+// the page already open) would be dropped, because smooth scrolling is
+// stopped. It waits for the lock to lift instead. Only briefly: a request
+// left over from long ago should not move the page when a dialog closes.
+const PENDING_MS = 1500;
+let pendingScroll = null;
+const clock = () => (typeof performance !== 'undefined' && performance.now ? performance.now() : Date.now());
+
 export function scrollToTarget(target, options = {}) {
+  intentListeners.forEach(listener => listener());
+  if (scrollLocks.size) {
+    pendingScroll = { target, options, at: clock() };
+    return;
+  }
   let element = target;
   if (typeof target === 'string') {
     try {
@@ -106,17 +131,20 @@ export function scrollToTarget(target, options = {}) {
   });
 }
 
-// Each overlay owns its lock, so closing a menu cannot unlock an open dialog.
-const scrollLocks = new Set();
-
 export function setScrollLocked(value, owner = 'default') {
   if (value) scrollLocks.add(owner);
   else scrollLocks.delete(owner);
   const locked = scrollLocks.size > 0;
   document.documentElement.classList.toggle('scroll-locked', locked);
-  if (!lenis) return;
-  if (locked) lenis.stop();
-  else lenis.start();
+  if (lenis) {
+    if (locked) lenis.stop();
+    else lenis.start();
+  }
+  if (!locked && pendingScroll) {
+    const { target, options, at } = pendingScroll;
+    pendingScroll = null;
+    if (clock() - at < PENDING_MS) scrollToTarget(target, options);
+  }
 }
 
 export function resetScroll() {
@@ -124,4 +152,26 @@ export function resetScroll() {
   window.scrollTo(0, 0);
   scrollState.y = 0;
   scrollState.velocity = 0;
+}
+
+// Stops an eased scroll where it is: the page stays wherever it has got to.
+export function haltScroll() {
+  if (lenis) {
+    // While the page is locked Lenis is already stopped and nothing is in flight.
+    if (!scrollLocks.size) {
+      lenis.stop();
+      lenis.start();
+    }
+    return;
+  }
+  window.scrollTo({ top: window.scrollY, behavior: 'instant' });
+}
+
+// Puts the page at y at once, with no easing: for restoring a remembered
+// position, and for anything that drives the scroll itself frame by frame.
+export function setScrollPosition(y) {
+  const top = Math.max(0, Number(y) || 0);
+  if (lenis) lenis.scrollTo(top, { immediate: true, force: true });
+  else window.scrollTo(0, top);
+  scrollState.y = top;
 }

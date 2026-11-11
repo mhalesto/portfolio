@@ -6,21 +6,46 @@ import SplitText from '../../site/components/SplitText';
 import Magnetic from '../../site/components/Magnetic';
 import Marquee from '../../site/components/Marquee';
 import ChapterRail from '../../site/components/ChapterRail';
+import Spaceman from '../../site/components/Spaceman';
 import YourAppDialog from '../../site/components/YourAppDialog';
 import ShowcaseDialog from '../../site/components/ShowcaseDialog';
 import { showcases } from '../../site/showcase';
 import useReveal from '../../site/useReveal';
+import useFitPanels from '../../site/useFitPanels';
+import useTour from '../../site/useTour';
+import TourIcon from '../../site/components/TourIcon';
 import { addTicker, loadStore } from '../../site/ticker';
 import { scrollToTarget } from '../../site/scroll';
+import { travel } from '../../site/transition';
 import { prefersReducedMotion, supportsWebGL } from '../../site/motion';
 import { apps, person, stack, webProjects } from '../../site/data';
 import { buildMailto, loadYourApp, saveYourApp, yourAppIconUrl } from '../../site/yourApp';
 import './home.css';
 
 const pad = value => String(value).padStart(2, '0');
-// Wide chapters pin their copy; portrait chapters scroll below the world.
-const chapterOffset = ratio => window.innerWidth >= 760 && window.innerWidth / window.innerHeight >= 0.95
-  ? window.innerHeight * ratio : 0;
+// 0 to 1 with a soft start and finish.
+const ramp = value => {
+  const t = Math.min(1, Math.max(0, value));
+  return t * t * (3 - 2 * t);
+};
+// Wide chapters pin their copy, so a jump lands part-way into the pin. Portrait
+// chapters scroll below the world, and windows too short to pin a chapter let
+// it scroll past (the max-height: 540px block in home.css): both start at the top.
+const chapterOffset = ratio =>
+  window.innerWidth >= 760 && window.innerWidth / window.innerHeight >= 0.95 && window.innerHeight > 540
+    ? window.innerHeight * ratio
+    : 0;
+const PINNED_PANELS = '.chapter__panel, .web__panel';
+// The tour's pacing, section by section (see site/tour.js): seconds to hold a
+// pinned section, and a reading speed for layouts where its copy scrolls.
+const TOUR_PLAN = [
+  { id: 'top', hold: 6 },
+  { id: 'manifesto', hold: 9 },
+  ...apps.map(app => ({ id: `app-${app.slug}`, hold: 6, reading: 0.2 })),
+  { id: 'web', hold: 5.5, reading: 0.2 },
+  { id: 'about', reading: 0.28 },
+  { id: 'contact-cta', hold: 4.6, reading: 0.2, end: 0.62 },
+];
 const REEL_URL = `${process.env.PUBLIC_URL}/experience/clipaura-reel.webp`;
 const MANIFESTO =
   'I build apps end to end: the interface, the code, the payments, the privacy policy and the support page. Seven of them live on this phone. Keep scrolling and each one opens into a world of its own.';
@@ -58,6 +83,10 @@ function Manifesto() {
       const progress = Math.min(1, Math.max(0, -rect.top / Math.max(travel, 1)));
       if (Math.abs(progress - last) < 0.001) return;
       last = progress;
+      // The scrim behind the words arrives with them, and its wider reach
+      // leaves before the section does (see .manifesto__sticky in home.css).
+      section.style.setProperty('--scrim-in', ramp(progress / 0.16).toFixed(3));
+      section.style.setProperty('--scrim-out', (1 - ramp((progress - 0.84) / 0.16)).toFixed(3));
       const lit = progress * (words.length + 6) - 3;
       words.forEach((word, index) => {
         const amount = Math.min(1, Math.max(0, lit - index + 1));
@@ -170,6 +199,8 @@ export default function Home() {
   yourAppRef.current = yourApp;
 
   useReveal(mainRef);
+  // A pinned panel never outgrows the screen it is pinned to.
+  useFitPanels(mainRef, PINNED_PANELS);
 
   useEffect(() => {
     document.title = `${person.name} — iOS apps & websites`;
@@ -201,7 +232,7 @@ export default function Home() {
             loadStore.set({ progress: 1, ready: true });
             if (canvasRef.current) canvasRef.current.classList.add('is-ready');
           },
-          onNavigate: route => navigateRef.current(route),
+          onNavigate: route => travel(route, to => navigateRef.current(to)),
           onSelectApp: index =>
             scrollToTarget(`#app-${apps[index].slug}`, {
               offset: chapterOffset(0.35),
@@ -275,6 +306,28 @@ export default function Home() {
 
   const webglActive = webgl && !sceneFailed;
 
+  // The journey can play itself. It is only offered with the 3D scene: the
+  // static fallback is an ordinary page, and reduced motion rules it out.
+  const toured = useRef(false);
+  const tour = useTour(TOUR_PLAN, webglActive, {
+    onStart: () => {
+      // Say once how to take over; after that the controls speak for themselves.
+      if (toured.current) return;
+      toured.current = true;
+      const touch = typeof window.matchMedia === 'function' && window.matchMedia('(pointer: coarse)').matches;
+      setToast({
+        id: Date.now(),
+        kind: 'tour',
+        message: `The tour is playing. Scroll or ${touch ? 'tap' : 'click'} anywhere to take over.`,
+      });
+    },
+  });
+  // Once the visitor has taken over, the notice would no longer be true.
+  const tourStatus = tour.status;
+  useEffect(() => {
+    if (tourStatus !== 'playing') setToast(current => (current && current.kind === 'tour' ? null : current));
+  }, [tourStatus]);
+
   return (
     <SiteShell className={`home${webglActive ? '' : ' home--static'}`}>
       {preloading && (
@@ -287,11 +340,17 @@ export default function Home() {
         />
       )}
       {webgl && <canvas ref={canvasRef} className="home-canvas" aria-hidden="true" />}
-      <ChapterRail items={railItems} />
+      <ChapterRail items={railItems} tour={tour} />
+      {tour.available && (
+        <div className={`tour-bar is-${tour.status}`} aria-hidden="true">
+          <span ref={tour.barRef} />
+        </div>
+      )}
 
       <main id="main" className="home-main" ref={mainRef}>
         <section className="hero" id="top" data-station="0" data-hold="0.85" data-in={heroIn ? '' : undefined}>
           <div className="hero__sticky">
+            <Spaceman />
             <div className="hero__top">
               <p className="eyebrow">Full-stack developer · Founder of {person.studio}</p>
               <p className="hero__meta mono">
@@ -376,10 +435,32 @@ export default function Home() {
               </ul>
             )}
 
-            <p className="hero__cue mono" aria-hidden="true">
-              <span>{webglActive ? 'Scroll to launch the apps' : 'Scroll'}</span>
-              <i />
-            </p>
+            <div className="hero__cue mono">
+              {tour.available && (
+                <button
+                  type="button"
+                  className="hero__tour"
+                  data-tour-control=""
+                  aria-pressed={tour.status === 'playing'}
+                  onClick={tour.toggle}
+                >
+                  <span className="hero__tour-disc" aria-hidden="true">
+                    <TourIcon playing={tour.status === 'playing'} />
+                  </span>
+                  Watch the tour
+                </button>
+              )}
+              <span className="hero__cue-hint" aria-hidden="true">
+                {tour.available ? (
+                  <>
+                    or scroll<span className="hero__cue-more"> to launch the apps</span>
+                  </>
+                ) : (
+                  'Scroll'
+                )}
+              </span>
+              <i aria-hidden="true" />
+            </div>
           </div>
         </section>
 
@@ -415,7 +496,7 @@ export default function Home() {
                       <span className="web__name">{project.name}</span>
                       <span className="web__kind">{project.kind}</span>
                       <span className="web__domain mono">
-                        {project.domain}
+                        <span className="web__domain-text">{project.domain}</span>
                         <span aria-hidden="true"> ↗</span>
                       </span>
                       {!webglActive && <img className="web__thumb" src={project.image} alt="" loading="lazy" decoding="async" width="800" height="500" />}
@@ -427,7 +508,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="about" id="about" aria-labelledby="about-title">
+        <section className="about" id="about" aria-labelledby="about-title" data-cover>
           <div className="about__intro">
             <p className="eyebrow" data-reveal>
               About
@@ -502,7 +583,7 @@ export default function Home() {
           </div>
         </section>
 
-        <Marquee items={['iOS apps', 'Websites', 'Full-stack', person.studio, person.country]} />
+        <Marquee items={['iOS apps', 'Websites', 'Full-stack', person.studio, person.country]} data-cover />
 
         <section
           className="finale"
@@ -574,7 +655,7 @@ export default function Home() {
         onRemove={() => changeYourApp(null, 'Your app idea is removed.')}
       />
       <ShowcaseDialog showcase={showcase} onClose={() => setShowcase(null)} />
-      <div className="yourapp-toasts" role="status" aria-live="polite">
+      <div className={`yourapp-toasts${toast && toast.kind === 'tour' ? ' yourapp-toasts--top' : ''}`} role="status" aria-live="polite">
         {toast && (
           <p className="yourapp-toast" key={toast.id}>
             {toast.message}

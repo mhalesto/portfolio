@@ -21,6 +21,14 @@ export class Interaction {
     this.pointerType = 'mouse';
     this.clientX = 0;
     this.clientY = 0;
+    // True while a mouse is somewhere over the page (it need not be over the
+    // canvas): the scene lets the current react to it.
+    this.hovering = false;
+    // A press that landed on no target, kept until release so a clean tap on
+    // empty space can be told from the start of a scroll or a drag.
+    this.blank = null;
+    // Called with no arguments when the visitor taps or clicks empty space.
+    this.onEmpty = null;
 
     this.onMove = this.onMove.bind(this);
     this.onDown = this.onDown.bind(this);
@@ -51,6 +59,7 @@ export class Interaction {
     this.updateCanvasPosition();
     this.pointerType = event.pointerType || 'mouse';
     this.overCanvas = event.target === this.canvas;
+    this.hovering = this.pointerType === 'mouse';
     this.moved = true;
   }
 
@@ -81,7 +90,11 @@ export class Interaction {
     this.updatePosition(event);
     if (!this.overCanvas) return;
     this.pick();
-    if (!this.hovered) return;
+    if (!this.hovered) {
+      this.blank = { x: event.clientX, y: event.clientY, time: performance.now(), pointerId: event.pointerId };
+      return;
+    }
+    this.blank = null;
     this.drag = {
       target: this.hovered,
       hit: this.hit,
@@ -97,6 +110,16 @@ export class Interaction {
   }
 
   onUp(event) {
+    const blank = this.blank;
+    if (blank && event.pointerId === blank.pointerId) {
+      this.blank = null;
+      const travelled = Math.abs(event.clientX - blank.x) + Math.abs(event.clientY - blank.y);
+      const quickTap = event.type !== 'pointercancel' && travelled < 8 && performance.now() - blank.time < 600;
+      if (quickTap && this.onEmpty) {
+        this.updateCanvasPosition();
+        this.onEmpty();
+      }
+    }
     const drag = this.drag;
     if (!drag || event.pointerId !== drag.pointerId) return;
     this.releaseDrag();
@@ -114,6 +137,8 @@ export class Interaction {
   onLeave() {
     this.releaseDrag();
     this.overCanvas = false;
+    this.hovering = false;
+    this.blank = null;
     this.clearHover();
   }
 

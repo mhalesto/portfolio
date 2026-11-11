@@ -5,7 +5,7 @@ import { prefersReducedMotion } from '../motion';
 
 // An endless line of words that speeds up with scroll velocity and flips
 // direction with the scroll direction.
-export default function Marquee({ items, speed = 70 }) {
+export default function Marquee({ items, speed = 70, ...rest }) {
   const trackRef = useRef(null);
 
   useEffect(() => {
@@ -45,7 +45,7 @@ export default function Marquee({ items, speed = 70 }) {
       }
     };
     const observer = typeof IntersectionObserver !== 'undefined'
-      ? new IntersectionObserver(([entry]) => setVisible(entry.isIntersecting), { rootMargin: '160px' })
+      ? new IntersectionObserver(entries => setVisible(entries[entries.length - 1].isIntersecting), { rootMargin: '160px' })
       : null;
     if (observer) observer.observe(track.parentElement);
     else setVisible(true);
@@ -68,7 +68,7 @@ export default function Marquee({ items, speed = 70 }) {
     ));
 
   return (
-    <div className="marquee" aria-hidden="true">
+    <div className="marquee" aria-hidden="true" {...rest}>
       <div className="marquee__track" ref={trackRef}>
         {renderRow('a')}
         {renderRow('b')}

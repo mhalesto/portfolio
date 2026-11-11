@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { addTicker, loadStore } from '../ticker';
 import { setScrollLocked } from '../scroll';
+import Logo from './Logo';
 
 const MIN_SECONDS = 1.5;
 const MAX_SECONDS = 14;
@@ -55,9 +56,7 @@ export default function Preloader({ onLeave, onDone }) {
     <div className={`preloader${leaving ? ' is-leaving' : ''}`} role="status" aria-label="Loading">
       <div className="preloader__top">
         <span className="brand brand--static">
-          <span>HG</span>
-          <span className="brand__rule" aria-hidden="true" />
-          <span>M</span>
+          <Logo />
         </span>
         <span className="preloader__note">Portfolio · South Africa</span>
       </div>

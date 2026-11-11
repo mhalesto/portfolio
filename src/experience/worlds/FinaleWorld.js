@@ -3,6 +3,8 @@ import { World } from './World';
 import { IconSlab } from '../objects/IconSlab';
 import { damp, easeOutBack } from '../utils/math';
 
+export const CORE_RADIUS = 0.62;
+
 // The end of the current: a bright core with every app orbiting it. Each
 // orbiting icon is a door to that app's page.
 export class FinaleWorld extends World {
@@ -15,7 +17,7 @@ export class FinaleWorld extends World {
       uPulse: { value: 0 },
     };
     this.core = new THREE.Mesh(
-      new THREE.SphereGeometry(0.62, 48, 32),
+      new THREE.SphereGeometry(CORE_RADIUS, 48, 32),
       new THREE.ShaderMaterial({
         uniforms: this.coreUniforms,
         vertexShader: /* glsl */ `

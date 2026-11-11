@@ -19,7 +19,7 @@ import { SoundFrameWorld } from './worlds/SoundFrameWorld';
 import { LifeTrackWorld } from './worlds/LifeTrackWorld';
 import { YouMineWorld } from './worlds/YouMineWorld';
 import { WebWorld } from './worlds/WebWorld';
-import { FinaleWorld } from './worlds/FinaleWorld';
+import { CORE_RADIUS, FinaleWorld } from './worlds/FinaleWorld';
 import { resetSharedMaterials } from './worlds/materials';
 import { worldAssets } from '../site/showcase';
 
@@ -353,16 +353,61 @@ async function build(options, controller) {
   let layout = 'wide';
   let cameraPath = null;
   let lookPath = null;
+  // The stacked layout shares the screen with text, and its sections are sized
+  // in svh while the canvas is lvh tall, so on a phone with its browser bars
+  // showing the canvas runs on below the fold. Returns the visible height and
+  // the gap the hero copy leaves under the header, both in canvas pixels.
+  const measureStacked = () => {
+    const sticky = root.querySelector('.hero__sticky');
+    const copy = root.querySelector('.hero__top');
+    if (!sticky || !copy || !sticky.offsetHeight) return null;
+    const header = parseFloat(window.getComputedStyle(document.documentElement).getPropertyValue('--header-h')) || 64;
+    // The pinned hero is exactly one small-viewport tall. On a phone on its
+    // side it is not pinned and runs taller than the screen: the window is
+    // the best measure there. offsetTop ignores the copy's entrance
+    // transform, unlike its client rect.
+    const visible = Math.min(sticky.offsetHeight, window.innerHeight || sticky.offsetHeight);
+    return { visible, top: header + 4, bottom: copy.offsetTop - 12 };
+  };
   const rebuildPaths = () => {
     const aspect = engine.width / engine.height;
     layout = aspect < 0.95 || engine.width < 760 ? 'stacked' : 'wide';
     const tanHalf = Math.tan(THREE.MathUtils.degToRad(FOV / 2));
+    const stacked = layout === 'stacked' ? measureStacked() : null;
+    const visible = stacked ? clamp(stacked.visible / engine.height, 0.55, 1) : 1;
     const cameraPoints = [];
     const lookPoints = [];
     stations.forEach(station => {
       const framing = station.framing;
-      const frame = framing[layout];
-      station.distance = Math.max(framing.fitY / (tanHalf * frame.v), framing.fitX / (tanHalf * aspect * frame.h));
+      let fitY = framing.fitY;
+      // v, h: the share of the canvas the world may fill; fx, fy: its centre.
+      const frame = { ...framing[layout] };
+      if (stacked) {
+        frame.v *= visible;
+        frame.fy *= visible;
+        const gap = stacked.bottom - stacked.top;
+        if (station.kind === 'hero' && gap > 90) {
+          // The phone takes exactly the room above the name, however tall the
+          // copy runs on this screen, so the two can never overlap.
+          frame.v = clamp(gap / engine.height, 0.18, 0.56);
+          frame.fy = (stacked.top + stacked.bottom) / 2 / engine.height;
+          fitY = 1.09;
+        }
+      }
+      station.frame = frame;
+      station.distance = Math.max(fitY / (tanHalf * frame.v), framing.fitX / (tanHalf * aspect * frame.h));
+      if (station.kind === 'finale' && !stacked) {
+        // The title is pinned to the foot of the screen and the core sits
+        // above it. On a short window, lift the core so its glow ends above
+        // the first line instead of behind it.
+        const content = root.querySelector('.finale__content');
+        const pinned = content && content.parentElement;
+        if (pinned && window.getComputedStyle(pinned).position === 'sticky') {
+          const pixelsPerUnit = engine.height / (2 * station.distance * tanHalf);
+          const limit = (content.offsetTop - 30 - CORE_RADIUS * pixelsPerUnit) / engine.height;
+          frame.fy = clamp(limit, 0.22, frame.fy);
+        }
+      }
       cameraPoints.push(station.position.clone().add(new THREE.Vector3(0, 0, station.distance)));
       lookPoints.push(station.position.clone());
     });
@@ -370,6 +415,8 @@ async function build(options, controller) {
     lookPath = new THREE.CatmullRomCurve3(lookPoints, false, 'centripetal');
   };
   engine.onResize(() => rebuildPaths());
+  // The hero copy changes height when fonts land or the visitor names an app.
+  journey.onMeasure = () => rebuildPaths();
   const onWindowResize = () => journey.measure();
   window.addEventListener('resize', onWindowResize);
   cleanupTasks.push(() => window.removeEventListener('resize', onWindowResize));
@@ -495,6 +542,8 @@ async function build(options, controller) {
     }
     // Refresh pointer targets for whichever station is active.
     activeStation = -1;
+    // The hero copy may have changed height; give the phone the room it left.
+    if (cameraPath) rebuildPaths();
   };
 
   // ---------------------------------------------------------------- frame loop
@@ -519,6 +568,21 @@ async function build(options, controller) {
   const bezier = new THREE.CubicBezierCurve3(startPosition, control1, control2, endPosition);
   let lastScroll = window.scrollY;
   let velocity = 0;
+  // The pointer, as the current feels it.
+  const stirRay = new THREE.Raycaster();
+  const stirDirection = new THREE.Vector3(0, 0, -1);
+  const lastPointer = new THREE.Vector2();
+  const ripplePoint = new THREE.Vector3();
+  let stir = 0;
+  // A click or tap on empty space sends a ripple through the current, from
+  // the point under the pointer at the depth the camera is looking at.
+  interaction.onEmpty = () => {
+    stirRay.setFromCamera(interaction.ndc, camera);
+    ripplePoint
+      .copy(stirRay.ray.origin)
+      .addScaledVector(stirRay.ray.direction, camera.position.distanceTo(lookPosition));
+    current.pulse(ripplePoint);
+  };
 
   const frameState = {
     time: 0,
@@ -533,6 +597,7 @@ async function build(options, controller) {
 
   engine.onFrame((time, delta) => {
     const scrollY = window.scrollY;
+    engine.covered = journey.isCovered(scrollY, engine.height);
     velocity = damp(velocity, (scrollY - lastScroll) / Math.max(delta, 1 / 240), 6, delta);
     lastScroll = scrollY;
     const speed = Math.min(Math.abs(velocity) / 2600, 1);
@@ -556,8 +621,8 @@ async function build(options, controller) {
     camera.position.copy(cameraPosition);
     camera.lookAt(lookPosition);
 
-    const frameA = stations[i0].framing[layout];
-    const frameB = stations[i1].framing[layout];
+    const frameA = stations[i0].frame;
+    const frameB = stations[i1].frame;
     const fx = THREE.MathUtils.lerp(frameA.fx, frameB.fx, blend);
     const fy = THREE.MathUtils.lerp(frameA.fy, frameB.fy, blend);
     fov = damp(fov, FOV + speed * 7 * engine.motion, 5, delta);
@@ -571,6 +636,17 @@ async function build(options, controller) {
       engine.height,
     );
     engine.finalPass.uniforms.uAberration.value = 0.004 + speed * 0.02 * engine.motion;
+
+    // The current parts and brightens under the pointer: a little while it
+    // rests, more the faster it sweeps, and it lets go slowly.
+    camera.updateMatrixWorld();
+    stirRay.setFromCamera(interaction.ndc, camera);
+    stirDirection.lerp(stirRay.ray.direction, 1 - Math.exp(-delta * 10)).normalize();
+    const pointerSpeed = lastPointer.distanceTo(interaction.screen) / Math.max(delta, 1 / 240);
+    lastPointer.copy(interaction.screen);
+    const stirTarget = interaction.hovering ? clamp(0.3 + pointerSpeed * 0.5) : 0;
+    stir = damp(stir, stirTarget, stirTarget > stir ? 9 : 1.6, delta);
+    current.setPointer(camera.position, stirDirection, stir * engine.motion);
 
     // Palette
     const paletteBlend = smoothstep(0.2, 0.8, p - i0);
@@ -727,8 +803,10 @@ async function build(options, controller) {
   // The fixed canvas remains in the viewport after the journey ends; watch
   // its content root so the GPU can rest while the visitor reads the footer.
   if (typeof IntersectionObserver !== 'undefined') {
-    const observer = new IntersectionObserver(([entry]) => {
-      if (alive()) engine.setRunning(entry.isIntersecting);
+    // Several changes can arrive in one call when frames run late; only the
+    // newest says where things stand now.
+    const observer = new IntersectionObserver(entries => {
+      if (alive()) engine.setRunning(entries[entries.length - 1].isIntersecting);
     }, { threshold: 0 });
     cleanupTasks.push(() => observer.disconnect());
     observer.observe(root);

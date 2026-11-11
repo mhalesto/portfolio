@@ -20,7 +20,7 @@
     [
       "03",
       "Make every run count",
-      "Race your own Echo in the Daily Sky Trial, deliver Sky Courier parcels, complete missions and climb 60 Sky Rank levels. Choose from six runners and earn your wardrobe in play."
+      "Race your own Echo in the Daily Sky Trial, deliver Sky Courier parcels, complete missions and climb 60 Sky Rank levels. Run as Ryder or Chico the dog, and earn wardrobe items in play."
     ],
     [
       "04",
@@ -35,10 +35,10 @@
     [
       "06",
       "Keep the moment",
-      "Pause a run to compose a photo, then choose whether to save it to Photos. Core play works offline, with no ads or in-app purchases."
+      "Pause a run to compose a photo, then choose whether to save it to Photos. Core play works offline, with no ads. Optional permanent cosmetic packs let you change your look."
     ]
   ],
-  "privacySummary": "Skystride is developed by Halalisani Mbanjwa at CurrentTech. The game does not send gameplay, device or personal data to developer-operated servers. Progress stays on your device. Optional Game Center features use Apple’s service, and contacting support shares only the information you choose to email.",
+  "privacySummary": "Skystride is developed by Halalisani Mbanjwa at CurrentTech. The game does not send gameplay, device or personal data to developer-operated servers. Progress stays on your device. Optional Game Center features and cosmetic purchases use Apple’s services, and contacting support shares only the information you choose to email.",
   "privacySections": [
     {
       "title": "Progress stays on your device",
@@ -65,9 +65,16 @@
       ]
     },
     {
+      "title": "Optional cosmetic purchases",
+      "paragraphs": [
+        "Skystride is free to play and has no ads. Luminara Glow, Crimson Storm and Skystride Supporter are optional permanent purchases processed by Apple through the App Store. Skystride does not receive your payment-card details.",
+        "The app checks Apple-verified purchase information on your device to unlock cosmetics, restore eligible purchases and respond to refunds or revoked access. We do not send your purchase history to a developer-operated server. Restore purchases using the same Apple Account that made them. Restoring purchases does not restore your locally saved coins or game progress."
+      ]
+    },
+    {
       "title": "Advertising, purchases and measurement",
       "paragraphs": [
-        "Skystride contains no advertising SDK, third-party analytics SDK, tracking system or in-app purchases. It does not request advertising identifiers, location, contacts, microphone or camera access. No gameplay analytics are sent to CurrentTech. Apple may process App Store or Game Center information under its own policies and your Apple settings."
+        "Skystride contains no advertising SDK, third-party analytics SDK or tracking system. It does not request advertising identifiers, location, contacts, microphone or camera access. No gameplay analytics are sent to CurrentTech. Apple may process App Store or Game Center information under its own policies and your Apple settings."
       ]
     },
     {
@@ -92,7 +99,8 @@
         "Records, rank, earned currency, missions and wardrobe",
         "Runner and world selections, sound and motion settings",
         "Achievement progress and the Daily Sky Trial Echo",
-        "Photo-mode shots you explicitly save to Photos"
+        "Photo-mode shots you explicitly save to Photos",
+        "Selected cosmetic look and on-device purchase access state"
       ]
     },
     {
@@ -101,7 +109,8 @@
         "Optional Game Center sign-in",
         "Scores and achievement reports when signed in",
         "Player identities and leaderboard entries for standings",
-        "Apple account, service and sharing settings under Apple’s policies"
+        "Apple account, service and sharing settings under Apple’s policies",
+        "Cosmetic purchase payments, verified transactions and restoration"
       ]
     },
     {
@@ -152,11 +161,33 @@
     },
     {
       "title": "Availability and purchases",
-      "body": "Skystride is being prepared for an App Store release for iPhone with iOS 17 or later. There are no ads or in-app purchases. Coins and gems are earned during play."
+      "body": "Skystride is being prepared for a free App Store release for iPhone with iOS 17 or later. Play as Ryder or Chico across all six worlds without ads. Coins and gems are earned during play, and their items remain in the original Shop wardrobe that opens by default. Choose Shop → Cosmetic Packs to explore the three optional permanent cosmetic packs. These change appearance only; no subscriptions or paid gameplay advantages."
+    },
+    {
+      "title": "Restoring cosmetic packs",
+      "body": "Choose Shop → Cosmetic Packs → Restore Purchases while signed in to the Apple Account used to buy the pack. An internet connection may be needed. Pending purchases unlock after Apple approves them; cancelling a purchase leaves gameplay available. Supporter includes both individual packs and a badge; buying it after an individual pack does not provide partial credit. Contact us if verified purchases still do not appear."
     },
     {
       "title": "Privacy questions",
       "body": "Email currenttech.co.za@gmail.com with questions about local saves, Game Center or information you sent to support. The Privacy Policy and Data Collection pages explain what stays on your phone and what Apple handles."
     }
-  ]
+  ],
+  "packs": [
+    {
+      "name": "Luminara Glow Pack",
+      "theme": "glow",
+      "description": "A luminous outfit for Ryder and matching details for Chico, a cosmetic board accessory and a drifting firefly trail."
+    },
+    {
+      "name": "Crimson Storm Pack",
+      "theme": "storm",
+      "description": "Storm-inspired outfits and details, a cosmetic board accessory, a branching lightning trail and a themed photo frame."
+    },
+    {
+      "name": "Skystride Supporter Pack",
+      "theme": "supporter",
+      "description": "Both Luminara Glow and Crimson Storm collections, plus a supporter profile badge."
+    }
+  ],
+  "packNote": "Three optional, permanent cosmetic purchases planned for launch. All six worlds and core gameplay remain free. Packs do not improve speed, scores or abilities. Local prices appear in the game before purchase."
 }

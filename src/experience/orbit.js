@@ -8,7 +8,7 @@ import { SLAB_SIZE, createSlabBackTexture } from './objects/IconSlab';
 import { FinaleWorld } from './worlds/FinaleWorld';
 import { createSlabGeometry } from './utils/geometry';
 import { ensureFonts, imageBrightness } from './utils/canvas';
-import { damp } from './utils/math';
+import { clamp, damp } from './utils/math';
 import { resetSharedMaterials } from './worlds/materials';
 
 const FOV = 35;
@@ -163,6 +163,21 @@ async function build({ canvas, apps, onNavigate, onReady = () => {} }, controlle
     pixelRatio: 1,
   };
   let scrollFade = 0;
+  // The pointer stirs the current here too, and a click on empty space
+  // sends a ripple through it (see the home scene).
+  const stirRay = new THREE.Raycaster();
+  const stirDirection = new THREE.Vector3(0, 0, -1);
+  const lastPointer = new THREE.Vector2();
+  const lookTarget = new THREE.Vector3();
+  const ripplePoint = new THREE.Vector3();
+  let stir = 0;
+  interaction.onEmpty = () => {
+    stirRay.setFromCamera(interaction.ndc, camera);
+    ripplePoint
+      .copy(stirRay.ray.origin)
+      .addScaledVector(stirRay.ray.direction, camera.position.distanceTo(lookTarget));
+    current.pulse(ripplePoint);
+  };
   engine.onFrame((time, delta) => {
     scrollFade = damp(scrollFade, Math.min(1, window.scrollY / window.innerHeight), 6, delta);
     const parallax = engine.motion;
@@ -171,7 +186,8 @@ async function build({ canvas, apps, onNavigate, onReady = () => {} }, controlle
       0.9 + interaction.screen.y * 0.3 * parallax + scrollFade * 1.2,
       distance,
     );
-    camera.lookAt(0, scrollFade * 0.6, 0);
+    lookTarget.set(0, scrollFade * 0.6, 0);
+    camera.lookAt(lookTarget);
     const fx = stacked ? 0.5 : 0.68;
     const fy = stacked ? 0.3 : 0.5;
     camera.setViewOffset(
@@ -182,6 +198,15 @@ async function build({ canvas, apps, onNavigate, onReady = () => {} }, controlle
       engine.width,
       engine.height,
     );
+    camera.updateMatrixWorld();
+    stirRay.setFromCamera(interaction.ndc, camera);
+    stirDirection.lerp(stirRay.ray.direction, 1 - Math.exp(-delta * 10)).normalize();
+    const pointerSpeed = lastPointer.distanceTo(interaction.screen) / Math.max(delta, 1 / 240);
+    lastPointer.copy(interaction.screen);
+    const stirTarget = interaction.hovering ? clamp(0.3 + pointerSpeed * 0.5) : 0;
+    stir = damp(stir, stirTarget, stirTarget > stir ? 9 : 1.6, delta);
+    current.setPointer(camera.position, stirDirection, stir * engine.motion);
+
     backdrop.update(camera, time);
     dust.update(time, engine.dpr);
     current.update(time, engine.dpr, 0);
@@ -200,8 +225,9 @@ async function build({ canvas, apps, onNavigate, onReady = () => {} }, controlle
   if (!alive()) return abort();
   // Stop rendering once the header has scrolled away.
   if (typeof IntersectionObserver !== 'undefined') {
-    const observer = new IntersectionObserver(([entry]) => {
-      if (alive()) engine.setRunning(entry.isIntersecting);
+    // The newest entry is the current state; older ones may ride along.
+    const observer = new IntersectionObserver(entries => {
+      if (alive()) engine.setRunning(entries[entries.length - 1].isIntersecting);
     }, { threshold: 0 });
     cleanupTasks.push(() => observer.disconnect());
     observer.observe(canvas);
