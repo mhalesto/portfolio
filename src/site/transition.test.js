@@ -1,4 +1,4 @@
-import { internalDestination, samePage, setLeaveHandler, travel } from './transition';
+import { internalDestination, isLinkToThisPage, samePage, setLeaveHandler, travel } from './transition';
 
 // The visitor is on /projects, so relative and in-page links resolve from there.
 beforeEach(() => window.history.pushState({}, '', '/projects'));
@@ -93,4 +93,34 @@ test('travel uses the curtain when one is mounted and can play, and navigates di
   removeCurrent();
   travel('/', navigate);
   expect(navigate).toHaveBeenLastCalledWith('/');
+});
+
+// The same helper as click(), asking the other question.
+function clicksThisPage(html, init = {}) {
+  document.body.innerHTML = html;
+  const target = document.querySelector('[data-target]') || document.body.firstElementChild;
+  let answer;
+  const onClick = event => {
+    answer = isLinkToThisPage(event);
+    event.preventDefault();
+  };
+  document.addEventListener('click', onClick);
+  target.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, button: 0, ...init }));
+  document.removeEventListener('click', onClick);
+  return answer;
+}
+
+test('a plain link to the page already open is recognised, so it can return to the top', () => {
+  expect(clicksThisPage('<a href="/projects">Projects</a>')).toBe(true);
+  expect(clicksThisPage('<a href="/projects/">Projects</a>')).toBe(true);
+  expect(clicksThisPage('<a href="/projects"><span data-target>Projects</span></a>')).toBe(true);
+});
+
+test('in-page jumps, other pages and modified clicks are not "this page"', () => {
+  expect(clicksThisPage('<a href="#work-index">Browse projects</a>')).toBe(false);
+  expect(clicksThisPage('<a href="/projects?filter=ios">iOS</a>')).toBe(false);
+  expect(clicksThisPage('<a href="/contact">Contact</a>')).toBe(false);
+  expect(clicksThisPage('<a href="/projects">Projects</a>', { ctrlKey: true })).toBe(false);
+  expect(clicksThisPage('<a href="/projects" target="_blank">Projects</a>')).toBe(false);
+  expect(clicksThisPage('<button type="button">Not a link</button>')).toBe(false);
 });

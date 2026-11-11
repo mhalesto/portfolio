@@ -1,10 +1,14 @@
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import { Link, MemoryRouter, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import RouteCurtain from './RouteCurtain';
+import { scrollToTarget } from '../scroll';
 import { travel } from '../transition';
 
+jest.mock('../scroll', () => ({ scrollToTarget: jest.fn() }));
+
 function Where() {
-  return <p data-testid="where">{useLocation().pathname}</p>;
+  const location = useLocation();
+  return <p data-testid="where" data-key={location.key}>{location.pathname}</p>;
 }
 
 function OrbitIcon() {
@@ -17,7 +21,7 @@ const renderSite = () => render(
     <RouteCurtain />
     <Where />
     <Routes>
-      <Route path="/" element={<><Link to="/projects">Projects</Link><OrbitIcon /></>} />
+      <Route path="/" element={<><Link to="/">Logo</Link><Link to="/projects">Projects</Link><OrbitIcon /></>} />
       <Route path="/projects" element={<Link to="/">Home</Link>} />
       <Route path="/contact" element={<Link to="/">Home</Link>} />
     </Routes>
@@ -48,10 +52,35 @@ function installAnimations() {
 const where = () => screen.getByTestId('where').textContent;
 const panelAnimations = () => animations.filter(animation => 'transform' in animation.keyframes[0]);
 
+beforeEach(() => {
+  jest.clearAllMocks();
+  // MemoryRouter keeps its own history; the click handler reads the real address.
+  window.history.pushState({}, '', '/');
+});
+
 afterEach(() => {
   delete HTMLElement.prototype.animate;
   delete HTMLElement.prototype.getAnimations;
   jest.useRealTimers();
+});
+
+test('a link to the page already open returns to its top without adding a history entry', () => {
+  renderSite();
+  const key = screen.getByTestId('where').getAttribute('data-key');
+  fireEvent.click(screen.getByRole('link', { name: 'Logo' }));
+  expect(scrollToTarget).toHaveBeenCalledWith(0);
+  // The router was not asked to navigate: same page, same entry.
+  expect(where()).toBe('/');
+  expect(screen.getByTestId('where').getAttribute('data-key')).toBe(key);
+});
+
+test('a modified click on such a link is left to the browser', () => {
+  renderSite();
+  const link = screen.getByRole('link', { name: 'Logo' });
+  // jsdom cannot open a tab; what matters is that this handler did not claim the click.
+  link.addEventListener('click', event => event.preventDefault());
+  fireEvent.click(link, { ctrlKey: true });
+  expect(scrollToTarget).not.toHaveBeenCalled();
 });
 
 test('without Web Animations a link changes page at once, as it always has', () => {

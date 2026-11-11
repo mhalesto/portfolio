@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useLayoutEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { prefersReducedMotion } from '../motion';
-import { internalDestination, setLeaveHandler } from '../transition';
+import { scrollToTarget } from '../scroll';
+import { internalDestination, isLinkToThisPage, setLeaveHandler } from '../transition';
 
 // The cover eases both ways; the reveal sets off at once and settles slowly,
 // so the dark pause between the two stays short.
@@ -77,7 +78,16 @@ export default function RouteCurtain() {
   useEffect(() => {
     const onClick = event => {
       const to = internalDestination(event);
-      if (to && leave(to)) event.preventDefault();
+      if (to) {
+        if (leave(to)) event.preventDefault();
+        return;
+      }
+      // A link to the page already open: go back to its top, and do not let
+      // the router stack a duplicate history entry for it.
+      if (isLinkToThisPage(event)) {
+        event.preventDefault();
+        scrollToTarget(0);
+      }
     };
     document.addEventListener('click', onClick, true);
     return () => document.removeEventListener('click', onClick, true);

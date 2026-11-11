@@ -10,8 +10,12 @@ import { recallScroll, rememberScroll } from '../scrollMemory';
 export default function SiteShell({ children, className = '' }) {
   const location = useLocation();
   const navigationType = useNavigationType();
-  // The entry this page was opened for; later location changes are not ours.
+  // How this page was opened decides where it starts.
   const entry = useRef({ key: location.key, back: navigationType === 'POP' });
+  // The entry can change while this page stays mounted (a link to the same
+  // route with a different query, say). Positions belong to the current one.
+  const currentKey = useRef(location.key);
+  currentKey.current = location.key;
 
   // A layout effect: the theme and the scroll position are settled before
   // the first paint, so a page never shows at the wrong place for a frame.
@@ -32,7 +36,7 @@ export default function SiteShell({ children, className = '' }) {
     else resetScroll();
     startSmoothScroll();
 
-    const remember = () => rememberScroll(key, window.scrollY);
+    const remember = () => rememberScroll(currentKey.current, window.scrollY);
     window.addEventListener('scroll', remember, { passive: true });
 
     return () => {

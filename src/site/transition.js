@@ -24,10 +24,10 @@ const trim = path => path.replace(/\/+$/, '') || '/';
 
 export const samePage = (a, b) => trim(a) === trim(b);
 
-// Decides whether a click on a link is an ordinary move to another page of
-// this site: the only kind the curtain takes over. Everything else (new
-// tabs, downloads, other sites, files, in-page anchors) is left alone.
-export function internalDestination(event, here = window.location) {
+// The URL an ordinary click on a link would open, when it is a page of this
+// site. Anything that is not a plain click on a plain link (new tabs,
+// modifier keys, downloads, other sites, files in public/) gives null.
+function ownPage(event, here) {
   if (event.defaultPrevented || event.button !== 0) return null;
   if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return null;
   const anchor = event.target && event.target.closest ? event.target.closest('a[href]') : null;
@@ -42,6 +42,23 @@ export function internalDestination(event, here = window.location) {
   if (url.origin !== here.origin) return null;
   // Routes never end in an extension; anything that does is a file in public/.
   if (/\.[a-z0-9]{2,5}$/i.test(url.pathname)) return null;
-  if (samePage(url.pathname, here.pathname)) return null;
+  return url;
+}
+
+// Decides whether a click on a link is an ordinary move to another page of
+// this site: the only kind the curtain takes over. Everything else (new
+// tabs, downloads, other sites, files, in-page anchors) is left alone.
+export function internalDestination(event, here = window.location) {
+  const url = ownPage(event, here);
+  if (!url || samePage(url.pathname, here.pathname)) return null;
   return `${url.pathname}${url.search}${url.hash}`;
+}
+
+// A plain link to the page the visitor is already on (the logo on Home, the
+// current item in the nav). The router would add a second history entry for
+// the same page and change nothing on screen; the useful meaning is "take me
+// back to the top". A link with a #target is an in-page jump and is not this.
+export function isLinkToThisPage(event, here = window.location) {
+  const url = ownPage(event, here);
+  return Boolean(url) && samePage(url.pathname, here.pathname) && !url.hash && url.search === here.search;
 }

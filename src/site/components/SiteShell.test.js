@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from '@testing-library/react';
-import { Link, MemoryRouter, Route, Routes } from 'react-router-dom';
+import { Link, MemoryRouter, Route, Routes, useNavigate } from 'react-router-dom';
 import SiteShell from './SiteShell';
 import { resetScroll, setScrollPosition, startSmoothScroll, stopSmoothScroll } from '../scroll';
 import { forgetScroll } from '../scrollMemory';
@@ -111,4 +111,31 @@ test('takes over scroll restoration while mounted and always hands it back to th
   } finally {
     delete window.history.scrollRestoration;
   }
+});
+
+test('positions are remembered against the entry that is current, even when it changes under a mounted page', () => {
+  // The same page gains a new history entry (a link to itself with a query).
+  function Filter() {
+    const navigate = useNavigate();
+    return <button type="button" onClick={() => navigate('/?filter=ios')}>Filter</button>;
+  }
+  const site = initialIndex => render(
+    <MemoryRouter initialEntries={['/', '/?filter=ios']} initialIndex={initialIndex}>
+      <Routes>
+        <Route path="/" element={<SiteShell><Filter /></SiteShell>} />
+      </Routes>
+    </MemoryRouter>,
+  );
+
+  const first = site(0);
+  scrollTo(1200);
+  fireEvent.click(screen.getByRole('button', { name: 'Filter' }));
+  // Still the same mounted page, now on a newer entry: read further down.
+  scrollTo(2900);
+  first.unmount();
+  jest.clearAllMocks();
+
+  // Back to the original entry: where it was when the visitor left it.
+  site(0);
+  expect(setScrollPosition).toHaveBeenCalledWith(1200);
 });
