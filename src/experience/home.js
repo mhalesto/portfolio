@@ -19,7 +19,7 @@ import { SoundFrameWorld } from './worlds/SoundFrameWorld';
 import { LifeTrackWorld } from './worlds/LifeTrackWorld';
 import { YouMineWorld } from './worlds/YouMineWorld';
 import { WebWorld } from './worlds/WebWorld';
-import { FinaleWorld } from './worlds/FinaleWorld';
+import { CORE_RADIUS, FinaleWorld } from './worlds/FinaleWorld';
 import { resetSharedMaterials } from './worlds/materials';
 import { worldAssets } from '../site/showcase';
 
@@ -392,6 +392,18 @@ async function build(options, controller) {
       }
       station.frame = frame;
       station.distance = Math.max(fitY / (tanHalf * frame.v), framing.fitX / (tanHalf * aspect * frame.h));
+      if (station.kind === 'finale' && !stacked) {
+        // The title is pinned to the foot of the screen and the core sits
+        // above it. On a short window, lift the core so its glow ends above
+        // the first line instead of behind it.
+        const content = root.querySelector('.finale__content');
+        const pinned = content && content.parentElement;
+        if (pinned && window.getComputedStyle(pinned).position === 'sticky') {
+          const pixelsPerUnit = engine.height / (2 * station.distance * tanHalf);
+          const limit = (content.offsetTop - 30 - CORE_RADIUS * pixelsPerUnit) / engine.height;
+          frame.fy = clamp(limit, 0.22, frame.fy);
+        }
+      }
       cameraPoints.push(station.position.clone().add(new THREE.Vector3(0, 0, station.distance)));
       lookPoints.push(station.position.clone());
     });

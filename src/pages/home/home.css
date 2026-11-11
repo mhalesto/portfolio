@@ -410,6 +410,8 @@
 .chapter__panel {
   position: relative;
   width: min(540px, 42vw);
+  /* useFitPanels scales a panel that is taller than its screen. */
+  transform-origin: left center;
 }
 
 .chapter__top {
@@ -584,6 +586,7 @@
 .web__panel {
   position: relative;
   width: min(540px, 40vw);
+  transform-origin: left center;
 }
 
 /* Sized against the height as well as the width: five rows have to fit a
@@ -1019,8 +1022,9 @@
 
 /* Too short to pin a whole chapter (a phone on its side, a very squat
    window): the copy scrolls past its world instead of being cropped. The 3D
-   layout stays side by side. chapterOffset() in index.js uses the same test. */
-@media (min-width: 760px) and (min-aspect-ratio: 95/100) and (max-height: 600px) {
+   layout stays side by side. chapterOffset() in index.js uses the same test.
+   Above this height useFitPanels keeps every pinned panel inside its screen. */
+@media (min-width: 760px) and (min-aspect-ratio: 95/100) and (max-height: 540px) {
   .hero,
   .chapter,
   .web,

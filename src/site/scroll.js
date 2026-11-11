@@ -125,3 +125,12 @@ export function resetScroll() {
   scrollState.y = 0;
   scrollState.velocity = 0;
 }
+
+// Puts the page at y at once, with no easing: for restoring a remembered
+// position, and for anything that drives the scroll itself frame by frame.
+export function setScrollPosition(y) {
+  const top = Math.max(0, Number(y) || 0);
+  if (lenis) lenis.scrollTo(top, { immediate: true, force: true });
+  else window.scrollTo(0, top);
+  scrollState.y = top;
+}

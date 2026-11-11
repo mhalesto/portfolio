@@ -10,8 +10,10 @@ import YourAppDialog from '../../site/components/YourAppDialog';
 import ShowcaseDialog from '../../site/components/ShowcaseDialog';
 import { showcases } from '../../site/showcase';
 import useReveal from '../../site/useReveal';
+import useFitPanels from '../../site/useFitPanels';
 import { addTicker, loadStore } from '../../site/ticker';
 import { scrollToTarget } from '../../site/scroll';
+import { travel } from '../../site/transition';
 import { prefersReducedMotion, supportsWebGL } from '../../site/motion';
 import { apps, person, stack, webProjects } from '../../site/data';
 import { buildMailto, loadYourApp, saveYourApp, yourAppIconUrl } from '../../site/yourApp';
@@ -25,11 +27,12 @@ const ramp = value => {
 };
 // Wide chapters pin their copy, so a jump lands part-way into the pin. Portrait
 // chapters scroll below the world, and windows too short to pin a chapter let
-// it scroll past (the max-height: 600px block in home.css): both start at the top.
+// it scroll past (the max-height: 540px block in home.css): both start at the top.
 const chapterOffset = ratio =>
-  window.innerWidth >= 760 && window.innerWidth / window.innerHeight >= 0.95 && window.innerHeight > 600
+  window.innerWidth >= 760 && window.innerWidth / window.innerHeight >= 0.95 && window.innerHeight > 540
     ? window.innerHeight * ratio
     : 0;
+const PINNED_PANELS = '.chapter__panel, .web__panel';
 const REEL_URL = `${process.env.PUBLIC_URL}/experience/clipaura-reel.webp`;
 const MANIFESTO =
   'I build apps end to end: the interface, the code, the payments, the privacy policy and the support page. Seven of them live on this phone. Keep scrolling and each one opens into a world of its own.';
@@ -183,6 +186,8 @@ export default function Home() {
   yourAppRef.current = yourApp;
 
   useReveal(mainRef);
+  // A pinned panel never outgrows the screen it is pinned to.
+  useFitPanels(mainRef, PINNED_PANELS);
 
   useEffect(() => {
     document.title = `${person.name} — iOS apps & websites`;
@@ -214,7 +219,7 @@ export default function Home() {
             loadStore.set({ progress: 1, ready: true });
             if (canvasRef.current) canvasRef.current.classList.add('is-ready');
           },
-          onNavigate: route => navigateRef.current(route),
+          onNavigate: route => travel(route, to => navigateRef.current(to)),
           onSelectApp: index =>
             scrollToTarget(`#app-${apps[index].slug}`, {
               offset: chapterOffset(0.35),

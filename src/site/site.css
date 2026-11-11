@@ -823,7 +823,10 @@ a.brand:hover .brand__rule {
   }
 }
 
+/* Parked below the screen; RouteCurtain animates it up over a page that is
+   leaving and on off the top once the next one is underneath. */
 .route-curtain {
+  --lip: 18vh;
   position: fixed;
   inset: 0;
   z-index: 240;
@@ -831,7 +834,30 @@ a.brand:hover .brand__rule {
   place-items: center;
   background: #050608;
   pointer-events: none;
-  animation: curtain-up 0.95s var(--ease-in-out) 0.12s both;
+  visibility: hidden;
+  transform: translate3d(0, calc(100% + var(--lip)), 0);
+  will-change: transform;
+}
+
+/* Feathered edges, so the panel reads as a shadow passing over the page
+   rather than a slab with a hard line. */
+.route-curtain::before,
+.route-curtain::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  left: 0;
+  height: var(--lip);
+  background: var(--fade-down);
+}
+
+.route-curtain::before {
+  bottom: 100%;
+}
+
+.route-curtain::after {
+  top: 100%;
+  transform: scaleY(-1);
 }
 
 .route-curtain__mark {
@@ -839,29 +865,7 @@ a.brand:hover .brand__rule {
   font-size: 13px;
   letter-spacing: 0.3em;
   color: rgba(236, 234, 228, 0.6);
-  animation: curtain-mark 0.95s ease both;
-}
-
-@keyframes curtain-up {
-  from {
-    transform: translateY(0);
-  }
-  to {
-    transform: translateY(-101%);
-  }
-}
-
-@keyframes curtain-mark {
-  0% {
-    opacity: 0;
-  }
-  30%,
-  60% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-  }
+  opacity: 0;
 }
 
 /* ==========================================================================
@@ -1369,7 +1373,6 @@ html.has-cursor .site input {
 
 @media (prefers-reduced-motion: reduce) {
   .grain,
-  .route-curtain,
   .pulse-dot {
     animation: none !important;
   }
