@@ -353,16 +353,45 @@ async function build(options, controller) {
   let layout = 'wide';
   let cameraPath = null;
   let lookPath = null;
+  // The stacked layout shares the screen with text, and its sections are sized
+  // in svh while the canvas is lvh tall, so on a phone with its browser bars
+  // showing the canvas runs on below the fold. Returns the visible height and
+  // the gap the hero copy leaves under the header, both in canvas pixels.
+  const measureStacked = () => {
+    const sticky = root.querySelector('.hero__sticky');
+    const copy = root.querySelector('.hero__top');
+    if (!sticky || !copy || !sticky.offsetHeight) return null;
+    const header = parseFloat(window.getComputedStyle(document.documentElement).getPropertyValue('--header-h')) || 64;
+    // offsetTop ignores the copy's entrance transform, unlike its client rect.
+    return { visible: sticky.offsetHeight, top: header + 4, bottom: copy.offsetTop - 12 };
+  };
   const rebuildPaths = () => {
     const aspect = engine.width / engine.height;
     layout = aspect < 0.95 || engine.width < 760 ? 'stacked' : 'wide';
     const tanHalf = Math.tan(THREE.MathUtils.degToRad(FOV / 2));
+    const stacked = layout === 'stacked' ? measureStacked() : null;
+    const visible = stacked ? clamp(stacked.visible / engine.height, 0.55, 1) : 1;
     const cameraPoints = [];
     const lookPoints = [];
     stations.forEach(station => {
       const framing = station.framing;
-      const frame = framing[layout];
-      station.distance = Math.max(framing.fitY / (tanHalf * frame.v), framing.fitX / (tanHalf * aspect * frame.h));
+      let fitY = framing.fitY;
+      // v, h: the share of the canvas the world may fill; fx, fy: its centre.
+      const frame = { ...framing[layout] };
+      if (stacked) {
+        frame.v *= visible;
+        frame.fy *= visible;
+        const gap = stacked.bottom - stacked.top;
+        if (station.kind === 'hero' && gap > 90) {
+          // The phone takes exactly the room above the name, however tall the
+          // copy runs on this screen, so the two can never overlap.
+          frame.v = clamp(gap / engine.height, 0.18, 0.56);
+          frame.fy = (stacked.top + stacked.bottom) / 2 / engine.height;
+          fitY = 1.09;
+        }
+      }
+      station.frame = frame;
+      station.distance = Math.max(fitY / (tanHalf * frame.v), framing.fitX / (tanHalf * aspect * frame.h));
       cameraPoints.push(station.position.clone().add(new THREE.Vector3(0, 0, station.distance)));
       lookPoints.push(station.position.clone());
     });
@@ -370,6 +399,8 @@ async function build(options, controller) {
     lookPath = new THREE.CatmullRomCurve3(lookPoints, false, 'centripetal');
   };
   engine.onResize(() => rebuildPaths());
+  // The hero copy changes height when fonts land or the visitor names an app.
+  journey.onMeasure = () => rebuildPaths();
   const onWindowResize = () => journey.measure();
   window.addEventListener('resize', onWindowResize);
   cleanupTasks.push(() => window.removeEventListener('resize', onWindowResize));
@@ -495,6 +526,8 @@ async function build(options, controller) {
     }
     // Refresh pointer targets for whichever station is active.
     activeStation = -1;
+    // The hero copy may have changed height; give the phone the room it left.
+    if (cameraPath) rebuildPaths();
   };
 
   // ---------------------------------------------------------------- frame loop
@@ -533,6 +566,7 @@ async function build(options, controller) {
 
   engine.onFrame((time, delta) => {
     const scrollY = window.scrollY;
+    engine.covered = journey.isCovered(scrollY, engine.height);
     velocity = damp(velocity, (scrollY - lastScroll) / Math.max(delta, 1 / 240), 6, delta);
     lastScroll = scrollY;
     const speed = Math.min(Math.abs(velocity) / 2600, 1);
@@ -556,8 +590,8 @@ async function build(options, controller) {
     camera.position.copy(cameraPosition);
     camera.lookAt(lookPosition);
 
-    const frameA = stations[i0].framing[layout];
-    const frameB = stations[i1].framing[layout];
+    const frameA = stations[i0].frame;
+    const frameB = stations[i1].frame;
     const fx = THREE.MathUtils.lerp(frameA.fx, frameB.fx, blend);
     const fy = THREE.MathUtils.lerp(frameA.fy, frameB.fy, blend);
     fov = damp(fov, FOV + speed * 7 * engine.motion, 5, delta);

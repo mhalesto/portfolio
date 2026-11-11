@@ -5,7 +5,7 @@ import { prefersReducedMotion } from '../motion';
 
 // An endless line of words that speeds up with scroll velocity and flips
 // direction with the scroll direction.
-export default function Marquee({ items, speed = 70 }) {
+export default function Marquee({ items, speed = 70, ...rest }) {
   const trackRef = useRef(null);
 
   useEffect(() => {
@@ -68,7 +68,7 @@ export default function Marquee({ items, speed = 70 }) {
     ));
 
   return (
-    <div className="marquee" aria-hidden="true">
+    <div className="marquee" aria-hidden="true" {...rest}>
       <div className="marquee__track" ref={trackRef}>
         {renderRow('a')}
         {renderRow('b')}

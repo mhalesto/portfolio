@@ -75,6 +75,8 @@ export class Engine {
     this.height = 1;
     this.dpr = 1;
     this.running = true;
+    // Set by a scene while opaque page content hides the whole canvas.
+    this.covered = false;
     this.callbacks = [];
     this.resizeCallbacks = [];
     this.perf = { frames: 0, time: 0, windows: 0 };
@@ -122,8 +124,11 @@ export class Engine {
     // when their independently owned scroll locks are released.
     if (!this.running || document.documentElement.classList.contains('scroll-locked')) return;
     this.time += delta;
-    this.watchPerformance(delta);
     for (let i = 0; i < this.callbacks.length; i += 1) this.callbacks[i](this.time, delta);
+    // The scene keeps moving so it is in the right place when it reappears,
+    // but there is no reason to draw frames nobody can see.
+    if (this.covered) return;
+    this.watchPerformance(delta);
     this.composer.render(delta);
   }
 

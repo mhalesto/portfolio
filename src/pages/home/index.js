@@ -18,9 +18,18 @@ import { buildMailto, loadYourApp, saveYourApp, yourAppIconUrl } from '../../sit
 import './home.css';
 
 const pad = value => String(value).padStart(2, '0');
-// Wide chapters pin their copy; portrait chapters scroll below the world.
-const chapterOffset = ratio => window.innerWidth >= 760 && window.innerWidth / window.innerHeight >= 0.95
-  ? window.innerHeight * ratio : 0;
+// 0 to 1 with a soft start and finish.
+const ramp = value => {
+  const t = Math.min(1, Math.max(0, value));
+  return t * t * (3 - 2 * t);
+};
+// Wide chapters pin their copy, so a jump lands part-way into the pin. Portrait
+// chapters scroll below the world, and windows too short to pin a chapter let
+// it scroll past (the max-height: 600px block in home.css): both start at the top.
+const chapterOffset = ratio =>
+  window.innerWidth >= 760 && window.innerWidth / window.innerHeight >= 0.95 && window.innerHeight > 600
+    ? window.innerHeight * ratio
+    : 0;
 const REEL_URL = `${process.env.PUBLIC_URL}/experience/clipaura-reel.webp`;
 const MANIFESTO =
   'I build apps end to end: the interface, the code, the payments, the privacy policy and the support page. Seven of them live on this phone. Keep scrolling and each one opens into a world of its own.';
@@ -58,6 +67,10 @@ function Manifesto() {
       const progress = Math.min(1, Math.max(0, -rect.top / Math.max(travel, 1)));
       if (Math.abs(progress - last) < 0.001) return;
       last = progress;
+      // The scrim behind the words arrives with them, and its wider reach
+      // leaves before the section does (see .manifesto__sticky in home.css).
+      section.style.setProperty('--scrim-in', ramp(progress / 0.16).toFixed(3));
+      section.style.setProperty('--scrim-out', (1 - ramp((progress - 0.84) / 0.16)).toFixed(3));
       const lit = progress * (words.length + 6) - 3;
       words.forEach((word, index) => {
         const amount = Math.min(1, Math.max(0, lit - index + 1));
@@ -415,7 +428,7 @@ export default function Home() {
                       <span className="web__name">{project.name}</span>
                       <span className="web__kind">{project.kind}</span>
                       <span className="web__domain mono">
-                        {project.domain}
+                        <span className="web__domain-text">{project.domain}</span>
                         <span aria-hidden="true"> ↗</span>
                       </span>
                       {!webglActive && <img className="web__thumb" src={project.image} alt="" loading="lazy" decoding="async" width="800" height="500" />}
@@ -427,7 +440,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="about" id="about" aria-labelledby="about-title">
+        <section className="about" id="about" aria-labelledby="about-title" data-cover>
           <div className="about__intro">
             <p className="eyebrow" data-reveal>
               About
@@ -502,7 +515,7 @@ export default function Home() {
           </div>
         </section>
 
-        <Marquee items={['iOS apps', 'Websites', 'Full-stack', person.studio, person.country]} />
+        <Marquee items={['iOS apps', 'Websites', 'Full-stack', person.studio, person.country]} data-cover />
 
         <section
           className="finale"

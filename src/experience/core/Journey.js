@@ -10,6 +10,9 @@ export class Journey {
     this.root = root;
     this.anchors = [];
     this.holds = new Map();
+    this.covers = [];
+    // Set by the scene to re-frame its worlds whenever the page is re-measured.
+    this.onMeasure = null;
     this.measure();
     this.observer = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(() => this.measure()) : null;
     if (this.observer) this.observer.observe(root);
@@ -40,6 +43,33 @@ export class Journey {
 
     anchors.sort((a, b) => a.scroll - b.scroll);
     this.anchors = anchors;
+
+    // Opaque blocks ([data-cover]) that sit in front of the canvas. Blocks
+    // that touch are merged into one span.
+    const covers = [];
+    this.root.querySelectorAll('[data-cover]').forEach(element => {
+      const rect = element.getBoundingClientRect();
+      if (rect.height > 0) covers.push({ top: rect.top + scrollY, bottom: rect.bottom + scrollY });
+    });
+    covers.sort((a, b) => a.top - b.top);
+    this.covers = covers.reduce((spans, cover) => {
+      const last = spans[spans.length - 1];
+      if (last && cover.top <= last.bottom + 1) last.bottom = Math.max(last.bottom, cover.bottom);
+      else spans.push({ ...cover });
+      return spans;
+    }, []);
+
+    if (this.onMeasure) this.onMeasure();
+  }
+
+  // True while an opaque block fills a viewport of the given height, so
+  // nothing drawn on the canvas could be seen.
+  isCovered(scroll, viewport) {
+    for (let i = 0; i < this.covers.length; i += 1) {
+      const cover = this.covers[i];
+      if (scroll >= cover.top && scroll + viewport <= cover.bottom) return true;
+    }
+    return false;
   }
 
   stationAt(scroll) {

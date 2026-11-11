@@ -1,9 +1,14 @@
+import { useRef } from 'react';
 import { Link } from 'react-router-dom';
 import LocalTime from './LocalTime';
+import useFitText from '../useFitText';
 import { portfolioApps as apps, person, webProjects } from '../data';
 
 export default function Footer() {
   const year = new Date().getFullYear();
+  const wordRef = useRef(null);
+  // The wordmark runs edge to edge whatever the name, font or window width.
+  useFitText(wordRef, { min: 56, max: 640, trim: 0.029 });
 
   return (
     <footer className="site-footer">
@@ -61,7 +66,7 @@ export default function Footer() {
       </div>
 
       <div className="site-footer__word" aria-hidden="true">
-        {person.firstName}
+        <span ref={wordRef}>{person.firstName}</span>
       </div>
 
       <div className="site-footer__bar">

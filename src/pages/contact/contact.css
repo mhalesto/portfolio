@@ -39,6 +39,30 @@
   }
 }
 
+/* The orb is wider than the hero; fade it out instead of cropping it at the
+   rule below. */
+.contact-hero::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 44%;
+  background: var(--fade-down);
+  pointer-events: none;
+}
+
+.contact-hero > .eyebrow,
+.contact-hero__title,
+.contact-hero__lede,
+.contact-hero__actions {
+  z-index: 1;
+}
+
+.contact-hero > .eyebrow {
+  position: relative;
+}
+
 .contact-hero__title {
   position: relative;
   margin: 18px 0 26px;
@@ -97,6 +121,13 @@
   gap: clamp(40px, 6vw, 100px);
   padding: clamp(80px, 12vh, 140px) var(--gutter) clamp(100px, 14vh, 170px);
   border-top: 1px solid var(--line);
+}
+
+/* The instructions stay beside the cards for as long as the cards run. */
+.contact-support__intro {
+  position: sticky;
+  top: calc(var(--header-h) + 28px);
+  align-self: start;
 }
 
 .contact-support__intro h2 {
@@ -193,6 +224,10 @@
 @media (max-width: 900px) {
   .contact-support {
     grid-template-columns: 1fr;
+  }
+
+  .contact-support__intro {
+    position: static;
   }
 }
 

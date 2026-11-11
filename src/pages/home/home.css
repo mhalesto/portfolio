@@ -36,6 +36,12 @@
   pointer-events: auto;
 }
 
+/* One left-hand scrim for every pinned section. Neighbouring sections abut
+   with the same gradient, so no edge shows as one hands over to the next. */
+.home {
+  --scrim-left: linear-gradient(90deg, rgba(6, 7, 10, 0.8) 0%, rgba(6, 7, 10, 0.5) 28%, rgba(6, 7, 10, 0) 52%);
+}
+
 .home--static {
   background:
     radial-gradient(1200px 800px at 85% 5%, rgba(139, 61, 255, 0.16), transparent 60%),
@@ -337,12 +343,27 @@
   padding: 0 var(--gutter);
 }
 
-.manifesto__sticky::before {
+/* The hero above has no scrim, so this one arrives with the first words
+   (--scrim-in, set by the Manifesto ticker) instead of sliding in as a slab. */
+.manifesto__sticky::before,
+.manifesto__sticky::after {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, rgba(6, 7, 10, 0.72) 0%, rgba(6, 7, 10, 0.4) 40%, rgba(6, 7, 10, 0) 64%);
   pointer-events: none;
+}
+
+.manifesto__sticky::before {
+  background: var(--scrim-left);
+  opacity: var(--scrim-in, 1);
+}
+
+/* The paragraph runs wider than a chapter panel. This extra reach leaves
+   again before the section does, so chapter one takes over without a step. */
+.manifesto__sticky::after {
+  z-index: -1;
+  background: linear-gradient(90deg, rgba(6, 7, 10, 0) 18%, rgba(6, 7, 10, 0.28) 40%, rgba(6, 7, 10, 0) 66%);
+  opacity: calc(var(--scrim-in, 1) * var(--scrim-out, 1));
 }
 
 .manifesto__text {
@@ -382,7 +403,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, rgba(6, 7, 10, 0.8) 0%, rgba(6, 7, 10, 0.5) 28%, rgba(6, 7, 10, 0) 52%);
+  background: var(--scrim-left);
   pointer-events: none;
 }
 
@@ -556,7 +577,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, rgba(6, 7, 10, 0.82) 0%, rgba(6, 7, 10, 0.5) 32%, rgba(6, 7, 10, 0) 56%);
+  background: var(--scrim-left);
   pointer-events: none;
 }
 
@@ -565,9 +586,11 @@
   width: min(540px, 40vw);
 }
 
+/* Sized against the height as well as the width: five rows have to fit a
+   1366 x 768 laptop, whose browser leaves about 650px. */
 .web__title {
-  margin: 16px 0 30px;
-  font-size: clamp(38px, 4vw, 66px);
+  margin: 16px 0 clamp(14px, 3.2vh, 30px);
+  font-size: min(clamp(38px, 4vw, 66px), 7.2vh);
   font-weight: 600;
   line-height: 0.98;
   letter-spacing: -0.045em;
@@ -589,7 +612,7 @@
     'num kind domain';
   align-items: center;
   column-gap: 12px;
-  padding: 16px 6px;
+  padding: clamp(7px, 3.4vh - 15px, 16px) 6px;
   border-bottom: 1px solid var(--line);
   color: var(--fg);
   text-decoration: none;
@@ -612,7 +635,7 @@
 
 .web__name {
   grid-area: name;
-  font-size: clamp(24px, 2.1vw, 34px);
+  font-size: min(clamp(24px, 2.1vw, 34px), 3.9vh);
   font-weight: 600;
   letter-spacing: -0.03em;
 }
@@ -646,12 +669,22 @@
   grid-template-columns: 1.05fr 1fr;
   gap: clamp(40px, 6vw, 110px);
   padding: clamp(120px, 18vh, 220px) var(--gutter) clamp(90px, 12vh, 150px);
-  background: linear-gradient(
-    180deg,
-    rgba(6, 7, 10, 0) 0,
-    rgba(6, 7, 10, 0.94) clamp(80px, 12vh, 160px),
-    rgba(6, 7, 10, 0.94) 100%
-  );
+  /* Solid: the camera flies through the web windows and the orbit while this
+     is on screen, and anything less lets them ghost through behind the text. */
+  background: var(--bg);
+}
+
+/* Night rises over the end of the websites section instead of meeting it
+   at a line. */
+.about::before {
+  content: '';
+  position: absolute;
+  right: 0;
+  bottom: 100%;
+  left: 0;
+  height: 26vh;
+  background: var(--fade-down);
+  pointer-events: none;
 }
 
 .about__title {
@@ -755,7 +788,7 @@
 
 .home .marquee {
   position: relative;
-  background: rgba(6, 7, 10, 0.9);
+  background: var(--bg);
 }
 
 /* ---------------------------------------------------------------- finale */
@@ -763,6 +796,19 @@
 .finale {
   position: relative;
   height: 185vh;
+}
+
+/* The orbit surfaces out of the dark below the marquee. */
+.finale::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 34vh;
+  background: var(--fade-down);
+  transform: scaleY(-1);
+  pointer-events: none;
 }
 
 .finale__sticky {
@@ -790,8 +836,9 @@
 }
 
 .finale__title {
-  margin: 12px 0 34px;
-  font-size: clamp(54px, 8.4vw, 150px);
+  margin: 12px 0 clamp(20px, 3.8vh, 34px);
+  /* Capped by height so a short window keeps the title clear of the core. */
+  font-size: min(clamp(54px, 8.4vw, 150px), 14.5vh);
   font-weight: 620;
   line-height: 0.9;
   letter-spacing: -0.055em;
@@ -940,6 +987,91 @@
   .chapter__meta {
     margin-bottom: 18px;
   }
+
+  .web__sticky {
+    padding-bottom: 18px;
+  }
+
+  .web__title {
+    margin-top: 10px;
+  }
+
+  .web__kind {
+    font-size: 13px;
+  }
+
+  .finale__sticky {
+    padding-bottom: 5vh;
+  }
+
+  .finale__hint {
+    margin-top: 16px;
+  }
+}
+
+/* Between a tablet and a laptop the list column is too narrow for a long
+   domain beside the name; the arrow alone says "opens the site". */
+@media (min-width: 760px) and (max-width: 1180px) and (min-aspect-ratio: 95/100) {
+  .web__domain-text {
+    display: none;
+  }
+}
+
+/* Too short to pin a whole chapter (a phone on its side, a very squat
+   window): the copy scrolls past its world instead of being cropped. The 3D
+   layout stays side by side. chapterOffset() in index.js uses the same test. */
+@media (min-width: 760px) and (min-aspect-ratio: 95/100) and (max-height: 600px) {
+  .hero,
+  .chapter,
+  .web,
+  .finale {
+    height: auto;
+  }
+
+  .hero__sticky,
+  .chapter__sticky,
+  .web__sticky,
+  .finale__sticky {
+    position: relative;
+    height: auto;
+    min-height: 100vh;
+  }
+
+  .hero__sticky {
+    display: block;
+    padding-bottom: 56px;
+  }
+
+  .hero__title {
+    margin-top: 16px;
+    font-size: clamp(56px, 8.6vw, 120px);
+  }
+
+  .hero__cue {
+    position: static;
+    justify-content: flex-start;
+    margin-top: 26px;
+  }
+
+  .chapter__sticky,
+  .web__sticky {
+    align-items: flex-start;
+    padding-top: calc(var(--header-h) + 22px);
+    padding-bottom: 72px;
+  }
+
+  .chapter__hint {
+    display: none;
+  }
+
+  .finale__sticky {
+    align-items: flex-start;
+    padding: 58vh var(--gutter) 56px;
+  }
+
+  .finale::before {
+    height: 14vh;
+  }
 }
 
 /* Matches the 3D layout switch: below 760px wide, or portrait windows, the
@@ -957,9 +1089,14 @@
     margin-bottom: 14px;
   }
 
+  /* One line on a 360px screen: no leading rule, tighter tracking. */
   .hero__top .eyebrow {
     font-size: 10.5px;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.06em;
+  }
+
+  .hero__top .eyebrow::before {
+    display: none;
   }
 
   .hero__title {
@@ -1044,8 +1181,15 @@
     padding-bottom: 12vh;
   }
 
+  /* Here the scrim sits under the words at the foot of the screen, and the
+     next chapter starts clear, so it leaves as well as arrives. */
   .manifesto__sticky::before {
     background: linear-gradient(180deg, rgba(6, 7, 10, 0) 30%, rgba(6, 7, 10, 0.75) 70%);
+    opacity: calc(var(--scrim-in, 1) * var(--scrim-out, 1));
+  }
+
+  .manifesto__sticky::after {
+    display: none;
   }
 
   .manifesto__text {
@@ -1078,6 +1222,27 @@
       rgba(6, 7, 10, 0) 46vh,
       rgba(6, 7, 10, 0.82) 60vh,
       rgba(6, 7, 10, 0.92) 100%
+    );
+  }
+
+  /* A chapter's copy dissolves into the next world instead of ending at a
+     line. The websites keep their floor: the About section rises over it. */
+  .chapter__sticky {
+    padding-bottom: 150px;
+  }
+
+  .chapter__sticky::before {
+    background: linear-gradient(
+      180deg,
+      rgba(6, 7, 10, 0) 0,
+      rgba(6, 7, 10, 0) 46vh,
+      rgba(6, 7, 10, 0.82) 60vh,
+      rgba(6, 7, 10, 0.92) calc(100% - 172px),
+      rgba(6, 7, 10, 0.8) calc(100% - 130px),
+      rgba(6, 7, 10, 0.54) calc(100% - 86px),
+      rgba(6, 7, 10, 0.24) calc(100% - 44px),
+      rgba(6, 7, 10, 0.07) calc(100% - 15px),
+      rgba(6, 7, 10, 0) 100%
     );
   }
 
@@ -1121,12 +1286,55 @@
     grid-template-columns: 1fr;
   }
 
+  /* Nothing is pinned here, so the fades must not sit on top of content:
+     keep them inside the padding of the sections they touch. */
+  .about::before {
+    height: 72px;
+  }
+
+  .finale::before {
+    height: 16vh;
+  }
+
   .about__stack {
     grid-template-columns: 1fr;
   }
 
   .rail {
     display: none;
+  }
+}
+
+/* Both hero buttons stay on one row down to a 360px screen. */
+@media (max-width: 400px) {
+  .hero__actions {
+    gap: 8px;
+  }
+
+  .hero__actions .btn {
+    height: 50px;
+    padding: 0 18px;
+    font-size: 14px;
+  }
+}
+
+/* A phone with its browser bars showing is about 660px tall. The 3D phone
+   needs that room more than a paragraph the manifesto repeats one swipe on. */
+@media (max-width: 759.98px) and (max-height: 720px), (max-aspect-ratio: 95/100) and (max-height: 720px) {
+  .hero__title {
+    font-size: clamp(52px, 15.5vw, 132px);
+  }
+
+  .hero__bottom {
+    margin-top: 16px;
+  }
+
+  .home:not(.home--static) .hero__intro .hero__lede {
+    display: none;
+  }
+
+  .hero__intro {
+    margin-bottom: 14px;
   }
 }
 
@@ -1197,6 +1405,12 @@
 .home--static .finale__sticky { min-height: 0; padding-block: 100px; }
 .home--static .chapter__sticky, .home--static .web__sticky { padding-block: 100px; }
 .home--static .web__panel { width: min(760px, 100%); }
+/* No canvas to cover: the page background runs straight through. */
+.home--static .about,
+.home--static .marquee { background: none; }
+.home--static .about::before,
+.home--static .finale::before,
+.home--static .manifesto__sticky::after { display: none; }
 .home--static .hero__fallback { top: 32%; }
 .home--static .hero__title { font-size: clamp(56px, 8vw, 142px); }
 
