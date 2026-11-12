@@ -1,42 +1,234 @@
 {
-  "effectiveDate": "July 18, 2026",
-  "summary": "ResumeStudio is an offline-first career workspace. Résumés, applications, cover letters, contacts, offers, interview history, and career evidence are stored on your device by default. Connected processing happens only when you choose a feature that requires it.",
+  "effectiveDate": "November 12, 2026",
+  "summary": "ResumeStudio is an offline-first career workspace. Your drafts and career records stay on your device by default. Optional sync, connected AI, live spoken interviews and hosted sharing have different data flows, described below, and run when you choose those features.",
   "features": [
-    ["01", "Build with evidence", "Structured editing, import, ATS readiness, Recruiter Scan, 131 résumé templates, Layout Studio, searchable PDF and editable DOCX export."],
-    ["02", "Run the search", "Capture job adverts, track applications, connect documents and contacts, schedule interviews, compare offers, and act on a focused Today queue."],
-    ["03", "Use AI deliberately", "On-device assistance handles suitable lightweight work. Higher-quality connected AI powers complex tailoring, interview plans, cover letters, and Career Coach workflows."]
+    [
+      "01",
+      "Build with evidence",
+      "Structured editing, import, ATS readiness, Recruiter Scan, 181 résumé templates, Layout Studio, searchable PDF and editable DOCX export."
+    ],
+    [
+      "02",
+      "Run the search",
+      "Capture job adverts, track applications, connect documents and contacts, schedule interviews, compare offers, and act on a focused Today queue."
+    ],
+    [
+      "03",
+      "Use AI deliberately",
+      "On-device assistance handles suitable lightweight work. Higher-quality connected AI powers complex tailoring, interview plans, cover letters, and Career Coach workflows."
+    ]
   ],
   "privacyBullets": [
-    "Drafts, applications, contacts, offers, and voice recordings are stored on device first.",
-    "On-device OCR reads selected screenshots and scanned job documents locally.",
-    "AI requests are explicit, redacted, App Check protected, and returned for review.",
-    "No advertising, data sale, or cross-app tracking.",
-    "Local, iCloud, hosted, and account data have separate export and deletion controls."
+    "Drafts, applications, evidence and saved interview work are stored on device first.",
+    "Selected screenshots and scanned documents can be read locally with Apple Vision.",
+    "Connected writing uses limited redacted context. AI import and live spoken interviews have separate, explicit data flows.",
+    "There is no advertising, data sale or cross-app advertising tracking. Optional product insights are off by default.",
+    "Local, iCloud, hosted and account data have separate export and deletion controls."
   ],
   "privacySections": [
-    {"title":"Data stored on your device","paragraphs":["ResumeStudio stores your résumé documents and photos, versions, layouts, cover letters, applications, contacts, offers, interview work, selected source files, AI results, settings, processing history, and the last verified StoreKit entitlement needed for secure offline access.","Voice-practice recordings remain local. When you request AI feedback, the transcript and delivery measurements may be sent, but not the raw recording."]},
-    {"title":"On-device intelligence and OCR","paragraphs":["Selected screenshots, images, and scanned documents can be read with Apple Vision on your device. On supported Apple Intelligence devices, suitable lightweight writing and extraction tasks may use Apple’s on-device Foundation Models framework. Content handled entirely on device is not sent to ResumeStudio, Firebase, or OpenAI.","Free users receive on-device assistance first when it is available. Connected fallback is off by default and can be enabled explicitly; it may use the credits displayed for the action. Go and Pro users receive the higher-quality connected AI service first, with on-device assistance used only as a private fallback for eligible temporary failures."]},
-    {"title":"Connected AI processing","paragraphs":["Connected AI runs only after you select an AI action. Requests pass through ResumeStudio’s Firebase backend to OpenAI. The backend uses Firebase App Check, fixed supported actions, usage limits, structured responses, and requests that OpenAI does not store the response for later retrieval.","Writing requests exclude names, phone numbers, email addresses, references, profile photographs, attached source files, interview links, interviewer names, and private source URLs. The minimum relevant redacted résumé or career evidence is sent for the selected task. You can pause AI and exclude Evidence Vault items in Privacy Centre."]},
-    {"title":"Privacy-safe product measurement","paragraphs":["Anonymous product insights are off by default. If you opt in, the app sends only allow-listed coarse event names, plan tier, AI route, app version, and a coarse onboarding goal. Events never include résumé text, identity, contact details, job descriptions, company names, URLs, document contents, advertising identifiers, or a persistent analytics identifier. The server stores aggregate daily counts, not a user activity timeline, and automatically deletes those aggregate documents after 90 days."]},
-    {"title":"iCloud, accounts, and hosted features","paragraphs":["If you enable document sync, ResumeStudio stores a workspace archive in your private iCloud container under your Apple Account. Firebase may store authentication records, saved AI results, AI-credit usage, referral records, entitlement verification, public CV-page metadata, trackable-link metadata, and hosted Review Room content needed to provide those features.","Publishing a CV page, trackable résumé link, or Review Room uploads the exact PDF you select, which may contain personal information you placed in that PDF. Links can be withdrawn, revoked, or deleted by their owner."]},
-    {"title":"Purchases","paragraphs":["Apple processes purchases and payment details. ResumeStudio receives signed transaction information such as product identifier, status, purchase date, and expiration date to unlock access and enforce allowances. ResumeStudio does not receive card or bank details."]},
-    {"title":"Data sharing and tracking","paragraphs":["ResumeStudio does not sell personal data, show third-party advertising, or track you across other companies’ apps and websites. Service providers receive data only to provide authentication, cloud functions, AI processing, purchase verification, optional iCloud sync, or explicitly published hosted features."]},
-    {"title":"Retention and deletion","paragraphs":["On-device data remains until you delete it or remove the app. iCloud data remains until you erase the archive. Saved AI work remains in Firebase until you delete it or your account. Hosted links end on expiry, revocation, withdrawal, or deletion. Optional aggregate product metrics expire automatically after 90 days.","Settings lets you separately delete the server account, on-device workspace, iCloud archive, AI history, and career intelligence. Deleting an account does not cancel an App Store subscription."]},
-    {"title":"Children, changes, and contact","paragraphs":["ResumeStudio is not directed to children under 13. This policy will be updated before material processing changes take effect.","For privacy or deletion questions, email currenttech.co.za@gmail.com."]}
+    {
+      "title": "Data stored on your device",
+      "paragraphs": [
+        "Your device stores résumé documents and photos, versions, layouts, cover letters, applications, selected contacts, offers, interview history, career evidence and attached source files, imported inbox items, AI results, coach conversations and remembered context, Writing Voice Profile samples, preferences and verified offline purchase access.",
+        "Importing a selected contact does not upload your entire address book. Messages, screenshots, documents and calendar invitations shared into the Application Inbox are analyzed locally for your review before any proposed workspace change is applied."
+      ]
+    },
+    {
+      "title": "On-device intelligence and OCR",
+      "paragraphs": [
+        "Apple Vision can read selected images, screenshots and scanned documents on your device. On supported Apple Intelligence devices, suitable lightweight tasks may use Apple’s on-device Foundation Models framework. Content handled entirely on device is not sent to ResumeStudio’s backend or OpenAI.",
+        "Availability depends on the device and system settings. Connected fallback is a separate setting and may use the credits shown for the action. You can pause AI in Privacy Centre. A local OCR preview and a connected AI import are separate choices."
+      ]
+    },
+    {
+      "title": "Connected writing and Career Coach",
+      "paragraphs": [
+        "Requested connected writing, tailoring, interview planning, feedback and coach actions send the relevant context through ResumeStudio’s Firebase backend to OpenAI. Dedicated names, phone numbers, email addresses, references and private source-URL fields are omitted from ordinary résumé-writing context. Private photos, signatures, attachment files and reference details are excluded from the redacted page image used for requested coach layout feedback. Text you place in a job description, note or chat may still contain personal information; review it before sending.",
+        "The coach can read relevant saved work through named tools. Selected relationship roles, companies, follow-ups and notes may be included when relevant; requested negotiation help can include the compensation and offer amounts you entered. Résumé, application, answer-vault and reminder changes proposed by the coach require your approval.",
+        "Coach memories are stored on device and can be reviewed, kept or forgotten; relevant remembered context may be sent with a coach request. The Writing Voice Profile sends a short style brief with tone, length, spelling and preferred or banned phrases. Its saved writing examples remain on device."
+      ]
+    },
+    {
+      "title": "AI résumé import",
+      "paragraphs": [
+        "If you choose connected AI import, the extracted text of the document is sent for structured parsing. That text can contain your name, contact details, employment history and other personal information in the original résumé; ordinary writing redaction does not apply to this import step. The original image or document file is not uploaded for ordinary OCR. Review the proposed imported fields before applying them. Saved AI output can be stored under your Firebase account."
+      ]
+    },
+    {
+      "title": "Recorded answer practice",
+      "paragraphs": [
+        "Single-answer voice practice records to your device. Speech recognition prefers on-device recognition where supported and may use Apple’s speech service when local recognition is unavailable. Choosing connected AI feedback sends the transcript and delivery measurements, rather than the saved audio file, to the writing service."
+      ]
+    },
+    {
+      "title": "Spoken mock interviews",
+      "paragraphs": [
+        "Starting a live spoken interview sends microphone audio directly from your device to OpenAI’s realtime service. ResumeStudio’s Firebase backend issues a short-lived session credential; it does not relay or store the live audio. The transcript is saved on device and can be sent later if you request connected feedback or a debrief.",
+        "OpenAI’s provider retention rules apply to live audio and transcripts. ResumeStudio does not promise zero-retention processing. You can stop the session to stop streaming microphone audio."
+      ]
+    },
+    {
+      "title": "Provider processing and retention",
+      "paragraphs": [
+        "ResumeStudio’s text requests disable stored API responses. This does not remove OpenAI’s separate security and abuse-monitoring retention. Under OpenAI’s default API controls, request content may be retained for abuse monitoring for up to 30 days, with exceptions described in its policy. Approved retention controls have not been verified for these sessions. API data is not used for model training by default. See OpenAI’s API data controls at https://developers.openai.com/api/docs/guides/your-data."
+      ]
+    },
+    {
+      "title": "iCloud, accounts and service identifiers",
+      "paragraphs": [
+        "If you enable iCloud sync, the workspace archive and associated evidence files are stored in your private iCloud container under your Apple Account. Apple operates that service.",
+        "When online, ResumeStudio creates a protected anonymous Firebase account so supported services can work without mandatory signup. Optional email or Sign in with Apple adds account information. Firebase can retain your account identifier, saved AI results, allowance and referral records, signed purchase-verification information, hosted content and its ownership metadata. An installation identifier is sent with service requests and may be hashed for allowance enforcement; it is not an advertising identifier."
+      ]
+    },
+    {
+      "title": "Review Rooms",
+      "paragraphs": [
+        "Publishing a Review Room uploads the selected PDF and rendered page images, together with the room title, message and reviewer context you provide. The PDF may contain the personal information you chose to include. The room uses an unguessable link and access code, expires within 31 days, and can be revoked or deleted by its owner.",
+        "Reviewer names, comments, exact suggested edits and sign-off are stored with the room. Suggested edits change your résumé only after you accept them. Deleting the hosted room removes its document, page images and stored feedback."
+      ]
+    },
+    {
+      "title": "Trackable résumé links and public CV pages",
+      "paragraphs": [
+        "A trackable link uploads your selected PDF and page images. Its viewer uses an anonymous per-link visitor cookie and records opens, reading time while the page is visible, PDF downloads and a coarse device/browser hint. This retained engagement data is visible to the sender; the viewer is told about it. ResumeStudio does not identify the visitor by name.",
+        "A public CV page contains the résumé and public profile fields you choose to publish. It can be search-indexable when you enable that choice. Owners can withdraw, revoke or delete their hosted pages and links. Removing access does not erase copies a recipient has already downloaded."
+      ]
+    },
+    {
+      "title": "Career Proof Packs",
+      "paragraphs": [
+        "Publishing a Proof Pack uploads its rendered PDF and page images. Before publishing, you choose the evidence and the redactions for employer names, sources, exact dates, attachment previews and referee names. Included attachment previews and personal details become part of the published document; the underlying source files are not uploaded separately.",
+        "A Proof Pack uses an unlisted, private-by-link address without viewer analytics. ResumeStudio does not record Proof Pack opens or reading time for its owner. Packs expire after fourteen days by default and no more than 31 days, use no-index headers, and can be revoked or deleted by their owner. Deleting a pack removes its hosted PDF and page images."
+      ]
+    },
+    {
+      "title": "Evidence confirmations and outcome benchmarks",
+      "paragraphs": [
+        "If you request confirmation of one evidence claim, the selected claim and context are hosted behind a one-use link. A referee independently provides their name, role, decision and comment. ResumeStudio does not upload a recipient email or address-book list for this request, and does not verify the identity of the person holding the link. An answered confirmation cannot be edited through ordinary revocation; account erasure removes the owned record.",
+        "Outcome benchmarks are a separate opt-in feature. Contributions contain bounded outcome counts and broad role, seniority and market categories rather than résumé text, an employer or a job title. A hashed installation/cohort key replaces a repeat contribution, and a cohort is not published until enough separate contributors are present."
+      ]
+    },
+    {
+      "title": "Purchases",
+      "paragraphs": [
+        "Apple processes purchases and payment details. ResumeStudio receives signed transaction information such as product identifier, status, purchase date and expiration date to unlock access and enforce allowances. ResumeStudio does not receive your payment-card or bank details."
+      ]
+    },
+    {
+      "title": "Privacy-safe product measurement",
+      "paragraphs": [
+        "Anonymous product insights are off by default. If you opt in, the app sends only allow-listed event names, plan tier, AI route, app version and a coarse onboarding goal. Events exclude résumé text, account and installation identifiers, contact details, company names, job descriptions, URLs and advertising identifiers. The backend folds events into aggregate daily counters rather than a per-user activity timeline. Those aggregate records expire after 90 days. Turning insights off stops new submissions; existing anonymous totals are not per-user records."
+      ]
+    },
+    {
+      "title": "Data sharing and tracking",
+      "paragraphs": [
+        "ResumeStudio does not sell personal data, display third-party advertising or track you across other companies’ apps and websites for advertising. Apple, Google/Firebase and OpenAI receive data for the app features described above. Trackable-link engagement is separate from advertising tracking; Proof Packs have no owner-facing viewer analytics."
+      ]
+    },
+    {
+      "title": "Retention and deletion",
+      "paragraphs": [
+        "On-device work remains until you erase it or remove the app. iCloud data remains until you erase the archive. Saved AI work remains in Firebase until you delete it or your account. Hosted access ends on expiry, withdrawal, revocation or deletion; expiry ends access and does not by itself promise immediate physical deletion of every hosted object.",
+        "Settings → Account and backup provides separate server-account, local-workspace and iCloud controls. Server-account deletion removes the managed account records, saved AI output, hosted CV pages, résumé links, Review Rooms, Proof Packs and owned evidence confirmations. Local erasure and iCloud erasure are separate choices. Provider security-retention rules may still apply to requests already processed, and downloaded copies remain with their recipients. Deleting an account does not cancel an App Store subscription."
+      ]
+    },
+    {
+      "title": "Children, changes and contact",
+      "paragraphs": [
+        "ResumeStudio is intended for career planning and is not directed to children. Check its current App Store age rating. This policy will be updated before material processing changes take effect.",
+        "For privacy, support or deletion questions, email currenttech.co.za@gmail.com."
+      ]
+    }
   ],
   "dataCards": [
-    {"title":"Not collected for advertising","items":["Advertising identifiers","Cross-app tracking data","Payment card or bank details","Background location","Your address book","Raw voice-practice recordings"]},
-    {"title":"Stored on device","items":["Résumés, photos, layouts, versions, and exports","Applications, contacts, offers, and interview history","Career evidence, local source files, and AI results","Voice recordings and transcripts","Preferences and secure offline entitlement state"]},
-    {"title":"Processed only when requested","items":["Apple Vision reads selected screenshots or scans locally.","Apple Foundation Models may process eligible lightweight tasks locally.","OpenAI receives a redacted, task-specific request through Firebase for connected AI.","Apple receives purchase requests and returns entitlement status.","iCloud receives the workspace archive only when sync is enabled."]},
-    {"title":"Hosted by explicit action","items":["Review Rooms upload a selected PDF and reviewer metadata.","Trackable links upload a selected PDF and privacy-safe engagement totals.","Public CV pages upload the selected résumé and chosen public profile fields.","All hosted surfaces can be withdrawn or deleted."]}
+    {
+      "title": "Not requested",
+      "items": [
+        "Advertising identifiers or cross-app advertising tracking.",
+        "Payment-card or bank-account details.",
+        "Background location or a general email-inbox feed.",
+        "A bulk upload of your address book."
+      ]
+    },
+    {
+      "title": "Stored on device first",
+      "items": [
+        "Résumés, photos, layouts, versions and exports.",
+        "Applications, selected contacts, offers, career evidence and attached source files.",
+        "Imported inbox items, interview records, coach conversations and remembered context.",
+        "Recorded answer-practice files, transcripts and Writing Voice Profile examples."
+      ]
+    },
+    {
+      "title": "Local processing",
+      "items": [
+        "Apple Vision reads selected screenshots and scanned documents locally.",
+        "Eligible lightweight tasks may use Apple Foundation Models on supported devices.",
+        "Shared application messages and invites are analyzed locally for review.",
+        "Apple speech recognition prefers local processing and may use Apple’s speech service when unavailable."
+      ]
+    },
+    {
+      "title": "Requested connected processing",
+      "items": [
+        "Ordinary writing sends limited redacted context through Firebase to OpenAI.",
+        "AI résumé import sends extracted original text, which may include names and contact details.",
+        "Live spoken interviews stream microphone audio directly to OpenAI; provider retention applies.",
+        "Relevant coach context can include selected relationship notes and compensation amounts entered for negotiation help."
+      ]
+    },
+    {
+      "title": "Hosted sharing you choose",
+      "items": [
+        "Review Rooms host the selected PDF, page images and reviewer feedback behind a link and code.",
+        "Trackable links retain opens, visible reading time, downloads and a per-link cookie for sender analytics.",
+        "Public CV pages host selected documents and fields and may be search-indexable.",
+        "Proof Packs host the reviewed, optionally redacted PDF and page images without owner-facing viewer tracking.",
+        "Evidence-confirmation links host the selected claim/context and the referee’s own reply."
+      ]
+    },
+    {
+      "title": "Accounts, sync and purchases",
+      "items": [
+        "Firebase retains the guest or signed-in account, saved AI results, service identifiers, allowances and ownership records.",
+        "Apple returns signed purchase status; ResumeStudio receives no payment-card or bank details.",
+        "The private iCloud workspace and evidence files sync only when you enable sync.",
+        "Server account, local workspace and iCloud erasure are separate controls; account deletion does not cancel subscriptions."
+      ]
+    }
   ],
-  "measurement": "Anonymous product insights are off by default. When you opt in, only allow-listed event names, plan tier, AI route, app version, and a coarse onboarding goal are sent for aggregate product improvement. Résumé content, identity, company names, job descriptions, URLs, advertising identifiers, and persistent analytics IDs are prohibited. Aggregate daily documents expire after 90 days.",
-  "supportIntro": "Get help with documents, accounts, purchases, AI credits, iCloud sync, public CV pages, trackable links, and Review Rooms.",
+  "measurement": "Anonymous product insights are off by default. Opting in sends only coarse allow-listed event, plan, AI route, version and onboarding-goal values. Identity, account/installation identifiers, content and URLs are excluded; daily aggregate records expire after 90 days. Opting out stops future submissions. Outcome benchmarks are a separate opt-in feature with bounded counts and broad categories.",
+  "supportIntro": "Get help with documents, accounts, purchases, AI credits, recorded and live interview practice, iCloud sync, public CV pages, trackable links, Review Rooms and Proof Packs.",
   "supportDiagnostic": "Include your device model, iOS version, ResumeStudio version and build number, the feature you were using, the exact steps, and the error shown. Attach a screenshot only after checking it contains no résumé or job-search data. Never send passwords, access codes, payment-card details, or a résumé unless you deliberately choose to share it for support.",
   "supportCards": [
-    {"title":"Account and data","body":"Use Settings → Account and backup to reset a password or separately delete server, local, and iCloud data. Account deletion does not cancel an App Store subscription."},
-    {"title":"Plans and purchases","body":"Use Settings → Plans and purchases to restore purchases. Manage or cancel subscriptions through your Apple Account subscription settings."},
-    {"title":"Offline access","body":"Editing, preview, export, applications, saved interview work, OCR, and eligible on-device AI remain available offline. Connected AI and hosted features require a connection."},
-    {"title":"Privacy and hosted links","body":"Privacy Centre controls AI and history. CV pages, résumé links, and Review Rooms can be withdrawn, revoked, or deleted from their management screens."}
+    {
+      "title": "Account and data",
+      "body": "Use Settings → Account and backup to reset a password or separately erase your server account, local workspace and iCloud archive. Server-account deletion also removes owned hosted documents, feedback and evidence confirmations. Deleting an account does not cancel an App Store subscription."
+    },
+    {
+      "title": "Plans and purchases",
+      "body": "Use Settings → Plans and purchases to restore purchases. Manage or cancel subscriptions through your Apple Account subscription settings. Apple processes payment details; do not send card or bank information to support."
+    },
+    {
+      "title": "Offline access",
+      "body": "Editing, preview, export, applications, saved interview work, OCR and supported on-device AI can work offline. Connected AI, live spoken interviews, account changes and hosted features require a connection."
+    },
+    {
+      "title": "AI import and writing",
+      "body": "Local OCR previews and connected AI import are separate choices. AI import sends extracted document text, including contact details present in the original; ordinary writing uses limited redacted context. Review imported fields and proposed edits before applying them. Privacy Centre lets you pause AI."
+    },
+    {
+      "title": "Voice and spoken interviews",
+      "body": "Recorded answer practice keeps the saved audio file on device; speech recognition may use Apple’s service when local recognition is unavailable. Live spoken interviews stream microphone audio directly to OpenAI and are subject to provider retention. Stop the session to stop audio streaming; only request a debrief when you want to send the transcript for feedback."
+    },
+    {
+      "title": "Hosted links and privacy",
+      "body": "Manage CV pages, trackable links, Review Rooms and Proof Packs from their screens to withdraw, revoke or delete access. Trackable links show sender engagement; Proof Packs do not record owner-facing viewer analytics. A downloaded copy remains with its recipient."
+    },
+    {
+      "title": "Insights and history",
+      "body": "Anonymous product insights are off by default and can be turned off in Privacy Centre. The optional daily totals contain no account or installation identifier and expire after 90 days. Review or forget coach memories and use the separate local, server and iCloud erasure controls for your saved work."
+    }
   ]
 }
